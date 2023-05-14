@@ -30,9 +30,7 @@
         </span>
         <button> Login </button>
         <p>
-            Don't have an account? How about <strong on:click={navigateToSignUp}
-                >Sign the hell up</strong
-            >
+            Don't have an account? How about <strong>Sign the hell up</strong>
         </p>
     </form>
 </div>

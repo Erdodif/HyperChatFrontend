@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="%sveltekit.assets%/svelte.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hyper chat App</title>
+    %sveltekit.head%
+    <style>
+      :root{
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body {
+        height: 100vh;
+        height: 100vw;
+        margin: 0;
+        padding: 0;
+        overflow: auto;
+        @supports (min-height: 100dvh) {
+            height: 100dvh;
+            width: 100dvw;
+        }
+    }
+    button{
+        background-color: var(--primary);
+        color: var(--on-primary);
+        border: .2ch solid var(--primary-variant);
+        width: fit-content;
+        border-radius: .225em;
+    }
+    button:hover{
+        background-color: var(--primary-variant);
+        color: var(--primary);
+        border: .2ch solid var(--primary);
+        filter: drop-shadow(0em 0em .125em var(--primary));
+        transition: all 170ms ease-in-out;
+    }
+    </style>
+  </head>
+  <body>
+    <div style="display: contents">
+      %sveltekit.body%
+    </div>
+  </body>
+</html>

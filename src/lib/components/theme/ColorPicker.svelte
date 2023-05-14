@@ -1,15 +1,21 @@
-<script>
-	import * as themeManager from '../../ThemeManager';
+<script lang="ts">
+    import { onMount } from "svelte";
 
 	export let key;
 	export let value;
 	export let label;
+
+	let set:(key:string,value:string)=>void = (key:string,value:string)=>{};
 	
-	$: themeManager.set(key, value);
+	onMount(()=>{
+		set = (key:string, value:string) => document.documentElement.style.setProperty(`--${key}`,value);
+	});
+
+	$: set(key,value);
 </script>
 
 <label>
-	<input style="padding:0" type="color" bind:value/> 
+	<input type="color" bind:value/> 
 	{label}
 </label>
 

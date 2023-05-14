@@ -1,5 +1,4 @@
 <script lang="ts">
-    import * as themeManager from "../../ThemeManager";
     import {onMount} from "svelte";
     import ColorPicker from "./ColorPicker.svelte";
     let primary = '#bb86fc';
@@ -11,16 +10,17 @@
     let error = '#cf6679';
     let onError = '#000000';
     let background = '#121212';
-    let onBackground = '#fff';
+    let onBackground = '#ffffff';
     let surface = '#161616';
-    let onSurface = '#fff';
+    let onSurface = '#ffffff';
     let custom = true;
 
     onMount(() =>{
         custom = false;
     });
-
 </script>
+
+<velte:document style=""/>
 
 <div>
     <button on:click="{() => custom = !custom}">

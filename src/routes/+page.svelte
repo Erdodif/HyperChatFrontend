@@ -1,6 +1,6 @@
 <script lang="ts">
   import Navigation from "../lib/components/Navigation.svelte";
-    import ThemePicker from "../lib/components/theme/ThemePicker.svelte";
+  import ThemePicker from "../lib/components/theme/ThemePicker.svelte";
   let page;
 </script>
 
