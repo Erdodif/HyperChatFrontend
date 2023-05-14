@@ -1,15 +1,29 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import Navigation from "../lib/components/Navigation.svelte";
   import ThemePicker from "../lib/components/theme/ThemePicker.svelte";
-  let page;
+  let token:string = null;
+  let username:string = null;
+  onMount(()=>{
+    token = localStorage.getItem("auth-token");
+    username = localStorage.getItem("username");
+  });
 </script>
 
 <div class="page">
   <header class="nav">
-    <Navigation {page}/>
+    <Navigation />
   </header>
   <main>
-    
+    {#if token === null}
+      <div>
+        Hey, you're not logged in yet. <br/> f u
+      </div>
+      {:else}
+      <div>
+        Welcome {username}
+      </div>
+    {/if}
   </main>
   <aside>
     <ThemePicker />

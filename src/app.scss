@@ -1,1 +1,44 @@
-/* Write your global styles here, in SCSS syntax. Variables and mixins from the src/variables.scss file are available here without importing */
+:root {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --primary:#bb86fc; 
+    --primary-variant:#3700b3; 
+    --on-primary:#000000;
+    --secondary:#03dac6;
+    --secondary-variant:#018786;
+    --on-secondary:#000000;
+    --error:#cf6679;
+    --on-error:#000000;
+    --background:#121212;
+    --on-background:#ffffff;
+    --surface:#161616;
+    --on-surface:#ffffff;
+  }
+
+  body {
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    overflow: auto;
+
+    @supports (min-height: 100dvh) {
+      height: 100dvh;
+      width: 100dvw;
+    }
+  }
+
+  button {
+    background-color: var(--primary);
+    color: var(--on-primary);
+    border: .2ch solid var(--primary-variant);
+    width: fit-content;
+    border-radius: .225em;
+  }
+
+  button:hover {
+    background-color: var(--primary-variant);
+    color: var(--primary);
+    border: .2ch solid var(--primary);
+    filter: drop-shadow(0em 0em .125em var(--primary));
+    transition: all 170ms ease-in-out;
+  }

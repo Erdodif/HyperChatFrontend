@@ -1,5 +1,5 @@
 <script lang="ts">
-    export let page:"LOGIN"|"REGISTER"|"IN"|"WELCOME" = "LOGIN";
+    let page:"LOGIN"|"REGISTER"|"IN"|"WELCOME" = "LOGIN";
 </script>
 
 

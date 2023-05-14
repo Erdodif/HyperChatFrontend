@@ -1,32 +1,26 @@
 <script lang="ts">
-    import { goto } from "$app/navigation";
     import { PUBLIC_SERVER_URL } from "$env/static/public";
-    import { onMount } from "svelte";
+    import { goto } from '$app/navigation';
     export let username: string = "";
     export let password: string = "";
-
-    onMount(()=>{
-        if(localStorage.getItem("username")){
-            username = localStorage.getItem("username");
-        }
-    });
+    export let password2: string = "";
 
     const handleSubmit = async () => {
-        const response = await fetch(PUBLIC_SERVER_URL + "/user/auth", {
+        if (password !== password2) return;
+        const response = await fetch(PUBLIC_SERVER_URL + "/user/create", {
             method: "POST",
-            credentials: "same-origin",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                username,
-                password,
+                "username":username,
+                "password":password,
             }),
         });
-        const content: {username:Number,token:string} = await response.json();
-        if(content.token){
-            localStorage.setItem("auth-token",content.token);
-            throw goto('/');
+        const content = await response.json();
+        if(content.user){
+            localStorage.setItem("username",content.user.username);
+            goto('/login');
         }
         else{
             console.error(content);
@@ -55,13 +49,24 @@
                 autocomplete="current-password"
             />
         </div>
-        <button type="submit"> Login </button>
-        <p>
-            Don't have an account?
-            <br/>How about <a href="/signup"
-                >Sign the hell up</a
-            >
-        </p>
+        <div>
+            <label for="password"> Password again </label>
+            <input
+                type="password"
+                id="password2"
+                bind:value={password2}
+                placeholder="password again"
+                autocomplete="current-password"
+            />
+            {#if password !== password2}
+                <span class="error">
+                    The two password must match!
+                </span>
+            {:else}
+                <span />
+            {/if}
+        </div>
+        <button type="submit"> Sign up </button>
     </form>
 </div>
 
@@ -69,8 +74,14 @@
     input,label{
         display: block;
     }
-    .error{
-        color:var(--error);
+    span{
+        font-size: .765em;
+        height: .765em;
+        display: block;
+        min-width: 1em;
+        &.error{
+            color:var(--error);
+        }
     }
     .holder {
         background-color: var(--background);
