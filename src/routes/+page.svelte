@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import ChatApp from "../lib/components/Chat.svelte"
   import Navigation from "../lib/components/Navigation.svelte";
   import ThemePicker from "../lib/components/theme/ThemePicker.svelte";
   let token:string = null;
@@ -17,12 +18,10 @@
   <main>
     {#if token === null}
       <div>
-        Hey, you're not logged in yet. <br/> f u
+        TF bro...
       </div>
       {:else}
-      <div>
-        Welcome {username}
-      </div>
+      <ChatApp />
     {/if}
   </main>
   <aside>
