@@ -69,9 +69,6 @@
     input,label{
         display: block;
     }
-    .error{
-        color:var(--error);
-    }
     .holder {
         background-color: var(--background);
         @supports (height: 100dvh) {

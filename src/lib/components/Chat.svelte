@@ -13,45 +13,54 @@
         token = localStorage.getItem("auth-token");
         if (!token) goto("/login");
         let gateway = new WebSocket(PUBLIC_SOCKET_URL);
-        gateway.addEventListener("open", () => {
-            gateway.send(JSON.stringify({ Identify: { token: token } }));
+        gateway.addEventListener("open", async () => {
+            let now = Date.now();
+            console.log(`Connecting to ${PUBLIC_SOCKET_URL}`);
+            gateway.send(JSON.stringify({ "event":"IDENTIFY", "data": { token: token } }));
         });
         gateway.addEventListener("message", (event) => {
             let content = JSON.parse(event.data);
-            switch (Object.keys(content)[0]) {
-                case "Ready":
-                    handleReady(content.Ready);
+            console.log(content);
+            switch (content.event) {
+                case "READY":
+                    handleReady(content.data);
                     break;
-                case "MessageCreate":
-                    handleMessage(content.MessageCreate);
+                case "MESSAGE_CREATE":
+                    handleMessage(content.data);
                     break;
-                case "MemberJoin":
-                    handleJoin(content.MemberJoin);
+                case "MEMBER_JOIN":
+                    handleJoin(content.data);
                     break;
-                case "MemberLeave":
-                    handleLeave(content.MemberLeave);
+                case "MEMBER_LEAVE":
+                    handleLeave(content.data);
                     break;
-                case "InvalidSession":
-                    handleInvalid(content.InvalidSession);
+                case "INVALID_SESSION":
+                    handleInvalid(content.data);
                     break;
                 default:
                     console.warn("server is not talkin to me 💢");
             }
         });
+
+        gateway.addEventListener("close", (ec:CloseEvent) => {
+            console.log("Disconnected");
+            console.warn(JSON.parse(ec.reason).data);   
+        });
     });
 
     function handleReady(ready: any) {
+        console.log("Connected");
         localStorage.setItem("user", ready);
     }
 
     function handleMessage(message: any) {
         chatlog.push(message.content);
-        console.log(message.content);
+        console.log(message);
         chatlog = chatlog;
     }
 
     function handleJoin(join: any) {
-        chatlog.push(`${join} is now with you, punk!`);
+        chatlog.push(`${join.display_name} is now with you, punk!`);
         chatlog = chatlog;
     }
 
@@ -77,8 +86,7 @@
             }),
         });
         const content = await response.json();
-        if (content.message.nonce) {
-            //chatlog.push(message);
+        if (content.nonce) {
             console.log(chatlog);
             chatlog = chatlog;
         } else {

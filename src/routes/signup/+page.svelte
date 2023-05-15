@@ -18,8 +18,8 @@
             }),
         });
         const content = await response.json();
-        if(content.user){
-            localStorage.setItem("username",content.user.username);
+        if(content.username){
+            localStorage.setItem("username",username);
             goto('/login');
         }
         else{
