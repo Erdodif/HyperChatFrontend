@@ -23,9 +23,12 @@
                 password,
             }),
         });
-        const content: {username:Number,token:string} = await response.json();
+        const content = await response.json();
         if(content.token){
             localStorage.setItem("auth-token",content.token);
+            localStorage.setItem("user_name",content.user_name);
+            localStorage.setItem("display_name",content.display_name);
+            localStorage.setItem("user_id",content.user_id);
             throw goto('/');
         }
         else{
