@@ -43,7 +43,7 @@
     grid-template-areas: "head head" "side main";
     grid-template-columns: 23ch 1fr;
     align-items: stretch;
-    grid-template-rows: 2em 1fr min-content;
+    grid-template-rows: 2.175em 1fr min-content;
     background-color: var(--background);
     .nav {
       grid-area: head;

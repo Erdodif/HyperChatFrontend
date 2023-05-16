@@ -3,15 +3,22 @@
     import { PUBLIC_SERVER_URL } from "$env/static/public";
     import { PUBLIC_SOCKET_URL } from "$env/static/public";
     import { onMount } from "svelte";
+    import {
+        Message,
+        SystemMessage,
+        ChatMessage,
+        UnsentMessage,
+    } from "../classes/Message";
+    import User from "../classes/User";
     import { readonly } from "svelte/store";
+    import ChatLog from "$lib/classes/ChatLog";
 
-    let chatlog: { key: string; value: string }[] = [];
+    let chatlog: ChatLog = new ChatLog();
     let token: string;
     let message: string;
     export let user;
 
     onMount(() => {
-        console.log(user);
         token = localStorage.getItem("auth-token");
         if (!token) goto("/login");
         let gateway = new WebSocket(PUBLIC_SOCKET_URL);
@@ -24,7 +31,6 @@
         });
         gateway.addEventListener("message", (event) => {
             let content = JSON.parse(event.data);
-            console.log(content);
             switch (content.event) {
                 case "READY":
                     handleReady(content.data);
@@ -53,32 +59,39 @@
     });
 
     function handleReady(ready: any) {
-        chatlog.push({ key: ready.id, value: "You just dropped in, tenno." });
+        chatlog.push(new SystemMessage("You just dropped in, tenno."));
+        chatlog = chatlog;
         console.log("Connected");
         localStorage.setItem("user", ready);
-        chatlog = chatlog;
     }
 
     function handleMessage(message: any) {
-        chatlog.push({ key: message.id, value: message.content });
-        console.log(message);
+        chatlog.push(
+            new ChatMessage(
+                new User(
+                    message.author.id,
+                    message.author.user_name,
+                    message.author.display_name
+                ),
+                message.content,
+                message.id
+            )
+        );
         chatlog = chatlog;
     }
 
     function handleJoin(join: any) {
         if ((join.id as string) == (user.id as string)) return;
-        chatlog.push({
-            key: join.id,
-            value: `${join.display_name} is now with you, punk!`,
-        });
+        chatlog.push(
+            new SystemMessage(`${join.display_name} is now with you, punk!`)
+        );
         chatlog = chatlog;
     }
 
     function handleLeave(leave: any) {
-        chatlog.push({
-            key: leave.id,
-            value: `${leave.display_name} just left this realm...`,
-        });
+        chatlog.push(
+            new SystemMessage(`${leave.display_name} just left this realm...`)
+        );
         chatlog = chatlog;
     }
 
@@ -87,7 +100,8 @@
     }
 
     async function sendMessage(message: string) {
-        const response = await fetch(PUBLIC_SERVER_URL + "/message/create", {
+        let nonce = `${Date.now()}-\"${message}\"`;
+        const response = fetch(PUBLIC_SERVER_URL + "/message/create", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -95,20 +109,30 @@
             },
             body: JSON.stringify({
                 content: message,
-                nonce: message,
+                nonce: nonce,
             }),
         });
-        const content = await response.json();
-        if (content.nonce) {
-            console.log(chatlog);
-            chatlog.at(
-                chatlog.findLastIndex(
-                    (k) => k.value == (content.nonce as string)
-                )
-            ).key = content.id;
+        let index = chatlog.push(new UnsentMessage(user, message, nonce));
+        const content = await (await response).json();
+        if (content.nonce == nonce) {
+            chatlog.makeSent(index, content.id);
             chatlog = chatlog;
         } else {
             console.error(content);
+        }
+    }
+
+    function getAuthor(message: Message): string {
+        if (message instanceof SystemMessage) {
+            return "Sys";
+        }
+        if (
+            message instanceof UnsentMessage &&
+            (message as UnsentMessage).author === user
+        ) {
+            return "You";
+        } else {
+            return (message as ChatMessage).author.display_name;
         }
     }
 </script>
@@ -117,8 +141,9 @@
     <div class="le-chat">
         <div class="scrollable">
             <div class="content">
-                {#each chatlog as msg}
-                    <span class="message">{msg.key} - {msg.value}</span>
+                {#each chatlog.values as msg}
+                    <span class="message">{getAuthor(msg)} - {msg.content}</span
+                    >
                 {/each}
             </div>
         </div>
@@ -154,13 +179,13 @@
                 overflow-y: scroll;
                 scroll-behavior: smooth;
                 scrollbar-color: var(--primary);
-                scrollbar-width: .3ch;
+                scrollbar-width: 0.3ch;
                 scrollbar-gutter: stable;
-                &::-webkit-scrollbar{
+                &::-webkit-scrollbar {
                     background-color: transparent;
-                    width: .3ch;
+                    width: 0.3ch;
                 }
-                &::-webkit-scrollbar-thumb{
+                &::-webkit-scrollbar-thumb {
                     background-color: var(--primary);
                     border-radius: 1em;
                 }
@@ -174,7 +199,7 @@
         form {
             display: grid;
             grid-template-columns: 1fr 7ch;
-            padding:.5em;
+            padding: 0.5em;
             input {
                 font-size: 0.65em;
             }

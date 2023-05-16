@@ -1,33 +1,33 @@
 <script lang="ts">
-    import { onMount } from "svelte";
-    
-    import init, {add} from 'wasm-hyper-chat-connector/module';
-    
-    let page:"LOGIN"|"REGISTER"|"IN"|"WELCOME" = "LOGIN";
-
-    let number = 0;
-
-    onMount(async ()=>{
-        await init();
-    });
+    let page: "LOGIN" | "REGISTER" | "IN" | "WELCOME" = "LOGIN";
 </script>
 
-
 <nav>
-    <span> Chat app lmao</span>
-    <a href="/">Home</a>
-    <button on:click={()=>{number = add(number,1)}}> {number} </button>
-    <a href="/login">
-        Login
-    </a>
+    <span> Chat app lmao </span>
+    <a href="/"> Home </a>
+    <a href="/login"> Login </a>
 </nav>
 
 <style lang="scss">
-    nav{
+    nav {
+        background: var(--surface);
+        padding: 0.2em;
+        border-bottom: 0.125em solid var(--secondary-variant);
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
-        justify-content: space-between;
+        gap: 1em;
         align-items: space-between;
+        a,
+        span {
+            text-decoration: none;
+            color: var(--on-surface);
+            border-radius: 0.2em;
+            padding: 0.155em;
+        }
+        a:hover {
+            color: var(--on-background);
+            filter: drop-shadow(0 0 1em var(--background));
+        }
     }
 </style>
