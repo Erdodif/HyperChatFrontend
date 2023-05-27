@@ -1,5 +1,3 @@
-<script>
-  import "../app.scss";
+<script lang="ts">
+    import "../app.scss";
 </script>
-
-<slot />

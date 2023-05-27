@@ -1,26 +1,36 @@
 <script lang="ts">
+    import { goto } from "$app/navigation";
     import { PUBLIC_SERVER_URL } from "$env/static/public";
-    import { goto } from '$app/navigation';
+    import { onMount } from "svelte";
     export let username: string = "";
     export let password: string = "";
-    export let password2: string = "";
+
+    onMount(()=>{
+        if(localStorage.getItem("username")){
+            username = localStorage.getItem("username");
+        }
+    });
 
     const handleSubmit = async () => {
-        if (password !== password2) return;
-        const response = await fetch(PUBLIC_SERVER_URL + "/user/create", {
+        console.log("Hi bitch");
+        const response = await fetch(PUBLIC_SERVER_URL + "/users/auth", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                "username":username,
-                "password":password,
+                username,
+                password,
             }),
         });
         const content = await response.json();
-        if(content.username){
-            localStorage.setItem("username",username);
-            goto('/login');
+        console.log(content);
+        if(content.token){
+            localStorage.setItem("auth-token",content.token);
+            localStorage.setItem("user_name",content.user_name);
+            localStorage.setItem("display_name",content.display_name);
+            localStorage.setItem("user_id",content.user_id);
+            throw goto('/home');
         }
         else{
             console.error(content);
@@ -49,39 +59,19 @@
                 autocomplete="current-password"
             />
         </div>
-        <div>
-            <label for="password"> Password again </label>
-            <input
-                type="password"
-                id="password2"
-                bind:value={password2}
-                placeholder="password again"
-                autocomplete="current-password"
-            />
-            {#if password !== password2}
-                <span class="error">
-                    The two password must match!
-                </span>
-            {:else}
-                <span />
-            {/if}
-        </div>
-        <button type="submit"> Sign up </button>
+        <button type="submit"> Login </button>
+        <p>
+            Don't have an account?
+            <br/>How about <a href="/signup"
+                >Sign the hell up</a
+            >
+        </p>
     </form>
 </div>
 
 <style lang="scss">
     input,label{
         display: block;
-    }
-    span{
-        font-size: .765em;
-        height: .765em;
-        display: block;
-        min-width: 1em;
-        &.error{
-            color:var(--error);
-        }
     }
     .holder {
         background-color: var(--background);

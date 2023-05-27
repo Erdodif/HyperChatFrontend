@@ -15,4 +15,17 @@ export default class User {
             && this.username === right.username
             && this.display_name == right.display_name;
     }
+
+    static fromLocalStorage(): User | null {
+        if (!(localStorage.getItem("user_id")
+            && localStorage.getItem("username")
+            && localStorage.getItem("display_name"))) {
+            return null;
+        }
+        return new User(
+            localStorage.getItem("user_id"),
+            localStorage.getItem("username"),
+            localStorage.getItem("display_name"));
+
+    }
 }
