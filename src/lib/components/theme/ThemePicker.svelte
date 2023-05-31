@@ -1,22 +1,13 @@
 <script lang="ts">
     import {onMount} from "svelte";
     import ColorPicker from "./ColorPicker.svelte";
-    let primary = '#bb86fc';
-    let primaryVariant = '#3700b3';
-    let onPrimary = '#000000';
-    let secondary = '#03dac6';
-    let secondaryVariant = '#018786';
-    let onSecondary = '#000000';
-    let error = '#cf6679';
-    let onError = '#000000';
-    let background = '#121212';
-    let onBackground = '#ffffff';
-    let surface = '#161616';
-    let onSurface = '#ffffff';
+    //import {theme} from "$stores/theme";
+    import {themeFromStorage, theme, themeToStorage, onSurface} from "$lib/../stores/theme";
     let custom = true;
 
     onMount(() =>{
         custom = false;
+        themeFromStorage()
     });
 </script>
 
@@ -27,18 +18,21 @@
         Use Custom palette
     </button>
     {#if custom}
-        <ColorPicker key="primary" label="Primary" value="{primary}"/>
-        <ColorPicker key="primary-variant" label="Primary Variant" value="{primaryVariant}"/>
-        <ColorPicker key="on-primary" label="On Primary" value="{onPrimary}"/>
-        <ColorPicker key="secondary" label="Secondary" value="{secondary}"/>
-        <ColorPicker key="secondary-variant" label="Secondary Variant" value="{secondaryVariant}"/>
-        <ColorPicker key="on-secondary" label="On Secondary" value="{onSecondary}"/>
-        <ColorPicker key="error" label="Error" value="{error}"/>
-        <ColorPicker key="on-error" label="On Error" value="{onError}"/>
-        <ColorPicker key="background" label="Background" value="{background}"/>
-        <ColorPicker key="on-background" label="On Background" value="{onBackground}"/>
-        <ColorPicker key="surface" label="Surface" value="{surface}"/>
-        <ColorPicker key="on-surface" label="On Surface" value="{onSurface}"/>
+        <ColorPicker key="primary" label="Primary" value="{$theme.primary}"/>
+        <ColorPicker key="primary-variant" label="Primary Variant" value="{$theme.primaryVariant}"/>
+        <ColorPicker key="on-primary" label="On Primary" value="{$theme.onPrimary}"/>
+        <ColorPicker key="secondary" label="Secondary" value="{$theme.secondary}"/>
+        <ColorPicker key="secondary-variant" label="Secondary Variant" value="{$theme.secondaryVariant}"/>
+        <ColorPicker key="on-secondary" label="On Secondary" value="{$theme.onSecondary}"/>
+        <ColorPicker key="error" label="Error" value="{$theme.error}"/>
+        <ColorPicker key="on-error" label="On Error" value="{$theme.onError}"/>
+        <ColorPicker key="background" label="Background" value="{$theme.background}"/>
+        <ColorPicker key="on-background" label="On Background" value="{$theme.onBackground}"/>
+        <ColorPicker key="surface" label="Surface" value="{$theme.surface}"/>
+        <ColorPicker key="on-surface" label="On Surface" value="{$onSurface}"/>
+        <button on:click="{() => themeToStorage($theme)}">
+            Save as custom theme
+        </button>
     {/if}
 </div>
 
