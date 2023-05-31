@@ -1,4 +1,4 @@
-import { readable, writable, derived } from "svelte/store";
+import {writable} from "svelte/store";
 import User from "$lib/classes/User";
 import { goto } from "$app/navigation";
 
@@ -24,6 +24,10 @@ export const user = writable({
 });
 
 export const getUser = async (token: string) => {
+    if (!document){
+        console.error("getUser accessed from server scope!");
+        return;
+    }
     user.update(old => ({ user: old.user, state: UserState.Loading }))
     try {
         user.set({ user: User.fromLocalStorage(), state: UserState.Present });
