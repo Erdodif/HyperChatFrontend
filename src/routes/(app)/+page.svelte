@@ -1,15 +1,13 @@
 <script lang="ts">
-    import type User from "../../lib/classes/User";
-    export let token: string;
-    export let user: User;
+  import {user, token} from "$lib/../stores/auth";
 </script>
 
 <div>Main</div>
 
-{#if token === null}
-    <div>TF bro...</div>
+{#if !$token}
+  <div>TF bro...</div>
 {:else}
-    <div>
-        Wellcome {user.display_name}!
-    </div>
+  <div>
+    Wellcome {($user).user.displayName}!
+  </div>
 {/if}
