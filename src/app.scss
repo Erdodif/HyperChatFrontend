@@ -1,44 +1,49 @@
 :root {
-    font-size: 20px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    --primary:#bb86fc; 
-    --primary-variant:#3700b3; 
-    --on-primary:#000000;
-    --secondary:#03dac6;
-    --secondary-variant:#018786;
-    --on-secondary:#000000;
-    --error:#cf6679;
-    --on-error:#000000;
-    --background:#121212;
-    --on-background:#ffffff;
-    --surface:#161616;
-    --on-surface:#ffffff;
+  font-size: 20px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  --primary: #bb86fc;
+  --primary-variant: #3700b3;
+  --on-primary: #000000;
+  --secondary: #03dac6;
+  --secondary-variant: #018786;
+  --on-secondary: #000000;
+  --error: #cf6679;
+  --on-error: #000000;
+  --background: #121212;
+  --on-background: #ffffff;
+  --surface: #161616;
+  --on-surface: #ffffff;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+
+  @supports (min-height: 100dvh) {
+    min-height: 100dvh;
   }
+}
 
-  body {
-    height: 100vh;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    overflow: auto;
-
-    @supports (min-height: 100dvh) {
-      height: 100dvh;
-    }
-  }
-
-  button {
-    background-color: var(--primary);
-    color: var(--on-primary);
-    border: .2ch solid var(--primary-variant);
-    width: fit-content;
-    border-radius: .225em;
-  }
-
-  button:hover {
+button {
+  font-size: .8   25em;
+  align-self: center;
+  padding-inline: .775em;
+  padding-block: .225em;
+  background-color: var(--primary);
+  color: var(--on-primary);
+  border: 0.2ch solid var(--primary-variant);
+  width: fit-content;
+  border-radius: 0.225em;
+  &:hover,
+  &:focus,
+  &:focus-visible,
+  &:focus-within {
     background-color: var(--primary-variant);
     color: var(--primary);
-    border: .2ch solid var(--primary);
-    filter: drop-shadow(0em 0em .125em var(--primary));
+    border: 0.2ch solid var(--primary);
+    filter: drop-shadow(0em 0em 0.125em var(--primary));
     transition: all 170ms ease-in-out;
   }
+}
