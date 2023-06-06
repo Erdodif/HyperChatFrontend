@@ -1,13 +1,10 @@
 <script lang="ts">
-  import {user, token} from "$lib/../stores/auth";
+  import type User from "$lib/classes/User";
+  import Chat from "$lib/components/Chat.svelte";
+
+  import {token} from "$lib/stores/auth";
 </script>
 
 <div>Main</div>
 
-{#if !$token}
-  <div>TF bro...</div>
-{:else}
-  <div>
-    Wellcome {($user).user.displayName}!
-  </div>
-{/if}
+<Chat token={$token}/>

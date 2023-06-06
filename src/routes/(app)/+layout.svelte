@@ -1,13 +1,7 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import Navigation from "$lib/components/Navigation.svelte";
   import ThemePicker from "$lib/components/theme/ThemePicker.svelte";
-  import {getUser, user, token} from "$lib/../stores/auth";
-
-  onMount(()=>{
-    $token = localStorage.getItem("auth-token");
-    getUser($token);
-  });
+  import Guilds from "$lib/components/Guilds.svelte";
 </script>
 
 <div class="page">
@@ -15,10 +9,10 @@
     <Navigation />
   </header>
   <main>
-    <slot/>
+    <slot />
   </main>
   <aside>
-    <ThemePicker />
+    <Guilds />
   </aside>
 </div>
 
