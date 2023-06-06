@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-    import {onSurface} from "$lib/../stores/theme";
+    import {onSurface} from "$lib/stores/theme";
 
 	export let key;
 	export let value;
