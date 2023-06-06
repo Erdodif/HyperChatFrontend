@@ -1,14 +1,23 @@
 import { PUBLIC_SERVER_URL } from "$env/static/public";
+import { goto } from "$app/navigation";
+
+export enum UserStatus{
+    UNKNOWN,
+    ONLINE,
+    AWAY
+}
 
 export default class User {
     username: string;
     displayName: string;
     id: string;
+    status:UserStatus;
 
     constructor(id: string, username: string, display_name: string) {
         this.id = id;
         this.username = username;
         this.displayName = display_name;
+        this.status = UserStatus.UNKNOWN;
     }
 
     equals(right: User) {
@@ -26,7 +35,7 @@ export default class User {
 
     static fromJson(content: any | { "username": string, "display_name": string, "id": string }) {
         if (!content.username || !content.display_name || !content.id) {
-            return new Error("Cannot construct user from json!");
+            throw goto("./login");
         }
         return new User(content.id, content.display_name, content.username);
     }
@@ -43,14 +52,18 @@ export default class User {
             localStorage.getItem("display_name"));
     }
 
-    static clearStorage(){
+    static clearStorage() {
         localStorage.removeItem("user_id");
         localStorage.removeItem("username");
         localStorage.removeItem("display_name");
     }
 
-    static async fromServer(token: string): Promise<User | Error> {
-        return User.fromJson(await (await fetch(PUBLIC_SERVER_URL + "/users/\@self", {
+    static async selfFromServer(token: string): Promise<User | Error> {
+        return this.fromServer(token, "@self")
+    }
+
+    static async fromServer(token: string, id: "@self" | string) {
+        return User.fromJson(await (await fetch(PUBLIC_SERVER_URL + `/users/${id}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
