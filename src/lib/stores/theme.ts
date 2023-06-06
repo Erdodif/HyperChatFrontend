@@ -47,7 +47,7 @@ export const onSurface = writable('#ffffff');
 export const theme = derived<Writable<string>,Theme>(onSurface,($onSurface)=>{
     let dflt = Theme.defaultTheme;
     dflt.onSurface = $onSurface;
-    console.log(dflt);
+    //console.log(dflt);
     return dflt;
 });
 
@@ -61,8 +61,8 @@ export function themeToStorage(theme: Theme) {
         return;
     }
     localStorage.setItem("theme", JSON.stringify(theme));
-    console.log(theme);
-    console.log(JSON.stringify(theme))
+    /*console.log(theme);
+    console.log(JSON.stringify(theme))*/
 }
 
 export function themeFromStorage(): Theme | null {
