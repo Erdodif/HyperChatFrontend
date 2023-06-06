@@ -1,9 +1,8 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
     import { PUBLIC_SERVER_URL } from "$env/static/public";
-    import User from "$lib/classes/User";
     import { onMount } from "svelte";
-    import {token} from "$lib/../stores/auth";
+    import {token} from "$lib/stores/auth";
     export let username: string = "";
     export let password: string = "";
     let error: String = "";
@@ -34,7 +33,6 @@
             if (content.token) {
                 localStorage.setItem("auth-token", content.token);
                 token.set(content.token);
-                User.clearStorage();
                 throw goto("/");
             } else {
                 console.error(content);
