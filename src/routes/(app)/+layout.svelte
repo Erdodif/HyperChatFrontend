@@ -2,6 +2,60 @@
   import Navigation from "$lib/components/Navigation.svelte";
   import ThemePicker from "$lib/components/theme/ThemePicker.svelte";
   import Guilds from "$lib/components/Guilds.svelte";
+  import SocketHandler, { EventHandler } from "$lib/classes/SocketHandler";
+  import { onMount } from "svelte";
+  import { user } from "$lib/stores/auth";
+  import User from "$lib/classes/User";
+  import Guild, { Channel } from "$lib/classes/Guild";
+  import { guilds } from "$lib/stores/guilds";
+  import { token } from "$lib/stores/auth";
+  import { page } from "$app/stores";
+  import { goto } from "$app/navigation";
+
+  let socketHandler: SocketHandler;
+
+  let handlerBundle = [
+    new EventHandler("INVALID_SESSION", () => {
+      goto(`/login?from=${$page.url.pathname}`);
+    }),
+    new EventHandler("READY", (event) => {
+      $user = User.fromJson(event.user, $page.url.pathname);
+      for (const guildData of event.guilds) {
+        guilds.set(
+          guildData.id,
+          new Guild(guildData.id, guildData.name, guildData.owner_id)
+        );
+      }
+    }),
+    new EventHandler("GUILD_CREATE", (event) => {
+      let channels: Channel[] = [];
+      let members: User[] = [];
+      for (const member of event.members) {
+        members.push(
+          new User(
+            member.user.id,
+            member.user.username,
+            member.user.display_name
+          )
+        );
+      }
+      for (const channel of event.channels) {
+        channels.push(new Channel(channel.id, channel.name, channel.type));
+      }
+      const guild = new Guild(
+        event.guild.id,
+        event.guild.name,
+        event.guild.owner_id,
+        channels,
+        members
+      );
+      guilds.set(guild.id, guild);
+    }),
+  ];
+
+  onMount(() => {
+    socketHandler = new SocketHandler($token, handlerBundle);
+  });
 </script>
 
 <div class="page">
@@ -26,7 +80,7 @@
     height: 100%;
     display: grid;
     grid-template-areas: "head head" "side main";
-    grid-template-columns: 23ch 1fr;
+    grid-template-columns: 3em 1fr;
     align-items: stretch;
     grid-template-rows: 2.175em 1fr min-content;
     background-color: var(--background);

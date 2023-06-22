@@ -1,35 +1,5 @@
 <script lang="ts">
-    import ChatLog from "$lib/classes/ChatLog";
-    import SocketHandler, { EventHandler } from "$lib/classes/SocketHandler";
-    import { onMount } from "svelte";
-    import { user } from "$lib/stores/auth";
-    import User from "$lib/classes/User";
-    import Guild from "$lib/classes/Guild";
-    import { guilds } from "$lib/stores/guilds";
-
-    export let token: string;
-    let chatlog: ChatLog = new ChatLog();
-    let message: string;
-
-    let socketHandler: SocketHandler;
-
-    let handlerBundle = [
-        new EventHandler("READY", (event) => {
-            $user = User.fromJson(event.user);
-            for (const guildData of event.guilds) {
-                $guilds.push(new Guild(guildData.id, guildData.name, guildData.owner_id));
-            }
-        }),
-        new EventHandler("GUILD_CREATE", (event) => {
-            $guilds[event.guild.id] = new Guild(event.guild.id, event.guild.name, event.guild.owner_id);
-            $guilds[event.guild.id].channels = event.guild.channels;
-            $guilds[event.guild.id].members = event.guild.members;
-        }),
-    ];
-
-    onMount(() => {
-        socketHandler = new SocketHandler(token, handlerBundle);
-    });
+    
 </script>
 
 <div class="chat-holder">
