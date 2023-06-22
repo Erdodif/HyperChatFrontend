@@ -2,10 +2,20 @@
     import { goto } from "$app/navigation";
     import { PUBLIC_SERVER_URL } from "$env/static/public";
     import { onMount } from "svelte";
-    import {token} from "$lib/stores/auth";
+    import { token } from "$lib/stores/auth";
+    import { page } from "$app/stores";
     export let username: string = "";
     export let password: string = "";
     let error: String = "";
+
+    let from = "/";
+
+    if (
+        $page.url.searchParams.get("from") &&
+        /^[^\@]+$/.test($page.url.searchParams.get("from"))
+    ) {
+        from = $page.url.searchParams.get("from");
+    }
 
     onMount(() => {
         if (localStorage.getItem("username")) {
@@ -33,7 +43,7 @@
             if (content.token) {
                 localStorage.setItem("auth-token", content.token);
                 token.set(content.token);
-                throw goto("/");
+                return goto(from);
             } else {
                 console.error(content);
             }
