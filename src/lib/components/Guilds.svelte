@@ -1,12 +1,10 @@
 <script lang="ts">
-    import clay from "$lib/assets/chat_bubble_clay.png"
-    import blue from "$lib/assets/chat_bubble_blue.png"
-    import purple from "$lib/assets/chat_bubble_purple.png"
-    import gold from "$lib/assets/chat_bubble_gold.png"
+    import clay from "$lib/assets/chat_bubble_clay.png";
+    import blue from "$lib/assets/chat_bubble_blue.png";
+    import purple from "$lib/assets/chat_bubble_purple.png";
+    import gold from "$lib/assets/chat_bubble_gold.png";
 
     import { guilds } from "$lib/stores/guilds";
-
-    console.log($guilds);
 
     const randomImage = () => {
         switch(Math.floor(Math.random() * 4)){
@@ -20,39 +18,49 @@
                 return gold;
         }
     };
+
+    console.log($guilds);
+
+    $:()=>console.log($guilds);
 </script>
 
-<!--{#each $guilds.values() as guild}
-    <div class="guild" id={guild.id}>
+{#each $guilds as guild}
+    <a class="guild" id={guild.id} href="/guilds/{guild.id}">
         <img src={randomImage()} alt={guild.name}>
         <span class="name">
             {guild.name}
         </span>
-    </div>
-{/each}-->
+    </a>
+{/each}
 
 
 <style lang="scss">
     .guild{
+        user-select: none;
         img{
-            max-height: 2em;
-            max-width: 2em;
-            width: 2em;
-            height: auto;
+            max-height: 90%;
+            max-width: 90%;
+            width: auto;
+            margin-inline: auto;
+            margin-block:.175em;
         }
         .name{
             display: none;
         }
         &:hover{
-            filter: drop-shadow(1em 1em 1em var(--secondary));           
+            filter: drop-shadow(0em 0em .425em var(--primary));           
             .name{
+                max-width: 20ch;
+                width: max-content;
                 display: block;
                 position: absolute;
-                left:0;
-                bottom:-1em;
+                left: 4em;
+                bottom: 30%;
                 font-size: .675em;
-                background: var(--secondary-variant);
-                color: var(--on-secondary);
+                background: var(--background);
+                padding-inline:1ch;
+                border-radius: 1ch;
+                color: var(--on-background);
             }
         }
     }

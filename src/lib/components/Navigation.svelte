@@ -1,11 +1,23 @@
 <script lang="ts">
-    let page: "LOGIN" | "REGISTER" | "IN" | "WELCOME" = "LOGIN";
+    import { goto } from "$app/navigation";
+    import { page } from "$app/stores";
+
+    let ápage: "LOGIN" | "REGISTER" | "IN" | "WELCOME" = "LOGIN";
 </script>
 
 <nav>
     <span> Chat app lmao </span>
     <a href="/"> Home </a>
     <a href="/login"> Login </a>
+    <button
+        on:click={() => {
+            localStorage.removeItem("user_name");
+            localStorage.removeItem("display_name");
+            localStorage.removeItem("user_id");
+            localStorage.removeItem("auth-token");
+            goto(`/login?from=${$page.url.href}`,{replaceState:true});
+        }}>Logoff</button
+    >
 </nav>
 
 <style lang="scss">
