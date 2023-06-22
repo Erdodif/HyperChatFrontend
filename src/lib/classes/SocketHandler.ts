@@ -1,4 +1,6 @@
 import { PUBLIC_SOCKET_URL } from "$env/static/public";
+import { goto } from "$app/navigation";
+import { page } from "$app/stores";
 
 export class EventHandler {
     type: string;
@@ -40,6 +42,14 @@ export default class SocketHandler {
     }
 
     readonly closeEvent = async (ec) => {
+        if(JSON.parse(ec.reason).event == "INVALID_SESSION"){
+            if (this.#handlers.has("INVALID_SESSION")){
+                this.#handlers.get("INVALID_SESSION")(ec);
+                return;
+            }
+            goto("/login");
+            throw new Error("Invalid session in SocketHandler, wich is unhandled.");
+        }
         console.log("Disconnected");
         console.warn(JSON.parse(ec.reason).data);
     }

@@ -1,7 +1,8 @@
 import { PUBLIC_SERVER_URL } from "$env/static/public";
 import { goto } from "$app/navigation";
+import { page } from "$app/stores";
 
-export enum UserStatus{
+export enum UserStatus {
     UNKNOWN,
     ONLINE,
     AWAY
@@ -11,7 +12,7 @@ export default class User {
     username: string;
     displayName: string;
     id: string;
-    status:UserStatus;
+    status: UserStatus;
 
     constructor(id: string, username: string, display_name: string) {
         this.id = id;
@@ -33,9 +34,13 @@ export default class User {
         localStorage.setItem("user_id", this.id);
     }
 
-    static fromJson(content: any | { "username": string, "display_name": string, "id": string }) {
+    static fromJson(content: any | { "username": string, "display_name": string, "id": string }, from: string = "/"): User {
         if (!content.username || !content.display_name || !content.id) {
-            throw goto("./login");
+            let login = new URL("/login");
+            if (from !== "/") {
+                login.searchParams.append("from", from);
+            }
+            goto(login);
         }
         return new User(content.id, content.display_name, content.username);
     }

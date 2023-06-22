@@ -8,11 +8,12 @@ export default class Guild {
     members: User[];
     channels: Channel[];
 
-    constructor(id: string, name: string, ownerId: string) {
+    constructor(id: string, name: string, ownerId: string, chanels: Channel[] = [], members: User[] = []) {
         this.id = id;
         this.name = name;
         this.ownerId = ownerId;
-        this.channels = [];
+        this.channels = chanels;
+        this.members = members;
     }
 
     static fromJson(content: { id: string, name: string, owner_id: string }): Guild {
@@ -28,13 +29,17 @@ export default class Guild {
     }
 }
 
-export class Channel{
+export class Channel {
+    readonly id: string;
     readonly name: string;
     readonly type: string;
     users: User[];
     chat: ChatLog;
 
-    constructor(){
+    constructor(id: string, name: string, type: string) {
+        this.id = id;
+        this.name = name;
+        this.type = type;
         this.users = [];
         this.chat = new ChatLog();
     }
