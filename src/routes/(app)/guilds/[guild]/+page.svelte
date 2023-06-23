@@ -1,8 +1,16 @@
 <script lang="ts">
-    export let data;
-    let guild = data.guild;
+    import { browser } from "$app/environment";
+    import { goto } from "$app/navigation";
+    import { page } from "$app/stores";
+    import Guild from "$lib/classes/Guild";
+    import { guilds } from "$lib/stores/guilds";
+    import { onMount } from "svelte";
+    import { derived } from "svelte/store";
 
-    $: guild = data.guild;
+    export let data;
+    let guild = guilds.get(data.guild);
+
+    console.log($page);
 </script>
 
 {#if guild !== undefined}
@@ -24,9 +32,9 @@
     <div>
         {#each guild.channels as channel}
             <div>
-                <span>
+                <a href="/channels/{channel.name}">
                     {channel.name}
-                </span>
+                </a>
             </div>
         {/each}
     </div>

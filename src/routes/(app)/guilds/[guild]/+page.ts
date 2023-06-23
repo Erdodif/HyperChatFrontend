@@ -1,9 +1,8 @@
-import { error } from '@sveltejs/kit';
-import { guilds } from '$lib/stores/guilds.js';
+import type Guild from "$lib/classes/Guild"
+import { guilds } from "$lib/stores/guilds"
+import { derived } from "svelte/store"
 
-export function load({ params }) {
-    if (guilds.has(params.guild)) {
-        return {guild:guilds.get(params.guild)};
-    }
-    //throw error(404, 'Not found');
+export function load({ params }){
+    //return derived<Guild>(guilds,);
+    guilds.subscribe((value: Guild[]) =>{return value.find(guild=>guild.id == params.guild)})
 }
