@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "wasm": "wasm-pack build ./wasm/ --target web",
-    "dev": "npm run wasm && node ./node_modules/vite/bin/vite.js dev",
-    "build": "npm run wasm && node ./node_modules/vite/bin/vite.js build",
+    "dev": "node ./node_modules/vite/bin/vite.js dev",
+    "build": "node ./node_modules/vite/bin/vite.js build",
     "preview": "node ./node_modules/vite/bin/vite.js preview",
     "check": "svelte-check --tsconfig ./tsconfig.json"
   },
