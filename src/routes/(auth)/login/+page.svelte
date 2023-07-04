@@ -58,6 +58,7 @@
             type="text"
             id="username"
             bind:value={username}
+            placeholder="Username"
             autocomplete="username"
         />
     </div>
