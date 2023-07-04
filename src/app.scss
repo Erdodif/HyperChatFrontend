@@ -41,9 +41,9 @@ button {
   &:focus-visible,
   &:focus-within {
     background-color: var(--primary-variant);
-    color: var(--primary);
-    border: 0.2ch solid var(--primary);
-    filter: drop-shadow(0em 0em 0.125em var(--primary));
+    color: var(--secondary);
+    border: 0.2ch solid var(--secondary-variant);
+    filter: drop-shadow(0em 0em 0.125em var(--secondary));
     transition: all 170ms ease-in-out;
   }
 }
