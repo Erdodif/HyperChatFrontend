@@ -1,8 +1,8 @@
 <script lang="ts">
   import type User from "$lib/classes/User";
-  import Chat from "$lib/components/Chat.svelte";
+  import Application from "$lib/components/Application.svelte";
 </script>
 
 <div>Main</div>
 
-<Chat/>
+<Application/>
