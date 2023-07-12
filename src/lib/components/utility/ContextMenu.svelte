@@ -7,8 +7,17 @@
         LinkAction,
         ToogleAction,
     } from "$lib/classes/ContextMenuOption";
+
+	import { createEventDispatcher } from 'svelte';
+
     export let options: ContextMenuItem[];
     export let visible: boolean = false;
+    
+	const dispatch = createEventDispatcher();
+
+	function close() {
+		dispatch('close');
+	}
 
     let node: HTMLDivElement;
 
@@ -31,7 +40,7 @@
             rect.right < x ||
             rect.left > x
         ) {
-            visible = false;
+            close();
         }
     };
 
@@ -90,7 +99,7 @@
                     {option.name}
                 </button>
             {:else if option instanceof LinkAction}
-                <a href={option.href}>
+                <a href={option.href} target={option.newTab?`_blank`:`_self`}>
                     {option.name}
                 </a>
             {:else}
@@ -100,33 +109,12 @@
                 <img src={option.icon} alt={option.name} />
             {/if}
         </span>
-
-            {#if option instanceof ContextAction}
-                <button class="context-option clickable" on:click={option.action}>
-                    {option.name}
-                </button>
-            {:else if option instanceof LinkAction}
-                <a class="context-option" href={option.href}>{option.name}</a>
-            {:else if option instanceof Expandable}
-                <input class="context-option" type="button" value={option.name} />
-                <svelte:self options={option.options} />
-            {:else if option instanceof ToogleAction}
-                <label class="context-option" >
-                    {option.name}
-                    <input
-                        type="checkbox"
-                        name={option.name}
-                        bind:checked={option.isSet}
-                    />
-                </label>
-            {:else}
-                <span>{option.name}</span>
-            {/if}-->
     {/each}
 </div>
 
 <style lang="scss">
     #context-menu {
+        z-index: 999;
         user-select: none;
         font-size: 0.925em;
         max-width: 20ch;
