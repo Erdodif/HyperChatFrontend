@@ -1,33 +1,63 @@
+import arrowLeft from "$lib/assets/icons/arrow-left.svg";
+import arrowRight from "$lib/assets/icons/arrow-right.svg";
+
 export class ContextMenuItem {
     name: string;
     icon: string | null;
-    constructor(name: string, icon: string | null = null) {
+    center: boolean;
+
+    constructor(name: string, icon: string | null = null, center: boolean = false) {
         this.name = name;
         this.icon = icon;
+        this.center = center;
     }
 }
 
-export default class ContextAction extends ContextMenuItem {
+export default class ButtonAction extends ContextMenuItem {
     action: () => void;
-    constructor(name: string, icon: string | null = null, action: () => void) {
-        super(name, icon);
+
+    constructor(name: string, action: () => void, icon: string | null = null, center: boolean = false) {
+        super(name, icon, center);
         this.action = action;
     }
 }
 
 export class LinkAction extends ContextMenuItem {
     href: string;
-    constructor(name: string, icon: string | null = null, href: string) {
-        super(name, icon);
+    constructor(name: string, href: string, icon: string | null = null, center: boolean = false) {
+        super(name, icon, center);
         this.href = href;
     }
 }
 
 export class ToogleAction extends ContextMenuItem {
     isSet: boolean;
+    isFor: string;
 
-    constructor(name: string, icon: string | null = null, isSet: boolean) {
-        super(name, icon);
+    constructor(name: string, isFor: string, isSet: boolean, icon: string | null = null, center: boolean = false) {
+        super(name, icon, center);
+        this.isFor = isFor;
         this.isSet = isSet;
+    }
+}
+
+export class Expandable extends ContextMenuItem{
+    options: ContextMenuItem[];
+    expanded: boolean;
+
+    constructor(name: string, options: ContextMenuItem[]) {
+        super(name, arrowRight);
+        this.options = options;
+        this.expanded = false;
+    }
+
+    close() {
+        this.icon = arrowRight;
+        this.expanded = false;
+    }
+
+    open() {
+        this.icon = arrowLeft;
+        this.expanded = true;
     }
 }
