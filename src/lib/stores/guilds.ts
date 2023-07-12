@@ -1,7 +1,7 @@
 import type { Readable, Writable } from "svelte/store";
 import { writable } from "svelte/store";
 import User from "$lib/classes/User";
-import Guild from "$lib/classes/Guild";
+import type Guild from "$lib/classes/Guild";
 import { CustomDerivedStore, IndirectStore } from "./custom";
 import type { Channel } from "$lib/classes/Guild";
 

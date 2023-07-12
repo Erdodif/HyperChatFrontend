@@ -3,8 +3,13 @@
     import blue from "$lib/assets/chat_bubble_blue.png";
     import purple from "$lib/assets/chat_bubble_purple.png";
     import gold from "$lib/assets/chat_bubble_gold.png";
-
+    import { token } from "$lib/stores/auth";
     import { guilds } from "$lib/stores/guilds";
+    import ContextMenu from "./utility/ContextMenu.svelte";
+    import ButtonAction, {
+        ContextMenuItem, LinkAction,
+    } from "$lib/classes/ContextMenuOption";
+    import type Guild from "$lib/classes/Guild";
 
     const randomImage = () => {
         switch (Math.floor(Math.random() * 4)) {
@@ -19,12 +24,34 @@
         }
     };
 
+    let activeIndex: number | null = null;
+    const getOptions = (guild: Guild) => [
+        new ContextMenuItem(guild.id),
+        new ContextMenuItem(guild.name),
+        new LinkAction("Open In new tab",`/guilds/${guild.id}`,null, true, true),
+        new ButtonAction(`Delete ${guild.name}`, () => deleteGuild(guild)),
+    ];
+
+    const deleteGuild = (guild: Guild) => {
+        alert(`now, you delete ${guild.id}`);
+    };
+
     $: () => console.log($guilds);
 </script>
 
 <div class="guilds">
-    {#each $guilds as guild}
-        <a class="guild" id={guild.id} href="/guilds/{guild.id}">
+    {#each $guilds as guild, i}
+        <a
+            class="guild"
+            id={guild.id}
+            href="/guilds/{guild.id}"
+            on:contextmenu|preventDefault={() => (activeIndex = i)}
+        >
+            <ContextMenu
+                options={getOptions(guild)}
+                visible={activeIndex == i}
+                on:close={() => (activeIndex = null)}
+            />
             <img src={randomImage()} alt={guild.name} />
             <span class="name">
                 {guild.name}
@@ -40,7 +67,7 @@
         flex-direction: column;
         flex-wrap: nowrap;
         justify-content: center;
-        gap:.275em;
+        gap: 0.275em;
         #create {
             line-height: 1.625em;
             user-select: none;
@@ -50,12 +77,12 @@
             background-color: var(--primary);
             border: 0.1ch solid var(--primary-variant);
             width: 80%;
-            margin-inline:auto;
+            margin-inline: auto;
             aspect-ratio: 1 / 1;
             text-decoration: none;
             text-align: center;
             border-radius: 35%;
-            &:hover{
+            &:hover {
                 background-color: var(--primary-variant);
                 border: 0.1ch solid var(--secondary-variant);
                 color: var(--secondary);
@@ -75,7 +102,6 @@
             .name {
                 display: none;
             }
-
 
             &:hover {
                 filter: drop-shadow(0em 0em 0.425em var(--primary));
