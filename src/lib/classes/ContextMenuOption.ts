@@ -24,9 +24,11 @@ export default class ButtonAction extends ContextMenuItem {
 
 export class LinkAction extends ContextMenuItem {
     href: string;
-    constructor(name: string, href: string, icon: string | null = null, center: boolean = false) {
+    newTab: boolean;
+    constructor(name: string, href: string, icon: string | null = null, center: boolean = false, newTab = false) {
         super(name, icon, center);
         this.href = href;
+        this.newTab = newTab;
     }
 }
 
