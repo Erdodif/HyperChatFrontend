@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "server": "cd `node -r dotenv/config -e \"console.log(process.env.DEV_SERVER_DIRECTORY);\"` && git pull && docker compose up --build",
+    "server": "node -r dotenv/config -e \"console.log(process.env.DEV_SERVER_DIRECTORY);\" | cd && git pull && docker compose up --build",
     "wasm": "wasm-pack build ./wasm/ --target web",
     "dev": "node ./node_modules/vite/bin/vite.js dev",
     "build": "node ./node_modules/vite/bin/vite.js build",
