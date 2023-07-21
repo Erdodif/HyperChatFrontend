@@ -3,11 +3,13 @@
     import blue from "$lib/assets/chat_bubble_blue.png";
     import purple from "$lib/assets/chat_bubble_purple.png";
     import gold from "$lib/assets/chat_bubble_gold.png";
-    import { token } from "$lib/stores/auth";
-    import { guilds } from "$lib/stores/guilds";
+    import { token, user } from "$lib/stores/auth";
+    import { guildSet } from "$lib/stores/guildSet";
+    import { PUBLIC_SERVER_URL } from "$env/static/public";
     import ContextMenu from "./utility/ContextMenu.svelte";
     import ButtonAction, {
-        ContextMenuItem, LinkAction,
+        ContextMenuItem,
+        LinkAction,
     } from "$lib/classes/ContextMenuOption";
     import type Guild from "$lib/classes/Guild";
 
@@ -28,19 +30,47 @@
     const getOptions = (guild: Guild) => [
         new ContextMenuItem(guild.id),
         new ContextMenuItem(guild.name),
-        new LinkAction("Open In new tab",`/guilds/${guild.id}`,null, true, true),
-        new ButtonAction(`Delete ${guild.name}`, () => deleteGuild(guild)),
+        new LinkAction(
+            "Open In a new tab",
+            `/guilds/${guild.id}`,
+            null,
+            true,
+            true
+        ),
+        guild.ownerId == $user.id
+            ? new ButtonAction("Delete channel", () => deleteGuild(guild))
+            : new ContextMenuItem("You cannot delete this channel"),
     ];
 
-    const deleteGuild = (guild: Guild) => {
-        alert(`now, you delete ${guild.id}`);
+    const deleteGuild = async(guild: Guild) => {
+        if (
+            confirm(
+                `Are you really going to delete ${guild.name} (${guild.id})?\nThis step is irreversible tho...`
+            )
+        ) {
+            const response = await fetch(`${PUBLIC_SERVER_URL}/guilds/${guild.id}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: $token,
+                },
+                body: JSON.stringify({ name: name }),
+            });
+            console.log(response);
+            if (response.ok) {
+                alert("Channel deleted, there's nothing to see here...")
+                return;
+            }
+            alert("Failed to delete Channel, see the logs to validate you misfortune...")
+            console.log(response);
+        }
     };
 
-    $: () => console.log($guilds);
+    $: () => console.log($guildSet);
 </script>
 
 <div class="guilds">
-    {#each $guilds as guild, i}
+    {#each $guildSet.guildsArray as guild, i}
         <a
             class="guild"
             id={guild.id}

@@ -1,6 +1,6 @@
 <script lang="ts">
     import Guilds from "$lib/components/Guilds.svelte";
-    import { guilds } from "$lib/stores/guilds";
+    import { guildSet } from "$lib/stores/guildSet";
     import clay from "$lib/assets/chat_bubble_clay.png";
     import blue from "$lib/assets/chat_bubble_blue.png";
     import purple from "$lib/assets/chat_bubble_purple.png";
@@ -22,7 +22,7 @@
     let holderOpen = false;
 </script>
 
-{#if $guilds.length == 0}
+{#if $guildSet.length == 0}
     <div>
         Looks like you don't have any guild, how about <a href="/guilds/create"
             >create a Guild</a
@@ -37,7 +37,7 @@
         on:click={() => (holderOpen = !holderOpen)}
         on:keypress={(e)=>{if(e.key === "\n") holderOpen = !holderOpen}}
     >
-        {#each $guilds as guild}
+        {#each $guildSet.guildsArray as guild}
             <a class="guild" id={guild.id} href="/guilds/{guild.id}">
                 <img src={randomImage()} alt={guild.name} />
                 <span class="name">

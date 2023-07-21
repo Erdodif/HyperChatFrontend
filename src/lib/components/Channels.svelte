@@ -6,6 +6,7 @@
     import type { Channel } from "$lib/classes/Guild";
     import type Guild from "$lib/classes/Guild";
     import ContextMenu from "./utility/ContextMenu.svelte";
+    import {page} from "$app/stores";
 
     export let guild: Guild;
 
@@ -22,7 +23,7 @@
 </script>
 
 <div class="channels">
-    {#each guild.channels as channel, index}
+    {#each guild.channelList as channel, index}
         <span id={channel.id}>
             <ContextMenu
                 options={getOptions(channel)}
@@ -36,6 +37,9 @@
             >
         </span>
     {/each}
+    <span id="new-channel">
+        <a href={`/guild/${guild.id}/create-channel`}>Create a new page</a>
+    </span>
 </div>
 
 <style lang="scss">

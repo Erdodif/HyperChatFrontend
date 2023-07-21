@@ -65,7 +65,7 @@
 </script>
 
 <svelte:document
-    on:keydown|preventDefault={keydown}
+    on:keydown|capture={keydown}
     on:click|capture={mouse}
     on:contextmenu|capture={mouse}
 />

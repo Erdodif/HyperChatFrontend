@@ -7,7 +7,7 @@
   import { user } from "$lib/stores/auth";
   import User from "$lib/classes/User";
   import Guild, { Channel } from "$lib/classes/Guild";
-  import { guilds } from "$lib/stores/guilds";
+  import { guildSet } from "$lib/stores/guildSet";
   import { token } from "$lib/stores/auth";
   import { page } from "$app/stores";
   import { goto } from "$app/navigation";
@@ -21,10 +21,7 @@
     new EventHandler("READY", (event) => {
       $user = User.fromJson(event.user, $page.url.pathname);
       for (const guildData of event.guilds) {
-        guilds.set(
-          guildData.id,
-          new Guild(guildData.id, guildData.name, guildData.owner_id)
-        );
+        guildSet.set(new Guild(guildData.id, guildData.name, guildData.owner_id));
       }
     }),
     new EventHandler("GUILD_CREATE", (event) => {
@@ -49,7 +46,12 @@
         channels,
         members
       );
-      guilds.set(guild.id, guild);
+      guildSet.set(guild);
+    }),
+    new EventHandler("GUILD_REMOVE",(event)=>{
+      $guildSet.remove(event.id);
+      console.log(event);
+      console.log($guildSet.has(event));
     }),
   ];
 
