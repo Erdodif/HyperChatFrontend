@@ -38,5 +38,5 @@ export default class ChatLog {
         this.#log[index] = (this.#log[index] as UnsentMessage).messageSent(id);
     }
 
-    get values() { return [...this.#log] };
+    get messages() { return [...this.#log] };
 }
