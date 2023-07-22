@@ -8,14 +8,29 @@
     import type Guild from "$lib/classes/Guild";
     import type {Channel} from "$lib/classes/Guild";
 
-    let channel: Channel = $guildSet.searchChannel($page.data.channel)!;
+    let channel: Channel = $guildSet.searchChannel($page.params.channel)!;
     //let guild = channel.guild;
-    let guild:Guild = channel.guild;
     $: {
+        channel = $guildSet.searchChannel($page.params.channel)!;
+    //let guild = channel.guild;
     }
 </script>
 
-<GuildPage {guild}>
+{#if channel == null}
+    {@debug $page}
+{:else}
+    {console.log(channel)}
+<GuildPage guild={channel.guild}>
+    <div class="channel">
+        <div class="head">
+            <h1>
+                {channel.name}
+            </h1>
+        </div>
+        <section>
+
+        </section>
+    </div>
     <!--
     <h1>{guild.name}</h1>
 
@@ -37,3 +52,12 @@
     </p>
     -->
 </GuildPage>
+{/if}
+
+<style lang="scss">
+    .channel{
+        .head h1{
+            font-size: 1em;
+        }
+    }
+</style>

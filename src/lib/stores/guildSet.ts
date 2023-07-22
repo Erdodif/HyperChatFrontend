@@ -1,40 +1,49 @@
-import type { Readable, Writable } from "svelte/store";
-import { writable } from "svelte/store";
-import User from "$lib/classes/User";
 import type Guild from "$lib/classes/Guild";
 import { CustomStore, IndirectStore } from "./custom";
 import type { Channel } from "$lib/classes/Guild";
 
+/**
+ * A wrapper Object of a `Map<string,Guild>`, to ensure the store's controlled functionality and it's only used to fulfill the store's needs.
+ */
 class GuildSet {
-    protected _guilds: Map<string,Guild>
+    protected _guilds: Map<string, Guild>
 
     constructor(initialValue: Map<string, Guild> = new Map<string, Guild>()) {
         this._guilds = initialValue;
     }
 
-    get guilds():Map<string, Guild>{
+    get guilds(): Map<string, Guild> {
         return this._guilds;
     }
 
-    get guildsArray():Array<Guild>{
+    get guildsArray(): Array<Guild> {
         return Array.from(this._guilds.values());
     }
 
-    get length():number{
+    get length(): number {
         return this._guilds.size;
     }
 
-    searchChannel(id:string):Channel | null{
+    searchChannel(id: string): Channel | null {
         let channel = null;
-        this._guilds.forEach((guild)=>{
-            if (guild.hasChannel(id)){
-                channel =  guild.getChannel(id);
+        this._guilds.forEach((guild) => {
+            if (guild.hasChannel(id)) {
+                channel = guild.getChannel(id);
             }
         });
         return channel;
     }
 
-    removeChannel(guildId:string,channelId:string):boolean{
+    setChannel(channel:Channel){
+        this._guilds.get(channel.guild.id).setChannel(channel);
+    }
+
+    addChannel(guildId:string, channel: Channel){
+        let guild = this._guilds.get(guildId);
+        guild.setChannel(channel.copyWithGuild(guild));
+    }
+
+    removeChannel(guildId: string, channelId: string): boolean {
         let success = this._guilds.get(guildId).removeChannel(channelId);
         return success;
     }
@@ -43,7 +52,7 @@ class GuildSet {
         return this._guilds.has(key);
     }
 
-    remove(key:string): boolean{
+    remove(key: string): boolean {
         let success = this._guilds.delete(key);
         return success;
     }
@@ -53,7 +62,12 @@ class GuildSet {
     }
 }
 
-class GuildStore extends CustomStore<GuildSet> {
+/**
+ * Custom store Object of a `Guild` Collection.
+ * 
+ * Channels and guilds shall be accessed and modified through it's methods and properties, or else the store notification system may not be triggered
+ */
+export class GuildStore extends CustomStore<GuildSet> {
 
     constructor(initialValue: Map<string, Guild> = new Map<string, Guild>()) {
         super(new GuildSet(initialValue));
@@ -64,17 +78,27 @@ class GuildStore extends CustomStore<GuildSet> {
         this.nofity();
     }
 
-    searchChannel(id:string):Channel | null{
+    searchChannel(id: string): Channel | null {
         return this.value.searchChannel(id);
     }
 
-    removeChannel(guildId:string,channelId:string):boolean{
-        let success = this.value.removeChannel(guildId,channelId);
+    setChannel(channel: Channel) {
+        this.value.setChannel(channel);
+        this.nofity();
+    }
+
+    addChannel(guildId: string, channel: Channel) {
+        this.value.addChannel(guildId,channel);
+        this.nofity();
+    }
+
+    removeChannel(guildId: string, channelId: string): boolean {
+        let success = this.value.removeChannel(guildId, channelId);
         this.nofity();
         return success;
     }
 
-    remove(key:string): boolean{
+    remove(key: string): boolean {
         let success = this.value.remove(key);
         this.nofity();
         return success;
