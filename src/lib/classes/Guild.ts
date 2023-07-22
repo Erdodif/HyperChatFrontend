@@ -1,29 +1,73 @@
 import ChatLog from "./ChatLog";
 import User from "./User";
 
+/**
+ * Object representation of the Server's guild instance
+ * 
+ * It stores it's users and channels in a `Map` Object
+ */
 export default class Guild {
+    /**
+     * TODO
+     * 
+     * Snowflake ID
+     * 
+     * Note: Snowflakes are delivered as strings by the API to ensure language compatibility, but they are guaranteed to be numeric.
+     * 
+     * Most if not all objects are identified by a snowflake ID with a custom epoch of 2023-01-01T00:00:00Z. Therefore, to obtain the creation timestamp of an object, you can use the following formula:
+     * @example    
+     * EPOCH = 1672531200000 // 2023-01-01T00:00:00Z in milis
+     * created_at = (id >> 22) + EPOCH
+     */
     readonly id: string;
     readonly name: string;
+    /**
+     * The owner's id (Snowflake)
+     */
     readonly ownerId: string;
 
     protected _members: Map<string, User>;
+    /**
+     * An array of the current members of the guild
+    */
     get memberList(): Array<User> {
         return Array.from(this._members.values());
     }
 
-    getMember(id: string): User {
+    /**
+     * 
+     * @param id The user's id (Snowflake)
+     * @returns The user, or undefined, if not present
+     */
+    getMember(id: string): User | undefined {
         return this._members.get(id);
     }
 
     protected _channels: Map<string, Channel>;
+    /**
+     * An array of the current channels of the guild
+     */
     get channelList(): Array<Channel> {
         return Array.from(this._channels.values());
     }
 
-    getChannel(id: string): Channel {
+    /**
+     * 
+     * @param id The channel' id (Snowflake)
+     * @returns The channel, or undefined, if not present
+     */
+    getChannel(id: string): Channel | undefined {
         return this._channels.get(id);
     }
 
+    /**
+     * Sets the given channel to it's new value.
+     * 
+     * It will be accessed via the readonly `id` parameter of the channel, therefore id shall not be changed by this manner!
+     * 
+     * If the channel was not in the collection, a copy will be added with `this` as it's new guild.
+     * @param channel The channel Object
+     */
     setChannel(channel: Channel) {
         if (this._channels.has(channel.id)) {
             this._channels.set(channel.id, channel);
@@ -31,10 +75,20 @@ export default class Guild {
         this._channels.set(channel.id, channel.copyWithGuild(this));
     }
 
+    /**
+     * Checks if the channel is in the collection
+     * @param id The channel id (Snowflake)
+     * @returns true, if the channel is present
+     */
     hasChannel(id: string): boolean {
         return this._channels.has(id);
     }
 
+    /**
+     * 
+     * @param id The channel' id (Snowflake)
+     * @returns True, if the deletion was successful, false if it was not present anyway
+     */
     removeChannel(id: string): boolean {
         return this._channels.delete(id);
     }
@@ -49,10 +103,15 @@ export default class Guild {
         }
         this._channels = new Map();
         for (const channel of channels) {
-            this._channels.set(channel.id, channel);
+            this._channels.set(channel.id, channel.copyWithGuild(this));
         }
     }
 
+    /**
+     * Creates a minimal instance of the guild based on the given `JSON` object
+     * @param content The given `JSON` object
+     * @returns A new `Guild`
+     */
     static fromJson(content: { id: string, name: string, owner_id: string }): Guild {
         return new Guild(
             content.id,
@@ -61,11 +120,21 @@ export default class Guild {
         );
     }
 
+    /**
+     * Fetches the User Object of the guild owner from the server
+     * @param token The authentication token
+     * @returns An async call of the user
+     */
     async getOwner(token: string): Promise<User> {
         return User.fromServer(token, this.ownerId);
     }
 }
 
+/**
+ * An Object representation of the server's channel instance
+ * 
+ * It stores it's members, and has an access to it's guild and chatlog
+ */
 export class Channel {
     readonly id: string;
     readonly name: string;
@@ -73,14 +142,28 @@ export class Channel {
     readonly guild: Guild | null;
 
     protected _members: Map<string, User>;
+    /**
+     * An array of the current members
+     */
     get memberList(): Array<User> {
         return Array.from(this._members.values());
     }
 
-    getMember(id: string) {
+    /**
+     * 
+     * @param id The user's id (Snowflake)
+     * @returns The user or undefined, if not present
+     */
+    getMember(id: string): User | undefined {
         return this._members.get(id);
     }
 
+    /**
+     * Sets the current member to it's new value
+     * 
+     * It will be accessed via the readonly id parameter of the user, therefore id shall not be changed by this manner!
+     * @param member The changed user value
+     */
     setMember(member: User) {
         this._members.set(member.id, member);
     }
@@ -100,6 +183,11 @@ export class Channel {
         }
     }
 
+    /**
+     * Returns a copy of the channel, with the given guild atached to it
+     * @param guild The new guild
+     * @returns A new channel instance
+     */
     copyWithGuild(guild: Guild): Channel {
         return new Channel(this.id, this.name, this.type, guild, this.memberList, this.chat);
     }
