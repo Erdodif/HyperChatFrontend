@@ -6,11 +6,16 @@
   import { onMount } from "svelte";
   import { user } from "$lib/stores/auth";
   import User from "$lib/classes/User";
-  import Guild, { Channel } from "$lib/classes/Guild";
+  import Guild from "$lib/classes/Guild";
+  import Channel from "$lib/classes/Channel";
   import { guildSet } from "$lib/stores/guildSet";
   import { token } from "$lib/stores/auth";
   import { page } from "$app/stores";
   import { goto } from "$app/navigation";
+  import Rest from "$lib/classes/Rest";
+  import Member from "$lib/classes/Member";
+  import Message from "$lib/components/Message.svelte";
+  import { ChatMessage } from "$lib/classes/Message";
 
   let socketHandler: SocketHandler;
 
@@ -19,9 +24,11 @@
       goto(`/login?from=${$page.url.pathname}`);
     }),
     new EventHandler("READY", (event) => {
-      $user = User.fromJson(event.user, $page.url.pathname);
+      $user = User.fromJsonOrRedirect(event.user, $page.url.pathname);
       for (const guildData of event.guilds) {
-        guildSet.set(new Guild(guildData.id, guildData.name, guildData.owner_id));
+        guildSet.set(
+          new Guild(guildData.id, guildData.name, guildData.owner_id)
+        );
       }
     }),
     new EventHandler("GUILD_CREATE", (event) => {
@@ -48,16 +55,29 @@
       );
       guildSet.set(guild);
     }),
-    new EventHandler("GUILD_REMOVE",(event)=>{
+    new EventHandler("GUILD_REMOVE", (event) => {
       $guildSet.remove(event.id);
+    }),
+    new EventHandler("MESSAGE_CREATE", (event) => {
       console.log(event);
-      console.log($guildSet.has(event));
+      let author: Member = Member.fromJson(event.author);
+      let message: ChatMessage = new ChatMessage(
+        author,
+        event.content,
+        event.id
+      );
+      $guildSet.pushToChatLog(event.channel_id, message, event.nonce);
+      guildSet.update();
     }),
   ];
 
   onMount(() => {
     socketHandler = new SocketHandler($token, handlerBundle);
   });
+
+  $: {
+    Rest.token = $token;
+  }
 </script>
 
 <div class="page">
