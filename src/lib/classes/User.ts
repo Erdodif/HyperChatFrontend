@@ -1,31 +1,38 @@
 import { PUBLIC_SERVER_URL } from "$env/static/public";
 import { goto } from "$app/navigation";
 import { page } from "$app/stores";
+import Rest from "./Rest";
+import Member from "./Member";
 
 export enum UserStatus {
-    UNKNOWN,
     ONLINE,
-    AWAY
+    IDLE,
+    BUSY,
+    OFFLINE
 }
 
 export default class User {
     username: string;
     displayName: string;
-    id: string;
+    readonly id: string;
     status: UserStatus;
 
     constructor(id: string, username: string, display_name: string) {
         this.id = id;
         this.username = username;
         this.displayName = display_name;
-        this.status = UserStatus.UNKNOWN;
+        this.status = UserStatus.OFFLINE;
     }
 
-    equals(right: User) {
-        return typeof this === typeof right
+    equals(right: User | Member) {
+        return (right instanceof User
             && this.id === right.id
             && this.username === right.username
-            && this.displayName == right.displayName;
+            && this.displayName == right.displayName)
+            || (right instanceof Member
+                && this.id === right.user.id
+                && this.username === right.user.username
+                && this.displayName == right.user.displayName);
     }
 
     toLocalStorage() {
@@ -34,7 +41,7 @@ export default class User {
         localStorage.setItem("user_id", this.id);
     }
 
-    static fromJson(content: any | { "username": string, "display_name": string, "id": string }, from: string = "/"): User {
+    static fromJsonOrRedirect(content: any | { "username": string, "display_name": string, "id": string }, from: string = "/"): User {
         if (!content.username || !content.display_name || !content.id) {
             let login = new URL("/login");
             if (from !== "/") {
@@ -42,6 +49,10 @@ export default class User {
             }
             goto(login);
         }
+        return new User(content.id, content.display_name, content.username);
+    }
+
+    static fromJson(content: any | { "username": string, "display_name": string, "id": string }): User {
         return new User(content.id, content.display_name, content.username);
     }
 
@@ -64,16 +75,10 @@ export default class User {
     }
 
     static async selfFromServer(token: string): Promise<User | Error> {
-        return this.fromServer(token, "@self")
+        return this.fromServer("@self");
     }
 
-    static async fromServer(token: string, id: "@self" | string) {
-        return User.fromJson(await (await fetch(PUBLIC_SERVER_URL + `/users/${id}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": token
-            }
-        })).json());
+    static async fromServer(id: "@self" | string) {
+        return User.fromJsonOrRedirect((await Rest.getJsonFromServer(`users/${id}`)));
     }
 }
