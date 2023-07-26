@@ -1,21 +1,27 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
     import { page } from "$app/stores";
-
-    let ápage: "LOGIN" | "REGISTER" | "IN" | "WELCOME" = "LOGIN";
+    import { user } from "$lib/stores/auth";
+    import { GuildSet, guildSet } from "$lib/stores/guildSet";
+    import { add_flush_callback } from "svelte/internal";
 </script>
 
 <nav>
     <span> Chat app lmao </span>
     <a href="/"> Home </a>
-    <a href="/login"> Login </a>
+    {#if $user}
+        <span>{$user.username} (aka. {$user.displayName})</span>
+    {:else}
+        <a data-sveltekit-replacestate href="/login"> Login </a>
+    {/if}
     <button
         on:click={() => {
             localStorage.removeItem("user_name");
             localStorage.removeItem("display_name");
             localStorage.removeItem("user_id");
             localStorage.removeItem("auth-token");
-            goto(`/login?from=${$page.url.href}`,{replaceState:true});
+            guildSet.resetGuildSet();
+            goto(`/login?from=${$page.url.href}`, { replaceState: true });
         }}>Logoff</button
     >
 </nav>
