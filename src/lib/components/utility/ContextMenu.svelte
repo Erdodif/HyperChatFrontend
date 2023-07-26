@@ -8,16 +8,16 @@
         ToogleAction,
     } from "$lib/classes/ContextMenuOption";
 
-	import { createEventDispatcher } from 'svelte';
+    import { createEventDispatcher } from "svelte";
 
     export let options: ContextMenuItem[];
     export let visible: boolean = false;
-    
-	const dispatch = createEventDispatcher();
 
-	function close() {
-		dispatch('close');
-	}
+    const dispatch = createEventDispatcher();
+
+    function close() {
+        dispatch("close");
+    }
 
     let node: HTMLDivElement;
 
@@ -71,9 +71,6 @@
 />
 
 <div id="context-menu" data-visible={visible} bind:this={node}>
-    {#if !options || !options.length}
-        <span class="context-option">No Actions available</span>
-    {/if}
     {#each options as option}
         <span class="context-option">
             {#if option instanceof Expandable}
@@ -99,7 +96,10 @@
                     {option.name}
                 </button>
             {:else if option instanceof LinkAction}
-                <a href={option.href} target={option.newTab?`_blank`:`_self`}>
+                <a
+                    href={option.href}
+                    target={option.newTab ? `_blank` : `_self`}
+                >
                     {option.name}
                 </a>
             {:else}
@@ -109,6 +109,8 @@
                 <img src={option.icon} alt={option.name} />
             {/if}
         </span>
+    {:else}
+        <span class="context-option">No Actions available</span>
     {/each}
 </div>
 
