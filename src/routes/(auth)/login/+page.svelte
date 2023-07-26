@@ -4,6 +4,8 @@
     import { onMount } from "svelte";
     import { token } from "$lib/stores/auth";
     import { page } from "$app/stores";
+    import Rest from "$lib/classes/Rest";
+    import { GuildSet, guildSet } from "$lib/stores/guildSet";
     export let username: string = "";
     export let password: string = "";
     let error: String = "";
@@ -24,30 +26,22 @@
     });
 
     const handleSubmit = async () => {
-        const response = await fetch(PUBLIC_SERVER_URL + "/users/auth", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                username: username,
-                password: password,
-            }),
+        const response = await Rest.sendToServer("users/auth", {
+            username: username,
+            password: password,
         });
         if (response.status === 401) {
             error = "Invalid username or password";
             return;
         }
         const content = await response.json();
-        if (response.ok) {
-            if (content.token) {
-                localStorage.setItem("auth-token", content.token);
-                token.set(content.token);
-                return goto(from);
-            } else {
-                console.error(content);
-            }
+        if (response.ok && content.token) {
+            localStorage.setItem("auth-token", content.token);
+            guildSet.resetGuildSet();
+            token.set(content.token);
+            return goto(from);
         }
+        console.error(content);
     };
 </script>
 
