@@ -7,17 +7,17 @@
     export let guild: Guild;
     let image = ArrowLeft;
     let collapsed = false;
-    let template = "15ch 1fr";
+    let template = "15ch 2ch 1fr";
 
     const toogle = () => {
         collapsed = !collapsed;
         if (collapsed) {
             image = ArrowRight;
-            template = "0ch 0ch 1fr";
+            template = "0ch 2ch 1fr";
             return;
         }
         image = ArrowLeft;
-        template = "15ch 0ch 1fr";
+        template = "15ch 2ch 1fr";
     };
 </script>
 

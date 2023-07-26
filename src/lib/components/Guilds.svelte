@@ -3,15 +3,15 @@
     import blue from "$lib/assets/chat_bubble_blue.png";
     import purple from "$lib/assets/chat_bubble_purple.png";
     import gold from "$lib/assets/chat_bubble_gold.png";
-    import { token, user } from "$lib/stores/auth";
+    import { user } from "$lib/stores/auth";
     import { guildSet } from "$lib/stores/guildSet";
-    import { PUBLIC_SERVER_URL } from "$env/static/public";
     import ContextMenu from "./utility/ContextMenu.svelte";
     import ButtonAction, {
         ContextMenuItem,
         LinkAction,
     } from "$lib/classes/ContextMenuOption";
     import type Guild from "$lib/classes/Guild";
+    import Rest, { RestMethod } from "$lib/classes/Rest";
 
     const randomImage = () => {
         switch (Math.floor(Math.random() * 4)) {
@@ -48,14 +48,7 @@
                 `Are you really going to delete ${guild.name} (${guild.id})?\nThis step is irreversible tho...`
             )
         ) {
-            const response = await fetch(`${PUBLIC_SERVER_URL}/guilds/${guild.id}`, {
-                method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: $token,
-                },
-                body: JSON.stringify({ name: name }),
-            });
+            const response = await Rest.sendToServer(`guilds${guild.id}`,null,RestMethod.DELETE);
             console.log(response);
             if (response.ok) {
                 alert("Channel deleted, there's nothing to see here...")

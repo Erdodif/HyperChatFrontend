@@ -3,10 +3,10 @@
         ContextMenuItem,
         LinkAction,
     } from "$lib/classes/ContextMenuOption";
-    import type { Channel } from "$lib/classes/Guild";
     import type Guild from "$lib/classes/Guild";
     import ContextMenu from "./utility/ContextMenu.svelte";
     import {page} from "$app/stores";
+    import type Channel from "$lib/classes/Channel";
 
     export let guild: Guild;
 
@@ -46,6 +46,9 @@
     .channels {
         display: flex;
         flex-direction: column;
+    }
+    span{
+        margin-block:.5em;
     }
     a {
         color: var(--on-background);
