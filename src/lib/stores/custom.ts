@@ -1,16 +1,16 @@
 import type { Readable, Writable } from "svelte/store";
 
 export abstract class CustomStore<T> implements Readable<T> {
-    readonly value: T;
+    protected _value: T;
     callbacks: Array<(value: T) => void>
 
     constructor(initialValue: T) {
-        this.value = initialValue;
+        this._value = initialValue;
         this.callbacks = [];
     }
 
     subscribe(callback: (value: T) => void): (() => void) {
-        callback(this.value);
+        callback(this._value);
         this.callbacks.push(callback);
         return () => this.unsubscribe(callback);
     }
@@ -21,14 +21,14 @@ export abstract class CustomStore<T> implements Readable<T> {
 
     protected nofity() {
         for (const callback of this.callbacks) {
-            callback(this.value);
+            callback(this._value);
         }
     }
 }
 
 export abstract class IndirectStore<T, R> implements Readable<T>{
 
-    protected readonly _value: R;
+    protected _value: R;
     abstract get value(): T;
     callbacks: Array<(value: T) => void>
 
@@ -56,7 +56,7 @@ export abstract class IndirectStore<T, R> implements Readable<T>{
 }
 
 export abstract class CustomDerivedStore<T> implements Readable<T> {
-    value: T;
+    protected value: T;
     protected readonly _stores: (Readable<any> | Writable<any>)[];
     protected callbacks: Array<(value: T) => void>
 
