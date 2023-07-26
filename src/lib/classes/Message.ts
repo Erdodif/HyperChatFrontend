@@ -1,11 +1,14 @@
+import type Member from "./Member";
 import type User from "./User";
 
 export class Message {
 
     content: string;
+    created: Date;
 
     constructor(content: string) {
         this.content = content;
+        this.created = new Date(Date.now());
     }
 
     equals(right: Message): boolean {
@@ -26,10 +29,10 @@ export class SystemMessage extends Message {
 
 export class ChatMessage extends Message {
 
-    author: User;
+    author: User|Member;
     id: string;
 
-    constructor(author: User, content: string, id: string) {
+    constructor(author: User|Member, content: string, id: string) {
         super(content)
         this.author = author;
         this.id = id;
@@ -43,10 +46,10 @@ export class ChatMessage extends Message {
 
 export class UnsentMessage extends Message {
 
-    author: User;
+    author: User | Member;
     nonce: string;
 
-    constructor(author: User, content: string, nonce: string) {
+    constructor(author: User | Member, content: string, nonce: string) {
         super(content)
         this.author = author;
         this.nonce = nonce;
