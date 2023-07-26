@@ -1,11 +1,12 @@
 import type Guild from "$lib/classes/Guild";
 import { CustomStore, IndirectStore } from "./custom";
-import type { Channel } from "$lib/classes/Guild";
+import type Channel from "$lib/classes/Channel";
+import type { Message } from "$lib/classes/Message";
 
 /**
  * A wrapper Object of a `Map<string,Guild>`, to ensure the store's controlled functionality and it's only used to fulfill the store's needs.
  */
-class GuildSet {
+export class GuildSet {
     protected _guilds: Map<string, Guild>
 
     constructor(initialValue: Map<string, Guild> = new Map<string, Guild>()) {
@@ -25,20 +26,24 @@ class GuildSet {
     }
 
     searchChannel(id: string): Channel | null {
-        let channel = null;
+        let channel: Channel | null = null;
         this._guilds.forEach((guild) => {
             if (guild.hasChannel(id)) {
-                channel = guild.getChannel(id);
+                channel = guild.getChannel(id)!;
             }
         });
         return channel;
     }
 
-    setChannel(channel:Channel){
+    pushToChatLog(channelId: string, message: Message, nonce: string) {
+        this.searchChannel(channelId).chat.push(message, nonce);
+    }
+
+    setChannel(channel: Channel) {
         this._guilds.get(channel.guild.id).setChannel(channel);
     }
 
-    addChannel(guildId:string, channel: Channel){
+    addChannel(guildId: string, channel: Channel) {
         let guild = this._guilds.get(guildId);
         guild.setChannel(channel.copyWithGuild(guild));
     }
@@ -74,34 +79,48 @@ export class GuildStore extends CustomStore<GuildSet> {
     }
 
     set(guild: Guild) {
-        this.value.set(guild);
+        this._value.set(guild);
         this.nofity();
     }
 
     searchChannel(id: string): Channel | null {
-        return this.value.searchChannel(id);
+        return this._value.searchChannel(id);
+    }
+
+    pushToChatLog(channelId: string, message: Message, nonce: string) {
+        this._value.pushToChatLog(channelId, message, nonce);
+        this.nofity();
     }
 
     setChannel(channel: Channel) {
-        this.value.setChannel(channel);
+        this._value.setChannel(channel);
         this.nofity();
     }
 
     addChannel(guildId: string, channel: Channel) {
-        this.value.addChannel(guildId,channel);
+        this._value.addChannel(guildId, channel);
         this.nofity();
     }
 
     removeChannel(guildId: string, channelId: string): boolean {
-        let success = this.value.removeChannel(guildId, channelId);
+        let success = this._value.removeChannel(guildId, channelId);
         this.nofity();
         return success;
     }
 
     remove(key: string): boolean {
-        let success = this.value.remove(key);
+        let success = this._value.remove(key);
         this.nofity();
         return success;
+    }
+
+    resetGuildSet() {
+        this._value = new GuildSet();
+        this.nofity();
+    }
+
+    update() {
+        this.nofity();
     }
 }
 
