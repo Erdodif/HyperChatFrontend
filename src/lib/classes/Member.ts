@@ -9,13 +9,16 @@ import User from "./User";
 export default class Member {
     user: User;
     guild: Guild;
-    nickname: string;
+    #nickname: string | null;
+    get nickname():string{
+        return this.#nickname??this.user.displayName;
+    }
     joinedAt: Date;
 
     constructor(user: User, guild: Guild, nickname: string, joinedAt: number) {
         this.user = user;
         this.guild = guild;
-        this.nickname = nickname;
+        this.#nickname = nickname;
         this.joinedAt = new Date(joinedAt * 1000);
     }
 

@@ -14,8 +14,8 @@
   import { goto } from "$app/navigation";
   import Rest from "$lib/classes/Rest";
   import Member from "$lib/classes/Member";
-  import Message from "$lib/components/Message.svelte";
   import { ChatMessage } from "$lib/classes/Message";
+  import { isLoading } from "svelte-i18n";
 
   let socketHandler: SocketHandler;
 
@@ -85,7 +85,11 @@
     <Navigation />
   </header>
   <main>
-    <slot />
+    {#if $isLoading}
+      <span>Loading</span>
+    {:else}
+      <slot />
+    {/if}
   </main>
   <aside>
     <Guilds />

@@ -1,0 +1,14 @@
+{
+    "title": {
+      "index": "Sussy Chat app"
+    },
+    "nav": {
+      "home": "Home",
+      "logout": "Log out"
+    },
+    "languages": {
+      "en": "English",
+      "hu": "Hungarian"
+    }
+  }
+  

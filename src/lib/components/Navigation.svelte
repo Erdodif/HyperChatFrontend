@@ -1,14 +1,15 @@
 <script lang="ts">
+    import { _ } from "svelte-i18n";
     import { goto } from "$app/navigation";
     import { page } from "$app/stores";
     import { user } from "$lib/stores/auth";
-    import { GuildSet, guildSet } from "$lib/stores/guildSet";
-    import { add_flush_callback } from "svelte/internal";
+    import { guildSet } from "$lib/stores/guildSet";
+    import LanguageSwitch from "./utility/LanguageSwitch.svelte";
 </script>
 
 <nav>
-    <span> Chat app lmao </span>
-    <a href="/"> Home </a>
+    <span>{$_('title.index')}</span>
+    <a href="/"> {$_('nav.home')} </a>
     {#if $user}
         <span>{$user.username} (aka. {$user.displayName})</span>
     {:else}
@@ -24,6 +25,7 @@
             goto(`/login?from=${$page.url.href}`, { replaceState: true });
         }}>Logoff</button
     >
+    <LanguageSwitch/>
 </nav>
 
 <style lang="scss">

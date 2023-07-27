@@ -21,14 +21,24 @@
                     return ((message as ChatMessage).author as User)
                         .displayName;
                 else
-                    ((message as ChatMessage).author as Member).nickname ??
-                        ((message as ChatMessage).author as Member).user
-                            .displayName;
+                    return ((message as ChatMessage).author as Member).nickname;
         }
     };
 </script>
 
-<span>
-    {getHeader()}
-    {message.content}
+<span class="message">
+    <span class="author">
+        {getHeader()}
+    </span>
+    <span class="created">
+        <time>
+            {message.created.toLocaleTimeString()}
+        </time>
+    </span>
+    <span class="content">
+        {message.content}
+    </span>
+    <button on:click={()=>console.log(message)}>
+        Log
+    </button>
 </span>

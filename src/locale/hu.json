@@ -1,0 +1,14 @@
+{
+    "title": {
+      "index": "Relytélyes csevegő"
+    },
+    "nav": {
+      "home": "Kezdőlap",
+      "logout": "Kilépés"
+    },
+    "languages": {
+      "en": "Angol",
+      "hu": "Magyar"
+    }
+  }
+  
