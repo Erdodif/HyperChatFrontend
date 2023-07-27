@@ -1,8 +1,8 @@
 <script lang="ts">
-  import type User from "$lib/classes/User";
-  import Application from "$lib/components/Application.svelte";
+    import Application from "$lib/components/Application.svelte";
+    import { _ } from "svelte-i18n";
 </script>
 
-<div>Main</div>
+<div>{$_("home.title")}</div>
 
-<Application/>
+<Application />

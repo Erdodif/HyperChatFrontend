@@ -12,6 +12,7 @@
     } from "$lib/classes/ContextMenuOption";
     import type Guild from "$lib/classes/Guild";
     import Rest, { RestMethod } from "$lib/classes/Rest";
+    import { _ } from "svelte-i18n";
 
     const randomImage = () => {
         switch (Math.floor(Math.random() * 4)) {
@@ -31,30 +32,31 @@
         new ContextMenuItem(guild.id),
         new ContextMenuItem(guild.name),
         new LinkAction(
-            "Open In a new tab",
+            $_("guild.open-new-tab"),
             `/guilds/${guild.id}`,
             null,
             true,
             true
         ),
         guild.ownerId == $user.id
-            ? new ButtonAction("Delete channel", () => deleteGuild(guild))
-            : new ContextMenuItem("You cannot delete this channel"),
+            ? new ButtonAction($_("guild.delete"), () => deleteGuild(guild))
+            : new ContextMenuItem($_("guild.cannot-delete")),
     ];
 
     const deleteGuild = async(guild: Guild) => {
         if (
             confirm(
-                `Are you really going to delete ${guild.name} (${guild.id})?\nThis step is irreversible tho...`
+                $_("guild.delete-confirm",{values:{name:guild.name,id:guild.id}})
+                //`Are you really going to delete ${guild.name} (${guild.id})?\nThis step is irreversible tho...`
             )
         ) {
             const response = await Rest.sendToServer(`guilds${guild.id}`,null,RestMethod.DELETE);
             console.log(response);
             if (response.ok) {
-                alert("Channel deleted, there's nothing to see here...")
+                alert($_("guild.deleted"));
                 return;
             }
-            alert("Failed to delete Channel, see the logs to validate you misfortune...")
+            alert($_("errors.guild.delete-failed"))
             console.log(response);
         }
     };

@@ -1,14 +1,68 @@
 {
-    "title": {
-      "index": "Sussy Chat app"
+  "title": {
+    "index": "Sussy Chat app"
+  },
+  "nav": {
+    "home": "Home",
+    "logout": "Log out"
+  },
+  "languages": {
+    "en": "English",
+    "hu": "Hungarian"
+  },
+  "user": {
+    "username": "Username",
+    "password": "Password",
+    "aka": "For others"
+  },
+  "auth": {
+    "username": "Username",
+    "password": "Password",
+    "login": "Login",
+    "no-account": "You don't have an account?",
+    "signup": "Sign up",
+    "password-again": "Password again"
+  },
+  "message":{
+    "system":"System message","pending":"Pending"
+  },
+  "guild": {
+    "guild": "Guild",
+    "channel": "Channel",
+    "channels": "Channels",
+    "message": "Message",
+    "member": "Member",
+    "members": "Members",
+    "user": "User",
+    "open-new-tab": "Open in new tab",
+    "delete": "Szerver törlése",
+    "cannot-delete":"You cannot delete this channel",
+    "delete-confirm":"Are you really going to delete {name} ({id})?\nThis step is irreversible!",
+    "deleted":"Guild deleted"
+  },
+  "channel": {
+    "delete": "Csatorna törlése",
+    "create":"Create channel"
+  },
+  "errors": {
+    "guild": {
+      "missing": "Guild not found",
+      "delete-failed":"Failed to delete guild"
     },
-    "nav": {
-      "home": "Home",
-      "logout": "Log out"
+    "auth": {
+      "credentials": "Invalid username or password"
     },
-    "languages": {
-      "en": "English",
-      "hu": "Hungarian"
-    }
+    "contextmenu": {
+      "no-option": "No actions available"
+    },
+    "not-implemented":"Feature or translation not implemented ⚰️",
+    "unspecific":"Something went wrong :("
+  },
+  "home": {
+    "title": "Home page"
+  },
+  "chat":{
+    "send-message":"Send",
+    "message-placeholder":"Write something nice here..."
   }
-  
+}

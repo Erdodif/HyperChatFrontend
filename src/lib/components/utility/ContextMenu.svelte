@@ -9,6 +9,7 @@
     } from "$lib/classes/ContextMenuOption";
 
     import { createEventDispatcher } from "svelte";
+    import { _ } from "svelte-i18n";
 
     export let options: ContextMenuItem[];
     export let visible: boolean = false;
@@ -110,7 +111,7 @@
             {/if}
         </span>
     {:else}
-        <span class="context-option">No Actions available</span>
+        <span class="context-option">{$_("errors.contextmenu.no-option")}</span>
     {/each}
 </div>
 

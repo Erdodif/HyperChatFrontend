@@ -7,15 +7,16 @@
         UnsentMessage,
     } from "$lib/classes/Message";
     import User from "$lib/classes/User";
+    import { _ } from "svelte-i18n";
 
     export let message: Message;
 
     const getHeader = () => {
         switch (message.constructor) {
             case SystemMessage:
-                return "System message";
+                return $_("message.system");
             case UnsentMessage:
-                return "Pending";
+                return $_("message.pending");
             case ChatMessage:
                 if ((message as ChatMessage).author instanceof User)
                     return ((message as ChatMessage).author as User)
@@ -38,7 +39,13 @@
     <span class="content">
         {message.content}
     </span>
-    <button on:click={()=>console.log(message)}>
-        Log
-    </button>
+    <button on:click={() => console.log(message)}> Log </button>
 </span>
+
+<style lang="scss">
+    .message {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+    }
+</style>

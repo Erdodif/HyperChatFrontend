@@ -3,6 +3,7 @@
     import Channels from "./Channels.svelte";
     import ArrowLeft from "$lib/assets/icons/arrow-left.svg";
     import ArrowRight from "$lib/assets/icons/arrow-right.svg";
+    import { _ } from "svelte-i18n";
 
     export let guild: Guild;
     let image = ArrowLeft;
@@ -39,7 +40,7 @@
         <details>
             <h1>{guild.name}</h1>
 
-            <h2>Members</h2>
+            <h2>{$_("guild.members")}</h2>
 
             <div>
                 {#each guild.memberList as user, index}
@@ -50,7 +51,7 @@
                 {/each}
             </div>
 
-            <h2>Channels</h2>
+            <h2>{$_("guild.channels")}</h2>
 
             <div>
                 {#each guild.channelList as channel}

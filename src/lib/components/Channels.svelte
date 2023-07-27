@@ -7,14 +7,15 @@
     import ContextMenu from "./utility/ContextMenu.svelte";
     import {page} from "$app/stores";
     import type Channel from "$lib/classes/Channel";
+    import { _ } from "svelte-i18n";
 
     export let guild: Guild;
 
     const getOptions = (channel: Channel) => {
         return [
             new ContextMenuItem(channel.name),
-            new ButtonAction("Delete channel", () =>
-                alert("you are deleting that channel...")
+            new ButtonAction($_("channel.delete"), () =>
+                alert($_("errors.not-implemented"))
             ),
         ];
     };
@@ -38,7 +39,7 @@
         </span>
     {/each}
     <span id="new-channel">
-        <a href={`/guild/${guild.id}/create-channel`}>Create a new page</a>
+        <a href={`/guild/${guild.id}/create-channel`}>{$_("channel.create")}</a>
     </span>
 </div>
 

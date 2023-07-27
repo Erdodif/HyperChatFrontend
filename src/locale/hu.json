@@ -1,14 +1,68 @@
 {
-    "title": {
-      "index": "Relytélyes csevegő"
+  "title": {
+    "index": "Relytélyes csevegő"
+  },
+  "nav": {
+    "home": "Kezdőlap",
+    "logout": "Kilépés"
+  },
+  "languages": {
+    "en": "Angol",
+    "hu": "Magyar"
+  },
+  "user": {
+    "name": "Felhasználónév",
+    "password": "Jelszó",
+    "aka": "Másoknak"
+  },
+  "auth": {
+    "username": "Felhasználónév",
+    "password": "Jelszó",
+    "login": "Belépés",
+    "no-account": "Még nincs felhasználód?",
+    "signup": "Regisztráció",
+    "password-again": "Jelszó még egyszer"
+  },
+  "message":{
+    "system":"Rendszerüzenet","pending":"Folyamatban"
+  },
+  "guild": {
+    "guild": "Szerver",
+    "channel": "Csatorna",
+    "channels": "Csatornák",
+    "message": "Üzenet",
+    "member": "Tag",
+    "members": "Tagok",
+    "user": "Felhasználó",
+    "open-new-tab": "Megnyitás új lapon",
+    "delete": "Szerver törlése",
+    "cannot-delete":"Nem tudod törölni ezt a szervert",
+    "delete-confirm":"Biztos törölni szeretné {name}-t ({id})?\nEz a lépés visszafordíthatatlan!",
+    "deleted":"Szerver törölve"
+  },
+  "channel": {
+    "delete": "Csatorna törlése",
+    "create":"Csatorna létrehozása"
+  },
+  "errors": {
+    "guild": {
+      "missing": "Szerver nem található",
+      "delete-failed":"Nem sikerült törölni a szervert"
     },
-    "nav": {
-      "home": "Kezdőlap",
-      "logout": "Kilépés"
+    "auth": {
+      "credentials": "Hibás felhasználónév vagy jelszó"
     },
-    "languages": {
-      "en": "Angol",
-      "hu": "Magyar"
-    }
+    "contextmenu": {
+      "no-option": "Nincs elérhető opció"
+    },
+    "not-implemented":"Funkció vagy fordítás nincs megvalósítva ⚰️",
+    "unspecific":"Valami elromlott :("
+  },
+  "home": {
+    "title": "Főoldal"
+  },
+  "chat":{
+    "send-message":"Küldés",
+    "message-placeholder":"Írj valami kedveset ide..."
   }
-  
+}

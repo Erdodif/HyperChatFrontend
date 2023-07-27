@@ -1,11 +1,11 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
-    import { PUBLIC_SERVER_URL } from "$env/static/public";
+    import { _ } from "svelte-i18n";
     import { onMount } from "svelte";
     import { token } from "$lib/stores/auth";
     import { page } from "$app/stores";
     import Rest from "$lib/classes/Rest";
-    import { GuildSet, guildSet } from "$lib/stores/guildSet";
+    import { guildSet } from "$lib/stores/guildSet";
     export let username: string = "";
     export let password: string = "";
     let error: String = "";
@@ -31,7 +31,7 @@
             password: password,
         });
         if (response.status === 401) {
-            error = "Invalid username or password";
+            error = $_("errors.auth.credentials");
             return;
         }
         const content = await response.json();
@@ -47,22 +47,22 @@
 
 <form on:submit|preventDefault={handleSubmit}>
     <div>
-        <label for="username"> Username </label>
+        <label for="username"> {$_("auth.username")} </label>
         <input
             type="text"
             id="username"
             bind:value={username}
-            placeholder="Username"
+            placeholder={$_("auth.username")}
             autocomplete="username"
         />
     </div>
     <div>
-        <label for="password"> Password </label>
+        <label for="password"> {$_("auth.password")} </label>
         <input
             type="password"
             id="password"
             bind:value={password}
-            placeholder="password"
+            placeholder={$_("auth.password")}
             autocomplete="current-password"
         />
         {#if error !== ""}
@@ -71,9 +71,9 @@
             </span>
         {/if}
     </div>
-    <button type="submit"> Login </button>
+    <button type="submit"> {$_("auth.login")} </button>
     <p>
-        Don't have an account? How about <a href="/signup">Sign up</a>
+        {$_("auth.no-account")}<a href="/signup">{$_("auth.signup")}</a>
     </p>
 </form>
 
@@ -85,7 +85,7 @@
     form {
         box-sizing: border-box;
         max-width: 100%;
-        width: min(15em, 100%);
+        width: min(16em, 100%);
         div {
             padding-block: 0.725em;
             display: block;
@@ -115,6 +115,14 @@
             align-self: center;
             font-size: 0.825em;
             max-width: min(25ch, 80%);
+        }
+        a {
+            color: var(--secondary-variant);
+            &:hover,
+            &:focus,
+            &:focus-visible {
+                color: var(--secondary);
+            }
         }
     }
 </style>

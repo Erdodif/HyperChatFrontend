@@ -11,7 +11,7 @@
     <span>{$_('title.index')}</span>
     <a href="/"> {$_('nav.home')} </a>
     {#if $user}
-        <span>{$user.username} (aka. {$user.displayName})</span>
+        <span>{$user.username} ({$_('user.aka')}: {$user.displayName})</span>
     {:else}
         <a data-sveltekit-replacestate href="/login"> Login </a>
     {/if}
