@@ -8,7 +8,9 @@
     } from "$lib/classes/Message";
     import User from "$lib/classes/User";
     import { user } from "$lib/stores/auth";
-    import { _ } from "svelte-i18n";
+    import { _, time } from "svelte-i18n";
+
+    //TODO, set type in chatlog, display (css) accordingly!
 
     export let message: Message;
 
@@ -60,13 +62,24 @@
         );
     }
 
+    export let context:
+        | "single"
+        | "same-author"
+        | "same-author-time"
+        | "same-time" = "single";
+
     export const scrollTo = () => {
         if (!isReallyVisible(true))
             element.scrollIntoView({ behavior: "smooth" });
     };
 </script>
 
-<span class="message" data-from={getType()} bind:this={element}>
+<span
+    class="message"
+    data-from={getType()}
+    bind:this={element}
+    data-context={context}
+>
     {#if !(getType() === "self")}
         <span class="author">
             {getHeader()}
@@ -74,7 +87,7 @@
     {/if}
     <span class="created">
         <time>
-            {message.created.toLocaleTimeString()}
+            {$time(message.created, {format:"short"})}
         </time>
     </span>
     <span class="content">
@@ -85,17 +98,21 @@
 
 <style lang="scss">
     .message {
+        font-size: 0.765em;
         width: 95%;
         margin-block: 0.275em;
         margin-inline: 1em;
-        border: 0.1ch solid var(--secondary-variant);
-        border-radius: 0.8ch;
         display: grid;
         grid-template-areas: "author time" "content content";
         grid-template-columns: 1fr 5ch;
         .author {
             font-size: 0.525em;
             grid-area: author;
+        }
+        &[data-context="same-author"]{
+            .author{
+                display: none;
+            }
         }
         .created {
             font-size: 0.375em;
@@ -105,22 +122,29 @@
         }
         .content {
             grid-area: content;
+            padding: 0.5ch;
+            border: 0.1ch solid var(--secondary-variant);
+            border-radius: 0.8ch;
         }
         &[data-from="system"] {
             color: var(--secondary-variant);
         }
         &[data-from="pending"] {
-            width: 60%;
+            max-width: 60%;
+            width: fit-content;
             margin-inline-start: auto;
             color: var(--primary-variant);
         }
         &[data-from="self"] {
-            width: 70%;
+            max-width: 70%;
+            width: fit-content;
+            text-align: right;
             margin-inline-start: auto;
             color: var(--primary);
         }
         &[data-from="someone"] {
-            width: 70%;
+            max-width: 70%;
+            width: fit-content;
             margin-inline-end: auto;
         }
     }

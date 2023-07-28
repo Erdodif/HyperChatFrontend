@@ -9,6 +9,8 @@
     import User from "$lib/classes/User";
     import Member from "$lib/classes/Member";
 
+    //determine chat type based on the messages before, remember previous to keep it consistent!
+
     export let chatLog: ChatLog;
 
     let message: string;
