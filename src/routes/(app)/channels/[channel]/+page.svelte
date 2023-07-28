@@ -3,23 +3,30 @@
     import { guildSet } from "$lib/stores/guildSet";
     import { page } from "$app/stores";
     import ChatLog from "$lib/components/ChatLog.svelte";
+    import { initializing } from "$lib/stores/socketHandler";
+    import type Channel from "$lib/classes/Channel";
+
+    let channel: Channel;
+    $: channel = $guildSet.searchChannel($page.params.channel);
 </script>
 
-{#if $guildSet.searchChannel($page.params.channel)}
-    <GuildPage guild={$guildSet.searchChannel($page.params.channel).guild}>
+{#if $initializing}
+    loading
+{:else if channel}
+    <GuildPage guild={channel.guild}>
         <div class="channel">
             <div class="head">
                 <h1>
-                    {$guildSet.searchChannel($page.params.channel).name}
+                    {channel.name}
                 </h1>
             </div>
             <div class="chat">
-                <ChatLog
-                    chatLog={$guildSet.searchChannel($page.params.channel).chat}
-                />
+                <ChatLog chatLog={channel.chat} />
             </div>
         </div>
     </GuildPage>
+{:else}
+    <span>404</span>
 {/if}
 
 <style lang="scss">
@@ -30,7 +37,7 @@
         grid-template-rows: 1.5em 1fr;
         .head h1 {
             font-size: 1em;
-            margin-block:.375em;
+            margin-block: 0.375em;
         }
     }
 </style>

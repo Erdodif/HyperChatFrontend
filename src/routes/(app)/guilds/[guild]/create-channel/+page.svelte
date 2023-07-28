@@ -1,20 +1,12 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
-    import { PUBLIC_SERVER_URL } from "$env/static/public";
     import { token } from "$lib/stores/auth";
     import {page} from "$app/stores";
-    import type Guild from "$lib/classes/Guild";
+    import Rest from "$lib/classes/Rest";
     let name: string = "";
 
     const handleSubmit = async () => {
-        const response = await fetch(PUBLIC_SERVER_URL + `/guilds/${$page.data.guild.id}/channels`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": $token
-            },
-            body: JSON.stringify({name:name}),
-        });
+        const response = await Rest.sendToServer(`/guilds/${$page.data.guild.id}/channels`,{name:name});
         let res = await response.json();
         if(response.ok){
             throw goto(`/channels/${res.id}`);
