@@ -1,6 +1,9 @@
 import type Guild from "./Guild";
 import type User from "./User";
 import ChatLog from "./ChatLog";
+import type Member from "./Member";
+
+export type ChannelJson = { id: string, name: string, type: string, guild_id: string };
 
 /**
  * An Object representation of the server's channel instance
@@ -13,11 +16,11 @@ export default class Channel {
     readonly type: string;
     readonly guild: Guild | null;
 
-    protected _members: Map<string, User>;
+    protected _members: Map<string, Member>;
     /**
      * An array of the current members
      */
-    get memberList(): Array<User> {
+    get memberList(): Array<Member> {
         return Array.from(this._members.values());
     }
 
@@ -26,7 +29,7 @@ export default class Channel {
      * @param id The user's id (Snowflake)
      * @returns The user or undefined, if not present
      */
-    getMember(id: string): User | undefined {
+    getMember(id: string): Member | undefined {
         return this._members.get(id);
     }
 
@@ -36,23 +39,47 @@ export default class Channel {
      * It will be accessed via the readonly id parameter of the user, therefore id shall not be changed by this manner!
      * @param member The changed user value
      */
-    setMember(member: User) {
-        this._members.set(member.id, member);
+    setMember(member: Member) {
+        this._members.set(member.user.id, member);
     }
 
 
     chat: ChatLog;
 
-    constructor(id: string, name: string, type: string, guild: Guild = null, members: User[] = []) {
+    constructor(id: string, name: string, type: string, guild: Guild = null, members: Member[] = [], chatLog: ChatLog = null) {
         this.id = id;
         this.name = name;
         this.type = type;
-        this.chat = new ChatLog(this);
         this.guild = guild;
         this._members = new Map();
         for (const member of members) {
-            this._members.set(member.id, member);
+            this._members.set(member.user.id, member);
         }
+        if (chatLog) {
+            this.chat = chatLog;
+        }
+        else {
+            this.chat = new ChatLog(this);
+        }
+    }
+
+    /**
+     * Creates a Channel instance from raw json.
+     * 
+     * The guild property will remain unset, if the guildSet reference is not present, or cannot be found.
+     * @param content The given Json Object
+     * @returns A Channel instance
+     */
+    static fromJson(content: ChannelJson, guildSet: Map<string, Guild> = null): Channel {
+        let guild = null;
+        if (guildSet && guildSet.has(content.guild_id)) {
+            guild = guildSet[content.guild_id];
+        }
+        let members = [];
+        if (guild) {
+            members = guild.memberList;
+        }
+        return new Channel(content.id, content.name, content.type, guild, members);
     }
 
     /**

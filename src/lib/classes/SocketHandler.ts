@@ -1,12 +1,11 @@
 import { PUBLIC_SOCKET_URL } from "$env/static/public";
 import { goto } from "$app/navigation";
-import { page } from "$app/stores";
 
 export class EventHandler {
     type: string;
     callback: (event: any) => void;
 
-    constructor(type:string, callback:(event:any)=>void){
+    constructor(type: string, callback: (event: any) => void) {
         this.type = type;
         this.callback = callback;
     }
@@ -17,7 +16,7 @@ export default class SocketHandler {
     #gateway: WebSocket;
     #handlers: Map<string, (event: any) => void>;
 
-    constructor(token, handlerBundle: EventHandler[]) {
+    constructor(token, handlerBundle: EventHandler[] = []) {
         this.#token = token;
         this.#handlers = new Map<string, (event: any) => void>();
         this.attachHandlerbundle(handlerBundle);
@@ -42,8 +41,8 @@ export default class SocketHandler {
     }
 
     readonly closeEvent = async (ec) => {
-        if(JSON.parse(ec.reason).event == "INVALID_SESSION"){
-            if (this.#handlers.has("INVALID_SESSION")){
+        if (JSON.parse(ec.reason).event == "INVALID_SESSION") {
+            if (this.#handlers.has("INVALID_SESSION")) {
                 this.#handlers.get("INVALID_SESSION")(ec);
                 return;
             }
@@ -66,7 +65,7 @@ export default class SocketHandler {
             this.#gateway.send(data);
         }
 
-    readonly messageEvent = async (event:MessageEvent) => {
+    readonly messageEvent = async (event: MessageEvent) => {
         let payload = JSON.parse(event.data);
         let fun = this.#handlers.get(payload.event);
         if (fun == undefined) {

@@ -1,5 +1,12 @@
 import type Guild from "./Guild";
-import User from "./User";
+import User, { type UserJson } from "./User";
+
+export type MemberJson = {
+    user: UserJson,
+    guild_id: string,
+    nickname: string,
+    joined_at: number
+};
 
 /**
  * Platform-specific member of a guild
@@ -10,12 +17,12 @@ export default class Member {
     user: User;
     guild: Guild;
     #nickname: string | null;
-    get nickname():string{
-        return this.#nickname??this.user.displayName;
+    get nickname(): string {
+        return this.#nickname ?? this.user.displayName;
     }
     joinedAt: Date;
 
-    constructor(user: User, guild: Guild, nickname: string, joinedAt: number) {
+    constructor(user: User, nickname: string, joinedAt: number, guild: Guild = null) {
         this.user = user;
         this.guild = guild;
         this.#nickname = nickname;
@@ -33,14 +40,22 @@ export default class Member {
                 && this.user.displayName == right.user.displayName);
     }
 
-    static fromJson(content:
-        any | {
-            "user":
-            { "username": string, "display_name": string, "id": string },
-            "guild_id": string,
-            "nickname": string,
-            "joined_at": number
-        }): Member {
-        return new Member(User.fromJson(content.user), content.guild_id, content.nickname, content.joined_at);
+    /**
+     * Creates Member instance from from raw json.
+     * 
+     * The guild property will remain unset, if the guildSet reference is not present, or cannot be found.
+     * @param content The given Json Object
+     * @returns A Member instance
+     */
+    static fromJson(content: any | MemberJson, guildSet: Map<string, Guild> = null): Member {
+        let guild = null;
+        if (guildSet && guildSet.has(content.guild_id)) {
+            guild = guildSet.get(content.guild_id);
+        }
+        return new Member(User.fromJson(content.user), content.nickname, content.joined_at, guild);
+    }
+
+    copyWithGuild(guild: Guild): Member {
+        return new Member(this.user, this.#nickname, this.joinedAt.getMilliseconds(), guild);
     }
 }

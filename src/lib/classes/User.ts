@@ -1,8 +1,8 @@
-import { PUBLIC_SERVER_URL } from "$env/static/public";
 import { goto } from "$app/navigation";
-import { page } from "$app/stores";
 import Rest from "./Rest";
 import Member from "./Member";
+
+export type UserJson = { username: string, display_name: string, id: string };
 
 export enum UserStatus {
     ONLINE,
@@ -41,7 +41,7 @@ export default class User {
         localStorage.setItem("user_id", this.id);
     }
 
-    static fromJsonOrRedirect(content: any | { "username": string, "display_name": string, "id": string }, from: string = "/"): User {
+    static fromJsonOrRedirect(content: any | UserJson, from: string = "/"): User {
         if (!content.username || !content.display_name || !content.id) {
             let login = new URL("/login");
             if (from !== "/") {
@@ -52,7 +52,7 @@ export default class User {
         return new User(content.id, content.display_name, content.username);
     }
 
-    static fromJson(content: any | { "username": string, "display_name": string, "id": string }): User {
+    static fromJson(content: any | UserJson): User {
         return new User(content.id, content.display_name, content.username);
     }
 
