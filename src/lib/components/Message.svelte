@@ -42,9 +42,31 @@
                 else return "someone";
         }
     };
+
+    let element: HTMLSpanElement;
+
+    function isReallyVisible(fullVisible) {
+        var parentRect = (
+            element.parentNode as HTMLElement
+        ).getBoundingClientRect();
+        var rect = arguments[2] || element.getBoundingClientRect();
+        return (
+            (fullVisible
+                ? rect.top >= parentRect.top
+                : rect.bottom > parentRect.top) &&
+            (fullVisible
+                ? rect.bottom <= parentRect.bottom
+                : rect.top < parentRect.bottom)
+        );
+    }
+
+    export const scrollTo = () => {
+        if (!isReallyVisible(true))
+            element.scrollIntoView({ behavior: "smooth" });
+    };
 </script>
 
-<span class="message" data-from={getType()}>
+<span class="message" data-from={getType()} bind:this={element}>
     {#if !(getType() === "self")}
         <span class="author">
             {getHeader()}

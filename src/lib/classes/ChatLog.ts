@@ -11,6 +11,14 @@ export default class ChatLog {
         this.channel = channel;
     }
 
+    get count(): number {
+        return this.#log.length;
+    }
+
+    get last(): Message {
+        return this.#log[this.count - 1]
+    }
+
     push(message: Message, nonce: string | null = null) {
         console.log(message);
         console.log(this.#log);
@@ -21,7 +29,31 @@ export default class ChatLog {
                 return;
             }
         }
-        this.#log.push(message);
+        this.#log.unshift(message);
+    }
+
+    //Follows cronological order
+    fillBefore(id: string, ...messages: ChatMessage[]) {
+        let index = this.messages.findIndex((msg) => msg instanceof ChatMessage && msg.id === id);
+        if (index > -1) {
+            this.#log.splice(index, 0, ...messages);
+            return;
+        }
+        index = this.messages.findLastIndex((msg) => msg instanceof ChatMessage && msg.id < id);
+        if (index == -1) index = 0;
+        this.#log.splice(index, 0, ...messages);
+    }
+
+    fillAfter(id: string, ...messages: ChatMessage[]) {
+        let index = this.messages.findIndex((msg) => msg instanceof ChatMessage && msg.id === id);
+        if (index > -1) {
+            this.#log.splice(index + 1, 0, ...messages);
+            return;
+        }
+        index = this.messages.findIndex((msg) => msg instanceof ChatMessage && msg.id > id);
+        if (index == -1) index = 0;
+        this.#log.splice(index + 1, 0, ...messages);
+
     }
 
     get(index) {
