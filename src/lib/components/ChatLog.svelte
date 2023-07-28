@@ -15,14 +15,21 @@
             content: message,
             nonce: `${$user.id}-${chatLog.channel.id}`,
         });
+        scrollToBottom();
+    };
+
+    let scrollable:HTMLDivElement;
+
+    const scrollToBottom = async () => {
+        scrollable.scroll({ top: scrollable.scrollHeight, behavior: "smooth" });
     };
 </script>
 
 <div class="chat-holder">
     <div class="messages">
-        <div class="scrollable">
+        <div class="scrollable" bind:this={scrollable}>
             {#each chatLog.messages as message}
-                <MessageComponent {message}/>
+                <MessageComponent {message} />
             {/each}
         </div>
     </div>
@@ -44,7 +51,7 @@
     }
     .chat-holder {
         overflow: hidden;
-        position: absolute;
+        height: 100%;
         margin: 0;
         display: grid;
         grid-template-rows: 1fr 2.5em;

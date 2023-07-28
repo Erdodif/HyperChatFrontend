@@ -1,4 +1,5 @@
 <script lang="ts">
+    //TODO - Localization
     import {onMount} from "svelte";
     import ColorPicker from "./ColorPicker.svelte";
     //import {theme} from "$stores/theme";

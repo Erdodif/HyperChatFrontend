@@ -41,6 +41,6 @@ export default class Member {
             "nickname": string,
             "joined_at": number
         }): Member {
-        return new Member(new User(content.id, content.display_name, content.username), content.guild_id, content.nickname, content.joined_at);
+        return new Member(User.fromJson(content.user), content.guild_id, content.nickname, content.joined_at);
     }
 }

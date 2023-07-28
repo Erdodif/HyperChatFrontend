@@ -3,28 +3,34 @@
     import { guildSet } from "$lib/stores/guildSet";
     import { page } from "$app/stores";
     import ChatLog from "$lib/components/ChatLog.svelte";
-
 </script>
 
 {#if $guildSet.searchChannel($page.params.channel)}
-<GuildPage guild={$guildSet.searchChannel($page.params.channel).guild}>
-    <div class="channel">
-        <div class="head">
-            <h1>
-                {$guildSet.searchChannel($page.params.channel).name}
-            </h1>
+    <GuildPage guild={$guildSet.searchChannel($page.params.channel).guild}>
+        <div class="channel">
+            <div class="head">
+                <h1>
+                    {$guildSet.searchChannel($page.params.channel).name}
+                </h1>
+            </div>
+            <div class="chat">
+                <ChatLog
+                    chatLog={$guildSet.searchChannel($page.params.channel).chat}
+                />
+            </div>
         </div>
-        {console.log($guildSet.searchChannel($page.params.channel).chat)}
-        <ChatLog chatLog={$guildSet.searchChannel($page.params.channel).chat}/>
-    </div>
-</GuildPage>
+    </GuildPage>
 {/if}
 
 <style lang="scss">
-    .channel{
+    .channel {
         position: relative;
-        .head h1{
+        height: 100%;
+        display: grid;
+        grid-template-rows: 1.5em 1fr;
+        .head h1 {
             font-size: 1em;
+            margin-block:.375em;
         }
     }
 </style>
