@@ -1,6 +1,7 @@
-import ChatLog from "./ChatLog";
-import User from "./User";
-import type Channel from "./Channel";
+import Channel, { type ChannelJson } from "./Channel";
+import Member, { type MemberJson } from "./Member";
+
+export type GuildJson = { id: string, name: string, owner_id: string, };
 
 /**
  * Object representation of the Server's guild instance
@@ -27,11 +28,11 @@ export default class Guild {
      */
     readonly ownerId: string;
 
-    protected _members: Map<string, User>;
+    protected _members: Map<string, Member>;
     /**
      * An array of the current members of the guild
     */
-    get memberList(): Array<User> {
+    get memberList(): Array<Member> {
         return Array.from(this._members.values());
     }
 
@@ -40,8 +41,16 @@ export default class Guild {
      * @param id The user's id (Snowflake)
      * @returns The user, or undefined, if not present
      */
-    getMember(id: string): User | undefined {
+    getMember(id: string): Member | undefined {
         return this._members.get(id);
+    }
+
+    /**
+     * Inserts a new member or overrides it, if already in the set
+     * @param member The member Object
+     */
+    setMember(member: Member) {
+        this._members.set(member.user.id, member);
     }
 
     protected _channels: Map<string, Channel>;
@@ -94,16 +103,15 @@ export default class Guild {
         return this._channels.delete(id);
     }
 
-    constructor(id: string, name: string, ownerId: string, channels: Channel[] = [], members: User[] = []) {
+    constructor(id: string, name: string, ownerId: string, channels: Channel[] = [], members: Member[] = []) {
         this.id = id;
         this.name = name;
-        this.ownerId = ownerId;
         this._members = new Map();
-        for (const member of members) {
-            this._members.set(member.id, member);
+        for (const member of members ?? []) {
+            this._members.set(member.user.id, member);
         }
         this._channels = new Map();
-        for (const channel of channels) {
+        for (const channel of channels ?? []) {
             this._channels.set(channel.id, channel.copyWithGuild(this));
         }
     }
@@ -113,20 +121,22 @@ export default class Guild {
      * @param content The given `JSON` object
      * @returns A new `Guild`
      */
-    static fromJson(content: { id: string, name: string, owner_id: string }): Guild {
-        return new Guild(
-            content.id,
-            content.name,
-            content.owner_id,
-        );
+    static fromJson(content: GuildJson): Guild {
+        return new Guild(content.id, content.name,content.owner_id);
     }
 
-    /**
-     * Fetches the User Object of the guild owner from the server
-     * @param token The authentication token
-     * @returns An async call of the user
-     */
-    async getOwner(token: string): Promise<User> {
-        return User.fromServer(this.ownerId);
+    static fromGuildCreate(content:{guild:GuildJson,channels:ChannelJson[],members:MemberJson[]}):Guild{
+        const guild = new Guild(
+            content.guild.id,
+            content.guild.name,
+            content.guild.owner_id
+        );
+        for (const member of content.members ?? []) {
+            guild.setMember(Member.fromJson(member).copyWithGuild(guild));
+        }
+        for (const channel of content.channels ?? []) {
+            guild.setChannel(Channel.fromJson(channel).copyWithGuild(guild));
+        }
+        return guild;
     }
 }

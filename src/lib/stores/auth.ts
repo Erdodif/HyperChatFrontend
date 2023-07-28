@@ -1,10 +1,14 @@
 import { writable } from "svelte/store";
 import type User from "$lib/classes/User";
-import { goto } from "$app/navigation";
 
-let initToken = ""
-if (typeof localStorage !== 'undefined') {
+let initToken = "";
+
+export function initializeToken() {
     initToken = localStorage.getItem("auth-token");
+}
+
+if (typeof localStorage !== 'undefined') {
+    initializeToken();
 }
 
 export const token = writable(initToken);
