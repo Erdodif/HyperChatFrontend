@@ -6,14 +6,14 @@
         Message,
         UnsentMessage,
     } from "$lib/classes/Message";
-    import User from "$lib/classes/User";
+    import type User from "$lib/classes/User";
     import { user } from "$lib/stores/auth";
-    import { _, number, time } from "svelte-i18n";
-    import Channels from "./Channels.svelte";
+    import { _, time } from "svelte-i18n";
 
     //TODO, set type in chatlog, display (css) accordingly!
 
     export let message: Message;
+    export let modifiers: string[] = [];
 
     const getHeader = () => {
         switch (message.constructor) {
@@ -63,23 +63,22 @@
         );
     }
 
-    export let context:
-        | "single"
-        | "same-author"
-        | "same-author-time"
-        | "same-time" = "single";
-
     export const scrollTo = () => {
         if (!isReallyVisible(true))
             element.scrollIntoView({ behavior: "smooth" });
     };
+
+    let modifierString = modifiers[0] ?? "";
+    for (let i = 1; i < modifiers?.length; i++) {
+        modifierString += " " + modifiers[i];
+    }
 </script>
 
 <span
     class="message"
     data-from={getType()}
     bind:this={element}
-    data-context={context}
+    data-modifiers={modifierString}
 >
     {#if !(getType() === "self")}
         <span class="author">
@@ -105,16 +104,12 @@
         margin-inline: 1em;
         box-sizing: border-box;
         display: grid;
-        grid-template-areas: "author time" "content content";
-        grid-template-columns: 1fr 5ch;
+        column-gap: 1ch;
+        grid-template-areas: "author time -" "content content content";
+        grid-template-columns: fit-content fit-content 1fr;
         .author {
             font-size: 0.525em;
             grid-area: author;
-        }
-        &[data-context="same-author"] {
-            .author {
-                display: none;
-            }
         }
         .created {
             font-size: 0.375em;
@@ -125,7 +120,7 @@
         .content {
             grid-area: content;
             padding: 0.5ch;
-            border: 0.1ch solid var(--secondary-variant);
+            border-inline: 0.1ch solid var(--secondary-variant);
             border-radius: 0.8ch;
         }
         &[data-from="system"] {
@@ -138,16 +133,67 @@
             color: var(--primary-variant);
         }
         &[data-from="self"] {
+            grid-template-areas: "_ _ time" "content content content";
+            grid-template-columns: 1fr fit-content fit-content;
             max-width: 70%;
             width: fit-content;
             text-align: right;
             margin-inline-start: auto;
             color: var(--primary);
+            .content {
+                border-color: var(--primary-variant);
+                border-inline-start: none;
+            }
         }
         &[data-from="someone"] {
+            color: var(--secondary);
             max-width: 70%;
             width: fit-content;
             margin-inline-end: auto;
+            .content {
+                border-color: var(--secondary-variant);
+                border-inline-end: none;
+            }
+        }
+
+        &[data-modifiers~="same-author"],
+        &[data-modifiers|="group-above"] {
+            .author {
+                display: none;
+            }
+        }
+        &[data-modifiers~="same-content"] {
+            position: relative;
+            .content {
+                color: var(--secondary-variant);
+            }
+        }
+        &[data-modifiers~="group-above"] {
+            grid-template-rows: 1fr;
+            grid-template-areas: "content content";
+            padding-block-start: 0;
+            .content {
+                border-block-start: unset;
+                border-radius: 0 0 0.8ch 0.8ch;
+            }
+            .created {
+                display: none;
+            }
+        }
+        &[data-modifiers~="group-below"] {
+            padding-block-end: 0;
+            .content {
+                border-block-end: unset;
+                border-radius: 0.8ch 0.8ch 0 0;
+            }
+            .created {
+                display: none;
+            }
+            &[data-modifiers~="group-above"] {
+                .content {
+                    border-radius: 0;
+                }
+            }
         }
     }
 </style>

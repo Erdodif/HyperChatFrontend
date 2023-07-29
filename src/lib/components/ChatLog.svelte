@@ -1,22 +1,23 @@
 <script lang="ts">
-    import {
-        ChatMessage,
-        UnsentMessage,
-    } from "$lib/classes/Message";
+    import { ChatMessage, UnsentMessage } from "$lib/classes/Message";
     import MessageComponent from "./Message.svelte";
     import Rest, { RestMethod } from "$lib/classes/Rest";
-    import { token, user } from "$lib/stores/auth";
+    import { user } from "$lib/stores/auth";
     import { _ } from "svelte-i18n";
     import { initializing, onSocketFinished } from "$lib/stores/socketHandler";
     import { onMount } from "svelte";
     import type ChatLog from "$lib/classes/ChatLog";
-    import { readable, writable } from "svelte/store";
     import { ChatStore } from "$lib/stores/guildSet";
 
-    //determine chat type based on the messages before, remember previous to keep it consistent!
+    /**
+     * If the frequency of messages from the same person does not exceed this many seconds,
+     * they will be grouped together, indicating that those messages may semantically be connected
+     *
+     * This should be user-available setting in the future
+     */
+    const MESSAGE_SECONDS_THRESHOLD = 60;
 
-
-    export let chatInit:ChatLog
+    export let chatInit: ChatLog;
     let chatLog = new ChatStore(chatInit);
 
     let message: string;
@@ -27,14 +28,14 @@
 
     /**
      * An integer value about how many standard message fits the screen
-     * 
+     *
      * this value gets measured after the component mounted
      */
     let messageCapacity: number = 20;
 
     /**
      * Creates a temporal svelte component to calculate actual height based on the applied styles
-     * 
+     *
      * The value gets stored in the messageCapacity property
      */
     function calculateVerticalMessageCapacity() {
@@ -83,18 +84,17 @@
             idOfFirst,
             ...messages.map((data) => ChatMessage.fromJson(data))
         );
-        console.log($chatLog);
     }
 
-    onMount(()=>{
+    onMount(() => {
         scrollToBottom();
     });
 
     onSocketFinished(async () => {
-        if($chatLog.count < messageCapacity)
-        //sus, because we shall rather clear and re-initialize.
-        // The server caps at 100, and there can be more messages before that
-        await previousMessages();
+        if ($chatLog.count < messageCapacity)
+            //sus, because we shall rather clear and re-initialize.
+            // The server caps at 100, and there can be more messages before that
+            await previousMessages();
     });
 
     onMount(() => {
@@ -107,8 +107,45 @@
         messageRefs[0]?.scrollTo();
     };
 
-    $:chatLog = new ChatStore(chatInit);
+    $: chatLog = new ChatStore(chatInit);
 
+    /**
+     * Defines modifiers on a message Object compared to the next and previous message
+     *
+     * Based on creation time, author and content
+     * @param index
+     */
+    const getMessageModifiers = (index: number) => {
+        let modifiers: string[] = [];
+        if (index < 0) {
+            return modifiers;
+        }
+        let current = $chatLog.get(index);
+        let previous = $chatLog.get(index + 1);
+        let next = $chatLog.get(index - 1);
+        if (!(current instanceof ChatMessage)) {
+            return modifiers;
+        }
+        if (
+            previous &&
+            previous instanceof ChatMessage &&
+            previous.sameAuthor(current)
+        ) {
+            modifiers.push("same-author");
+            if (current.secondsBetween(previous) < MESSAGE_SECONDS_THRESHOLD) {
+                modifiers.push("group-above");
+            }
+        }
+        if (next && next instanceof ChatMessage && next.sameAuthor(current)) {
+            if (next.sameContent(current)) {
+                modifiers.push("same-content");
+            }
+            if (next.secondsBetween(current) < MESSAGE_SECONDS_THRESHOLD) {
+                modifiers.push("group-below");
+            }
+        }
+        return modifiers;
+    };
 </script>
 
 {#if $initializing}
@@ -121,6 +158,7 @@
                     <MessageComponent
                         {message}
                         bind:this={messageRefs[index]}
+                        modifiers={getMessageModifiers(index)}
                     />
                 {/each}
             </div>

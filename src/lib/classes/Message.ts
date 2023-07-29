@@ -18,6 +18,19 @@ export class Message {
     equals(right: Message): boolean {
         return typeof this === typeof right && this.content == right.content;
     }
+
+    /**
+     * Returns the time difference in seconds
+     * @param other The other message object to compare
+     * @returns Time in seconds
+     */
+    secondsBetween(other: Message): number {
+        return Math.round((this.created.valueOf() - other.created.valueOf()) / 1000);
+    }
+
+    sameContent(other: Message): boolean {
+        return this.content === other.content;
+    }
 }
 
 export class SystemMessage extends Message {
@@ -36,8 +49,8 @@ export class ChatMessage extends Message {
     author: User | Member;
     id: string;
 
-    get from():string{
-        if(this.author instanceof User){
+    get from(): string {
+        if (this.author instanceof User) {
             return this.author.id;
         }
         return this.author.user.id;
@@ -63,6 +76,10 @@ export class ChatMessage extends Message {
             author = Member.fromJson(data.author);
         }
         return new ChatMessage(author, data.content, data.id);
+    }
+
+    sameAuthor(other: ChatMessage): boolean {
+        return this.author.id === other.author.id;
     }
 }
 
