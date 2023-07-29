@@ -167,6 +167,11 @@
             .content {
                 color: var(--secondary-variant);
             }
+            &[data-from="self"] {
+                .content {
+                    color: var(--primary-variant);
+                }
+            }
         }
         &[data-modifiers~="group-above"] {
             grid-template-rows: 1fr;
