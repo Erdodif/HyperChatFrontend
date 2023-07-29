@@ -41,15 +41,13 @@
             $guildSet.remove(event.id);
         }),
         new EventHandler("MESSAGE_CREATE", (event) => {
-            console.log(event);
             let author: Member = Member.fromJson(event.author);
             let message: ChatMessage = new ChatMessage(
                 author,
                 event.content,
                 event.id
             );
-            $guildSet.pushToChatLog(event.channel_id, message, event.nonce);
-            guildSet.update();
+            guildSet.pushToChatLog(event.channel_id, message, event.nonce);
         }),
     ];
 

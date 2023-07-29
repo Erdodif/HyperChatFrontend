@@ -8,19 +8,12 @@
     } from "$lib/classes/Message";
     import User from "$lib/classes/User";
     import { user } from "$lib/stores/auth";
-    import { _, time } from "svelte-i18n";
+    import { _, number, time } from "svelte-i18n";
+    import Channels from "./Channels.svelte";
 
     //TODO, set type in chatlog, display (css) accordingly!
 
     export let message: Message;
-
-    let author: User;
-
-    if ((message as ChatMessage).author instanceof User) {
-        author = (message as ChatMessage).author as User;
-    } else {
-        author = ((message as ChatMessage).author as Member).user;
-    }
 
     const getHeader = () => {
         switch (message.constructor) {
@@ -29,7 +22,10 @@
             case UnsentMessage:
                 return $_("message.pending");
             case ChatMessage:
-                return author.displayName;
+                return (
+                    ((message as ChatMessage).author as Member).nickname ??
+                    ((message as ChatMessage).author as User).displayName
+                );
         }
     };
 
@@ -40,9 +36,14 @@
             case UnsentMessage:
                 return "pending";
             case ChatMessage:
-                if (author.id == $user.id) return "self";
-                else return "someone";
+                return (message as ChatMessage).from === $user.id
+                    ? "self"
+                    : "someone";
         }
+    };
+
+    export const getBoundingClientRect = () => {
+        return element.getBoundingClientRect();
     };
 
     let element: HTMLSpanElement;
@@ -87,7 +88,7 @@
     {/if}
     <span class="created">
         <time>
-            {$time(message.created, {format:"short"})}
+            {$time(message.created, { format: "short" })}
         </time>
     </span>
     <span class="content">
@@ -100,8 +101,9 @@
     .message {
         font-size: 0.765em;
         width: 95%;
-        margin-block: 0.275em;
+        padding-block: 0.275em;
         margin-inline: 1em;
+        box-sizing: border-box;
         display: grid;
         grid-template-areas: "author time" "content content";
         grid-template-columns: 1fr 5ch;
@@ -109,8 +111,8 @@
             font-size: 0.525em;
             grid-area: author;
         }
-        &[data-context="same-author"]{
-            .author{
+        &[data-context="same-author"] {
+            .author {
                 display: none;
             }
         }

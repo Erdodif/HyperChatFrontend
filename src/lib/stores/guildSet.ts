@@ -1,7 +1,8 @@
 import type Guild from "$lib/classes/Guild";
-import { CustomStore, IndirectStore } from "./custom";
+import { CustomDerivedStore, CustomStore, IndirectStore } from "./CustomStore";
 import type Channel from "$lib/classes/Channel";
-import type { Message } from "$lib/classes/Message";
+import type { ChatMessage, Message } from "$lib/classes/Message";
+import type ChatLog from "$lib/classes/ChatLog";
 
 /**
  * A wrapper Object of a `Map<string,Guild>`, to ensure the store's controlled functionality and it's only used to fulfill the store's needs.
@@ -23,6 +24,10 @@ export class GuildSet {
 
     get length(): number {
         return this._guilds.size;
+    }
+
+    guildByChannelId(channelId: string): Guild {
+        return this.searchChannel(channelId).guild;
     }
 
     searchChannel(id: string): Channel | null {
@@ -62,6 +67,10 @@ export class GuildSet {
         return success;
     }
 
+    get(guildId: string): Guild {
+        return this._guilds.get(guildId);
+    }
+
     set(guild: Guild) {
         this.guilds.set(guild.id, guild);
     }
@@ -72,7 +81,7 @@ export class GuildSet {
  * 
  * Channels and guilds shall be accessed and modified through it's methods and properties, or else the store notification system may not be triggered
  */
-export class GuildStore extends CustomStore<GuildSet> {
+export class GuildSetStore extends CustomStore<GuildSet> {
 
     constructor(initialValue: Map<string, Guild> = new Map<string, Guild>()) {
         super(new GuildSet(initialValue));
@@ -81,6 +90,10 @@ export class GuildStore extends CustomStore<GuildSet> {
     set(guild: Guild) {
         this._value.set(guild);
         this.nofity();
+    }
+
+    get(guildId: string) {
+        return this._value.get(guildId);
     }
 
     searchChannel(id: string): Channel | null {
@@ -122,6 +135,41 @@ export class GuildStore extends CustomStore<GuildSet> {
     update() {
         this.nofity();
     }
+
+    guildStore(guildId: string): GuildStore {
+        return new GuildStore(this, this._value.get(guildId));
+    }
+
+    channelStore(guildId: string, channelId: string): ChannelStore {
+        return new ChannelStore(this.guildStore(guildId), this._value.get(guildId).getChannel(channelId));
+    }
+
+    searchChannelStore(channelId: string): ChannelStore {
+        return new ChannelStore(this.guildStore(this._value.guildByChannelId(channelId).id), this._value.searchChannel(channelId));
+    }
 }
 
-export const guildSet = new GuildStore();
+export class ChatStore extends CustomStore<ChatLog>{
+    constructor(initLog: ChatLog) {
+        super(initLog);
+    }
+
+    push(message: Message, nonce: string | null = null) {
+        this._value.push(message, nonce);
+        this.nofity();
+    }
+
+    fillBefore(id:string,...messages:ChatMessage[]){
+        this._value.fillBefore(id, ...messages);
+        this.nofity();
+    }
+
+    fillAfter(id:string,...messages:ChatMessage[]){
+        this._value.fillAfter(id, ...messages);
+        this.nofity();
+    }
+
+
+}
+
+export const guildSet = new GuildSetStore();

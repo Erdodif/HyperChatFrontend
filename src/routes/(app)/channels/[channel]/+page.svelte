@@ -3,11 +3,17 @@
     import { guildSet } from "$lib/stores/guildSet";
     import { page } from "$app/stores";
     import ChatLog from "$lib/components/ChatLog.svelte";
-    import { initializing } from "$lib/stores/socketHandler";
+    import { initializing, onSocketFinished } from "$lib/stores/socketHandler";
     import type Channel from "$lib/classes/Channel";
+    import { onMount } from "svelte";
 
     let channel: Channel;
-    $: channel = $guildSet.searchChannel($page.params.channel);
+
+    onSocketFinished(()=>{
+        channel = $guildSet.searchChannel($page.params.channel);
+    });
+
+    $:channel = $guildSet.searchChannel($page.params.channel);
 </script>
 
 {#if $initializing}
@@ -21,7 +27,7 @@
                 </h1>
             </div>
             <div class="chat">
-                <ChatLog chatLog={channel.chat} />
+                <ChatLog chatInit={channel.chat} />
             </div>
         </div>
     </GuildPage>

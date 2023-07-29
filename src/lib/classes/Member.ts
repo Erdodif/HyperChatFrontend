@@ -20,6 +20,10 @@ export default class Member {
     get nickname(): string {
         return this.#nickname ?? this.user.displayName;
     }
+
+    get id():string{
+        return this.user.id;
+    }
     joinedAt: Date;
 
     constructor(user: User, nickname: string, joinedAt: number, guild: Guild = null) {

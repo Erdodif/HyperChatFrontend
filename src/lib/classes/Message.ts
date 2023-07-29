@@ -1,7 +1,9 @@
-import type Member from "./Member";
-import type User from "./User";
+import Member, { type MemberJson } from "./Member";
+import User, { type UserJson } from "./User";
 
 export const EPOCH: bigint = 1672531200000n // 2023-01-01T00:00:00Z in milis
+
+export type ChatMessageJson = { author: MemberJson | UserJson, content: string, id: string }
 
 export class Message {
 
@@ -34,6 +36,13 @@ export class ChatMessage extends Message {
     author: User | Member;
     id: string;
 
+    get from():string{
+        if(this.author instanceof User){
+            return this.author.id;
+        }
+        return this.author.user.id;
+    }
+
     constructor(author: User | Member, content: string, id: string) {
         super(content)
         this.author = author;
@@ -44,6 +53,16 @@ export class ChatMessage extends Message {
     equals(right: Message): boolean {
         return typeof this === typeof right
             && this.id === (right as ChatMessage).id;
+    }
+
+    static fromJson(data: ChatMessageJson): ChatMessage {
+        let author: User | Member;
+        if ((data.author as UserJson).id) {
+            author = User.fromJson(data.author);
+        } else {
+            author = Member.fromJson(data.author);
+        }
+        return new ChatMessage(author, data.content, data.id);
     }
 }
 
