@@ -8,13 +8,9 @@
 </script>
 
 <nav>
-    <span>{$_('title.index')}</span>
-    <a href="/"> {$_('nav.home')} </a>
+    <a href="/"> {$_('title.index')} </a>
     {#if $user}
         <span>{$user.username} ({$_('user.aka')}: {$user.displayName})</span>
-    {:else}
-        <a data-sveltekit-replacestate href="/login"> Login </a>
-    {/if}
     <button
         on:click={() => {
             localStorage.removeItem("user_name");
@@ -23,9 +19,12 @@
             localStorage.removeItem("auth-token");
             guildSet.resetGuildSet();
             goto(`/login?from=${$page.url.href}`, { replaceState: true });
-        }}>Logoff</button
-    >
+        }}>Logoff</button>
+    {:else}
+        <a data-sveltekit-replacestate href="/login"> Login </a>
+    {/if}
     <LanguageSwitch/>
+    <a href="/about">{$_("about.header")}</a>
 </nav>
 
 <style lang="scss">
@@ -46,8 +45,8 @@
             padding: 0.155em;
         }
         a:hover {
-            color: var(--on-background);
-            filter: drop-shadow(0 0 1em var(--background));
+            color: var(--secondary);
+            filter: drop-shadow(0 0 1em var(--on-background));
         }
     }
 </style>

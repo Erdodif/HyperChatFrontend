@@ -1,7 +1,7 @@
 <script lang="ts">
     import Navigation from "$lib/components/Navigation.svelte";
     import Guilds from "$lib/components/Guilds.svelte";
-    import SocketHandler, { EventHandler } from "$lib/classes/SocketHandler";
+    import { EventHandler } from "$lib/classes/SocketHandler";
     import { onMount } from "svelte";
     import { user } from "$lib/stores/auth";
     import User from "$lib/classes/User";
@@ -33,7 +33,7 @@
         new EventHandler("GUILD_CREATE", (event) => {
             guildSet.set(Guild.fromGuildCreate(event));
             if (waiting > 0) {
-                waiting--
+                waiting--;
             }
             $initializing = waiting <= 0;
         }),

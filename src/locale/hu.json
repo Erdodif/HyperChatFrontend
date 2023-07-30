@@ -1,68 +1,90 @@
 {
-  "title": {
-    "index": "Relytélyes csevegő"
-  },
-  "nav": {
-    "home": "Kezdőlap",
-    "logout": "Kilépés"
-  },
-  "languages": {
-    "en": "Angol",
-    "hu": "Magyar"
-  },
-  "user": {
-    "name": "Felhasználónév",
-    "password": "Jelszó",
-    "aka": "Másoknak"
+  "about": {
+    "devs": {
+      "all": "Kiegészítésre vár",
+      "header": "Fejlesztők"
+    },
+    "disclaimer": {
+      "credits": "Itt esik szó a készítőkről, technológiákról és licencelésről"
+    },
+    "giphy": {
+      "disclaimer": "A Giphy Semmilyen formában nem támogatja a projektet, minden, az üzenetküldő rendszerben elküldött gif a Giphy-ről származik.",
+      "soon": "Gifek a Giphy jóvoltából, hamarosan elérhető."
+    },
+    "header": "Rólunk",
+    "repo": {
+      "backend": "A frontend nem volna lehetséges az őt kiszolgáló backend nélkül:",
+      "frontend": "Az eredeti repó elérhető az alábbi linken:",
+      "header": "Github repó"
+    },
+    "technologies": "Felhasznált technológiák"
   },
   "auth": {
-    "username": "Felhasználónév",
-    "password": "Jelszó",
     "login": "Belépés",
     "no-account": "Még nincs felhasználód?",
+    "password": "Jelszó",
+    "password-again": "Jelszó még egyszer",
     "signup": "Regisztráció",
-    "password-again": "Jelszó még egyszer"
-  },
-  "message":{
-    "system":"Rendszerüzenet","pending":"Folyamatban"
-  },
-  "guild": {
-    "guild": "Szerver",
-    "channel": "Csatorna",
-    "channels": "Csatornák",
-    "message": "Üzenet",
-    "member": "Tag",
-    "members": "Tagok",
-    "user": "Felhasználó",
-    "open-new-tab": "Megnyitás új lapon",
-    "delete": "Szerver törlése",
-    "cannot-delete":"Nem tudod törölni ezt a szervert",
-    "delete-confirm":"Biztos törölni szeretné {name}-t ({id})?\nEz a lépés visszafordíthatatlan!",
-    "deleted":"Szerver törölve"
+    "username": "Felhasználónév"
   },
   "channel": {
-    "delete": "Csatorna törlése",
-    "create":"Csatorna létrehozása"
+    "create": "Csatorna létrehozása",
+    "delete": "Csatorna törlése"
+  },
+  "chat": {
+    "message-placeholder": "Írj valami kedveset ide...",
+    "send-message": "Küldés"
   },
   "errors": {
-    "guild": {
-      "missing": "Szerver nem található",
-      "delete-failed":"Nem sikerült törölni a szervert"
-    },
     "auth": {
       "credentials": "Hibás felhasználónév vagy jelszó"
     },
     "contextmenu": {
       "no-option": "Nincs elérhető opció"
     },
-    "not-implemented":"Funkció vagy fordítás nincs megvalósítva ⚰️",
-    "unspecific":"Valami elromlott :("
+    "guild": {
+      "delete-failed": "Nem sikerült törölni a szervert",
+      "missing": "Szerver nem található"
+    },
+    "not-implemented": "Funkció vagy fordítás nincs megvalósítva ⚰️",
+    "unspecific": "Valami elromlott :("
+  },
+  "guild": {
+    "cannot-delete": "Nem tudod törölni ezt a szervert",
+    "channel": "Csatorna",
+    "channels": "Csatornák",
+    "delete": "Szerver törlése",
+    "delete-confirm": "Biztos törölni szeretné {name}-t ({id})?\nEz a lépés visszafordíthatatlan!",
+    "deleted": "Szerver törölve",
+    "guild": "Szerver",
+    "member": "Tag",
+    "members": "Tagok",
+    "message": "Üzenet",
+    "open-new-tab": "Megnyitás új lapon",
+    "user": "Felhasználó"
   },
   "home": {
     "title": "Főoldal"
   },
-  "chat":{
-    "send-message":"Küldés",
-    "message-placeholder":"Írj valami kedveset ide..."
+  "languages": {
+    "en": "Angol",
+    "hu": "Magyar"
+  },
+  "message": {
+    "pending": "Folyamatban",
+    "system": "Rendszerüzenet"
+  },
+  "nav": {
+    "home": "Kezdőlap",
+    "logout": "Kilépés"
+  },
+  "title": {
+    "index": "Relytélyes csevegő"
+  },
+  "user": {
+    "aka": "Másoknak",
+    "name": "Felhasználónév",
+    "password": "Jelszó",
+    "username": "Felhasználónév"
   }
 }
