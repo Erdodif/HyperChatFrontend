@@ -36,7 +36,7 @@
             case UnsentMessage:
                 return "pending";
             case ChatMessage:
-                return (message as ChatMessage).from === $user.id
+                return (message as ChatMessage).author.id === $user.id
                     ? "self"
                     : "someone";
         }
