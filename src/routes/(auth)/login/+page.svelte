@@ -10,15 +10,12 @@
     export let password: string = "";
     let error: String = "";
 
-    let from = "/";
+    let from = new URL($page.url.searchParams.get("from"),$page.url);
 
-    if (
-        $page.url.searchParams.get("from") &&
-        /^[^\@]+$/.test($page.url.searchParams.get("from"))
-    ) {
-        from = $page.url.searchParams.get("from");
-    }
-
+    if(from.hostname !== $page.url.hostname){
+        from = new URL("/",$page.url);
+    } 
+    
     onMount(() => {
         if (localStorage.getItem("username")) {
             username = localStorage.getItem("username");
