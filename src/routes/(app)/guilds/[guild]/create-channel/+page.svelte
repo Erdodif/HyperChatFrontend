@@ -1,6 +1,5 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
-    import { token } from "$lib/stores/auth";
     import {page} from "$app/stores";
     import Rest from "$lib/classes/Rest";
     let name: string = "";
