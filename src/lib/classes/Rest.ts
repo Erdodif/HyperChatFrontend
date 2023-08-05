@@ -62,4 +62,19 @@ export default class Rest {
             }
         })).json();
     }
+
+    /**
+     * Issues a bodyless GET request to the specified location
+     * @param location The url that needs to be checked
+     * @returns Whether the requested location is accessible (`Response.ok`)
+     */
+    static async isTokenValid(location: string): Promise<boolean> {
+        return  (await fetch(`${PUBLIC_SERVER_URL}/${location}`, {
+            method: RestMethod.GET,
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: Rest.token,
+            }
+        })).ok;
+    }
 }
