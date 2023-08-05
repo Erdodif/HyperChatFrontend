@@ -39,7 +39,7 @@
         </span>
     {/each}
     <span id="new-channel">
-        <a href={`/guild/${guild.id}/create-channel`}>{$_("channel.create")}</a>
+        <a href={`/guilds/${guild.id}/create-channel`}>{$_("channel.create")}</a>
     </span>
 </div>
 
