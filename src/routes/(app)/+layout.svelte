@@ -52,6 +52,9 @@
     ];
 
     onMount(async () => {
+        if(!(await Rest.isTokenValid("users/@self"))){
+            goto(`/login?from=${$page.url.pathname}`)
+        }
         socketHandler.init($token, handlerBundle);
     });
 
