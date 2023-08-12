@@ -135,18 +135,6 @@ export class GuildSetStore extends CustomStore<GuildSet> {
     update() {
         this.nofity();
     }
-
-    guildStore(guildId: string): GuildStore {
-        return new GuildStore(this, this._value.get(guildId));
-    }
-
-    channelStore(guildId: string, channelId: string): ChannelStore {
-        return new ChannelStore(this.guildStore(guildId), this._value.get(guildId).getChannel(channelId));
-    }
-
-    searchChannelStore(channelId: string): ChannelStore {
-        return new ChannelStore(this.guildStore(this._value.guildByChannelId(channelId).id), this._value.searchChannel(channelId));
-    }
 }
 
 export class ChatStore extends CustomStore<ChatLog>{
