@@ -12,12 +12,16 @@
         }
         console.log(res);
     };
+
+    
+
 </script>
 
 <form on:submit|preventDefault={handleSubmit}>
     <input type="text" bind:value={name} placeholder="Channel Name" />
     <span>{name}</span>
     <button type="submit">Create</button>
+
 </form>
 
 <style lang="scss">

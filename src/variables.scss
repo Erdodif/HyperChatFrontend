@@ -1,1 +1,30 @@
 /* Variables and mixins declared here will be available in all other SCSS files */
+
+@mixin button(
+    $background-color: var(--primary-variant),
+    $color: var(--secondary),
+    $border-color: var(--secondary-variant),
+    $shadow-color: var(--secondary)
+) {
+    user-select: none;
+    cursor: pointer;
+    font-size: 0.8 25em;
+    align-self: center;
+    padding-inline: 0.775em;
+    padding-block: 0.225em;
+    background-color: var(--primary);
+    color: var(--on-primary);
+    border: 0.2ch solid var(--primary-variant);
+    width: fit-content;
+    border-radius: 0.225em;
+    &:hover,
+    &:focus,
+    &:focus-visible,
+    &:focus-within {
+        background-color: $background-color;
+        color: $color;
+        border: 0.2ch solid $border-color;
+        filter: drop-shadow(0em 0em 0.125em $shadow-color);
+        transition: all 170ms ease-in-out;
+    }
+}
