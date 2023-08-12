@@ -7,8 +7,12 @@
         UnsentMessage,
     } from "$lib/classes/Message";
     import type User from "$lib/classes/User";
+    import type Attachment from "$lib/classes/Attachment";
     import { user } from "$lib/stores/auth";
     import { _, time } from "svelte-i18n";
+    import { each, space } from "svelte/internal";
+    import { fly } from "svelte/transition";
+    import { PUBLIC_FILE_SERVER_URL } from "$env/static/public";
 
     //TODO, set type in chatlog, display (css) accordingly!
 
@@ -74,11 +78,34 @@
     }
 </script>
 
+{#if message instanceof ChatMessage && message.attachments}
+    <div
+        class="attachments"
+        data-modifiers={modifierString}
+        data-from={getType()}
+    >
+        {#each message.attachments as attachment}
+            {#if attachment.contentType && attachment.contentType.split("/")[0] === "image"}
+                <img
+                    src={`${PUBLIC_FILE_SERVER_URL}/${attachment.endpoint}`}
+                    alt={`${attachment.message.id}_${attachment.id}_${attachment.filename}`}
+                />
+            {:else}
+                <span>{attachment.contentType}</span>
+                <a
+                    href={`${PUBLIC_FILE_SERVER_URL}/${attachment.endpoint}`}
+                    target="_blank">{attachment.filename}</a
+                >
+            {/if}
+        {/each}
+    </div>
+{/if}
 <span
     class="message"
     data-from={getType()}
     bind:this={element}
     data-modifiers={modifierString}
+    transition:fly
 >
     {#if !(getType() === "self")}
         <span class="author">
@@ -90,15 +117,17 @@
             {$time(message.created, { format: "short" })}
         </time>
     </span>
-    <span class="content">
-        {message.content}
-    </span>
+    {#if message.content}
+        <span class="content">
+            {message.content}
+        </span>
+    {/if}
     <!--<button on:click={() => console.log(message)}> Log </button>-->
 </span>
 
 <style lang="scss">
     .message {
-        font-size: 0.765em;
+        font-size: 0.625em;
         width: 95%;
         padding-block: 0.275em;
         margin-inline: 1em;
@@ -199,6 +228,21 @@
                     border-radius: 0;
                 }
             }
+        }
+    }
+    .attachments {
+        font-size: 0.525em;
+        a {
+            @include button;
+            max-width: 20ch;
+            text-overflow: ellipsis;
+            overflow-wrap: break-word;
+        }
+        &[data-from="self"] {
+            margin-inline-start: auto;
+        }
+        &[data-from="someone"] {
+            margin-inline-end: auto;
         }
     }
 </style>

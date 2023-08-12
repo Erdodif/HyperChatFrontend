@@ -8,6 +8,7 @@
     import { onMount } from "svelte";
     import type ChatLog from "$lib/classes/ChatLog";
     import { ChatStore } from "$lib/stores/guildSet";
+    import { writable } from "svelte/store";
 
     /**
      * If the frequency of messages from the same person does not exceed this many seconds,
@@ -16,6 +17,8 @@
      * This should be user-available setting in the future
      */
     const MESSAGE_SECONDS_THRESHOLD = 60;
+
+    const MAX_ATTACHMENT_COUNT = 10;
 
     export let chatInit: ChatLog;
     let chatLog = new ChatStore(chatInit);
@@ -47,28 +50,54 @@
         let messageHeight = pseudoComponent.getBoundingClientRect().height;
         pseudoComponent.$destroy();
         messageCapacity = Math.ceil(height / messageHeight);
+        if (messageCapacity > 100) {
+            messageCapacity = 100;
+        }
     }
 
     const handleSend = async () => {
+        if (!message && !attachments) {
+            return;
+        }
         chatLog.push(
             new UnsentMessage(
                 $user,
-                message,
+                message ?? "attachments...",
                 `${$user.id}-${$chatLog.channel.id}`
             )
         );
-        await Rest.sendToServer($chatLog.sendLocation, {
+        let jsonPart = {
             content: message,
             nonce: `${$user.id}-${$chatLog.channel.id}`,
-        });
+        };
+        let messageForm = new FormData();
+        if (message) {
+            messageForm.append(
+                "json",
+                new Blob([JSON.stringify(jsonPart)], {
+                    type: "application/json",
+                })
+            );
+        }
+        if (attachments) {
+            let i = 0;
+            for (const file of $attachments) {
+                messageForm.append(`attachment-${i}`, file);
+                i++;
+            }
+        }
+        await Rest.sendMultipart(
+            $chatLog.sendLocation,
+            messageForm,
+            RestMethod.POST
+        );
+        message = "";
+        $attachments = [];
         scrollToBottom();
     };
 
     async function previousMessages() {
         let count = messageCapacity;
-        if (count > 100) {
-            count = 100;
-        }
         let idOfFirst: string = (
             $chatLog.messages.find(
                 (msg) => msg instanceof ChatMessage
@@ -80,10 +109,14 @@
             }limit=${count}`,
             RestMethod.GET
         );
-        chatLog.fillBefore(
-            idOfFirst,
-            ...messages.map((data) => ChatMessage.fromJson(data))
-        );
+        if (messages.length) {
+            chatLog.fillBefore(
+                idOfFirst,
+                ...messages.map((data) =>
+                    ChatMessage.fromJson(data, $chatLog.channel)
+                )
+            );
+        }
     }
 
     onMount(() => {
@@ -108,6 +141,10 @@
     };
 
     $: chatLog = new ChatStore(chatInit);
+
+    let attachments = writable<Array<File>>([]);
+
+    let attachment: HTMLInputElement;
 
     /**
      * Defines modifiers on a message Object compared to the next and previous message
@@ -146,10 +183,42 @@
         }
         return modifiers;
     };
+
+    const handleAttachentsUploaded = (event: Event) => {
+        if (
+            $attachments.length + attachment.files.length >
+            MAX_ATTACHMENT_COUNT
+        ) {
+            console.error(
+                `Maximum attachment count reached (which is ${MAX_ATTACHMENT_COUNT})`
+            );
+            alert(
+                $_("errors.chat.max-attachment-reached", {
+                    values: {
+                        maxcount: MAX_ATTACHMENT_COUNT,
+                        leftover:
+                            $attachments.length +
+                            attachment.files.length -
+                            MAX_ATTACHMENT_COUNT,
+                    },
+                })
+            );
+        }
+        for (const file of attachment.files) {
+            if ($attachments.length < MAX_ATTACHMENT_COUNT) {
+                $attachments.push(file);
+                $attachments = $attachments;
+            } else {
+                attachment.value = "";
+                return;
+            }
+        }
+        attachment.value = "";
+    };
 </script>
 
 {#if $initializing}
-    <span>Loading</span>
+    <span>$_('chat.loading')</span>
 {:else}
     <div class="chat-holder">
         <div class="messages">
@@ -176,6 +245,41 @@
                 value={$_("chat.send-message")}
                 class="button"
             />
+            {#if attachments}
+                <div class="attachments">
+                    {#each $attachments as file, index}
+                        {#if file.type && file.type.split("/")[0] === "image"}
+                            <div class="attachment attachment__image">
+                                <img
+                                    src={URL.createObjectURL(file)}
+                                    alt={`attachment-${index}`}
+                                />
+                                <span class="file__name">
+                                    {file.name}
+                                </span>
+                            </div>
+                        {:else}
+                            <div class="attachment attachment__file">
+                                <span class="file__name">
+                                    {file.name}
+                                </span>
+                                <span class="file__size">
+                                    {file.size}
+                                </span>
+                            </div>
+                        {/if}
+                    {/each}
+                </div>
+            {/if}
+            <label class="attach">
+                {$_("chat.attachment.icon")}
+                <input
+                    type="file"
+                    bind:this={attachment}
+                    multiple
+                    on:change={handleAttachentsUploaded}
+                />
+            </label>
         </form>
     </div>
 {/if}
@@ -186,7 +290,7 @@
         height: 100%;
         margin: 0;
         display: grid;
-        grid-template-rows: 1fr 2.5em;
+        grid-template-rows: 1fr min-content;
         grid-template-areas: "chat" "send";
 
         .messages {
@@ -218,12 +322,91 @@
         }
         form {
             display: grid;
-            grid-template-columns: 1fr 7ch;
+            grid-template-columns: 3ch 1fr 7ch;
+            grid-template-rows: fit-content 1fr;
+            grid-template-areas: "attachments attachments attachments" "attach message submit";
             padding: 0.5em;
+            grid-area: send;
             input {
                 font-size: 0.65em;
+                &[type="text"] {
+                    grid-area: message;
+                }
+                &[type="submit"] {
+                    width: 100%;
+                    height: 100%;
+                    grid-area: submit;
+                }
+                &[type="file"] {
+                    opacity: 0;
+                    width: 0;
+                    height: 0;
+                    grid-area: attach;
+                }
             }
-            grid-area: send;
+            .attach {
+                background-color: var(--primary-variant);
+                &:hover {
+                    background-color: var(--secondary-variant);
+                }
+            }
+            .attachments {
+                background-color: var(--surface);
+                grid-area: attachments;
+                display: flex;
+                max-height: 100%;
+                overflow-y: hidden;
+                overflow-x: auto;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                .attachment {
+                    position: relative;
+                    display: grid;
+                    align-items: center;
+                    &__image {
+                        grid-template-rows: 1fr 1em;
+                        img {
+                            max-height: 12em;
+                            max-width: 16em;
+                            border-radius: 1em;
+                            grid-row-start: 1;
+                            grid-row-end: 2;
+                            border: 0.2ch dashed var(--secondary-variant);
+                        }
+                        .file {
+                            &__name {
+                                color: var(--primary);
+                                background: var(--surface);
+                                text-overflow: ellipsis;
+                                border-radius: 1ch 0 0 0;
+                                padding-inline: 1ch;
+                                grid-row: 2;
+                                right: 0;
+                                bottom: 0;
+                            }
+                        }
+                    }
+                    &__file {
+                        grid-template-rows: 1fr 1fr;
+                        position: relative;
+                        min-width: 4em;
+                        min-height: 3em;
+                        max-height: 12em;
+                        max-width: 16em;
+                        border-radius: 1em;
+                        border: 0.3ch dashed var(--primary-variant);
+                        .file {
+                            &__name {
+                                color: var(--primary);
+                                padding-inline: 1ch;
+                                position: absolute;
+                                right: 50%;
+                                bottom: 0;
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 </style>

@@ -1,17 +1,22 @@
+import type { AttachmentJson } from "./Attachment";
+import Attachment from "./Attachment";
+import type Channel from "./Channel";
 import Member, { type MemberJson } from "./Member";
 import User, { type UserJson } from "./User";
 
 export const EPOCH: bigint = 1672531200000n // 2023-01-01T00:00:00Z in milis
 
-export type ChatMessageJson = { author: MemberJson | UserJson, content: string, id: string }
+export type ChatMessageJson = { author: MemberJson | UserJson, content: string, id: string, attachments: AttachmentJson[] }
 
 export class Message {
 
+    channel: Channel;
     content: string;
     created: Date;
 
-    constructor(content: string) {
+    constructor(content: string, channel: Channel | null = null) {
         this.content = content;
+        this.channel = channel;
         this.created = new Date(Date.now());
     }
 
@@ -46,6 +51,7 @@ export class SystemMessage extends Message {
 
 export class ChatMessage extends Message {
 
+    attachments: Attachment[];
     author: User | Member;
     id: string;
 
@@ -56,11 +62,15 @@ export class ChatMessage extends Message {
         return this.author.user.id;
     }
 
-    constructor(author: User | Member, content: string, id: string) {
-        super(content)
+    constructor(author: User | Member, content: string, id: string, channel: Channel | null = null, attachments: Attachment[] = []) {
+        super(content, channel);
         this.author = author;
         this.id = id;
         this.created = new Date(Number((BigInt(id) >> 22n) + EPOCH));
+        this.attachments = attachments;
+        for (const attachment of attachments) {
+            attachment.message = this;
+        }
     }
 
     equals(right: Message): boolean {
@@ -68,14 +78,18 @@ export class ChatMessage extends Message {
             && this.id === (right as ChatMessage).id;
     }
 
-    static fromJson(data: ChatMessageJson): ChatMessage {
+    static fromJson(data: ChatMessageJson, channel: Channel | null = null): ChatMessage {
         let author: User | Member;
         if ((data.author as UserJson).id) {
             author = User.fromJson(data.author);
         } else {
             author = Member.fromJson(data.author);
         }
-        return new ChatMessage(author, data.content, data.id);
+        let attachments = [];
+        for (const attachment of data.attachments) {
+            attachments.push(Attachment.fromJson(attachment));
+        }
+        return new ChatMessage(author, data.content, data.id, channel, attachments);
     }
 
     sameAuthor(other: ChatMessage): boolean {

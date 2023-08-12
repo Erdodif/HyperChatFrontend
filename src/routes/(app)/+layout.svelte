@@ -1,20 +1,26 @@
 <script lang="ts">
+    // Components
     import Navigation from "$lib/components/Navigation.svelte";
     import Guilds from "$lib/components/Guilds.svelte";
-    import { EventHandler } from "$lib/classes/SocketHandler";
-    import { onMount } from "svelte";
-    import { user } from "$lib/stores/auth";
-    import User from "$lib/classes/User";
+    // Types
     import Guild from "$lib/classes/Guild";
-    import { guildSet } from "$lib/stores/guildSet";
-    import { token } from "$lib/stores/auth";
-    import { page } from "$app/stores";
-    import { goto } from "$app/navigation";
-    import Rest from "$lib/classes/Rest";
+    import User from "$lib/classes/User";
     import Member from "$lib/classes/Member";
     import { ChatMessage } from "$lib/classes/Message";
+    import Rest from "$lib/classes/Rest";
+    import { EventHandler } from "$lib/classes/SocketHandler";
+    // Stores
+    import { guildSet } from "$lib/stores/guildSet";
+    import { user } from "$lib/stores/auth";
+    import { token } from "$lib/stores/auth";
+    import { page } from "$app/stores";
     import { isLoading } from "svelte-i18n";
     import socketHandler, { initializing } from "$lib/stores/socketHandler";
+    // Utility
+    import { onMount } from "svelte";
+    import { goto } from "$app/navigation";
+    // Assets
+    import Settings from "$lib/assets/icons/Settings.svelte";
 
     let waiting: number = 1;
 
@@ -41,19 +47,14 @@
             $guildSet.remove(event.id);
         }),
         new EventHandler("MESSAGE_CREATE", (event) => {
-            let author: Member = Member.fromJson(event.author);
-            let message: ChatMessage = new ChatMessage(
-                author,
-                event.content,
-                event.id
-            );
+            let message: ChatMessage = ChatMessage.fromJson(event,guildSet.searchChannel(event.channel_id));
             guildSet.pushToChatLog(event.channel_id, message, event.nonce);
         }),
     ];
 
     onMount(async () => {
-        if(!(await Rest.isTokenValid("users/@self"))){
-            goto(`/login?from=${$page.url.pathname}`)
+        if (!(await Rest.isTokenValid("users/@self"))) {
+            goto(`/login?from=${$page.url.pathname}`);
         }
         socketHandler.init($token, handlerBundle);
     });
@@ -75,7 +76,15 @@
         {/if}
     </main>
     <aside>
-        <Guilds />
+        <div class="guilds">
+            <Guilds />
+        </div>
+        <div class="options">
+            <hr />
+            <a href="/options">
+                <Settings className="settings" />
+            </a>
+        </div>
     </aside>
 </div>
 
@@ -105,7 +114,45 @@
         aside {
             grid-area: side;
             border-top: 0.2em solid var(--background);
+            display: grid;
+            grid-template-rows: 1fr min-content;
             background-color: var(--surface);
+            .guilds {
+                min-height: 100%;
+                overflow-y: auto;
+            }
+            .options {
+                margin-inline: 0.275em;
+                margin-block: 0em;
+                hr {
+                    border-color: var(--secondary-variant);
+                    border-width: 0.1ch;
+                }
+                a {
+                    display: block;
+                    margin: 0;
+                    padding: 0;
+                    width: 100%;
+                    height: auto;
+                    background-color: var(--secondary);
+                    border-radius: 1ch;
+                    :global(svg.settings) {
+                        width: 100%;
+                        height: auto;
+                        color: var(--on-secondary);
+                    }
+                    &:hover {
+                        background-color: color-mix(
+                            in srgb,
+                            var(--secondary-variant) 25%,
+                            var(--background)
+                        );
+                        :global(svg.settings) {
+                            color: var(--secondary);
+                        }
+                    }
+                }
+            }
         }
     }
 </style>

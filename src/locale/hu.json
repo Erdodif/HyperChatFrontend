@@ -32,12 +32,19 @@
     "delete": "Csatorna törlése"
   },
   "chat": {
+    "attachment": {
+      "icon": "📎"
+    },
+    "loading": "Betöltés",
     "message-placeholder": "Írj valami kedveset ide...",
     "send-message": "Küldés"
   },
   "errors": {
     "auth": {
       "credentials": "Hibás felhasználónév vagy jelszó"
+    },
+    "chat": {
+      "max-attachment-reached": "Nem tudsz több, mint {maxcount} fájlt csatolni egy üzenethez, a maradék {leftover} fájl nem kerül feltöltésre."
     },
     "contextmenu": {
       "no-option": "Nincs elérhető opció"

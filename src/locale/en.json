@@ -32,12 +32,19 @@
     "delete": "Csatorna törlése"
   },
   "chat": {
+    "attachment": {
+      "icon": "📎"
+    },
+    "loading": "Loading",
     "message-placeholder": "Write something nice here...",
     "send-message": "Send"
   },
   "errors": {
     "auth": {
       "credentials": "Invalid username or password"
+    },
+    "chat": {
+      "max-attachment-reached": "You cannot send more than {maxcount} attachment in a single message, the rest {leftover} files will be ignored."
     },
     "contextmenu": {
       "no-option": "No actions available"
