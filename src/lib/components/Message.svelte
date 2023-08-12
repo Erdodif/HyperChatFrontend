@@ -7,12 +7,13 @@
         UnsentMessage,
     } from "$lib/classes/Message";
     import type User from "$lib/classes/User";
-    import type Attachment from "$lib/classes/Attachment";
+    import Attachment from "$lib/classes/Attachment";
     import { user } from "$lib/stores/auth";
     import { _, time } from "svelte-i18n";
     import { each, space } from "svelte/internal";
     import { fly } from "svelte/transition";
     import { PUBLIC_FILE_SERVER_URL } from "$env/static/public";
+    import AttachmentElement from "./Attachment.svelte";
 
     //TODO, set type in chatlog, display (css) accordingly!
 
@@ -85,18 +86,7 @@
         data-from={getType()}
     >
         {#each message.attachments as attachment}
-            {#if attachment.contentType && attachment.contentType.split("/")[0] === "image"}
-                <img
-                    src={`${PUBLIC_FILE_SERVER_URL}/${attachment.endpoint}`}
-                    alt={`${attachment.message.id}_${attachment.id}_${attachment.filename}`}
-                />
-            {:else}
-                <span>{attachment.contentType}</span>
-                <a
-                    href={`${PUBLIC_FILE_SERVER_URL}/${attachment.endpoint}`}
-                    target="_blank">{attachment.filename}</a
-                >
-            {/if}
+            <AttachmentElement {attachment} />
         {/each}
     </div>
 {/if}
@@ -231,6 +221,9 @@
         }
     }
     .attachments {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
         font-size: 0.525em;
         a {
             @include button;
@@ -238,15 +231,18 @@
             text-overflow: ellipsis;
             overflow-wrap: break-word;
         }
-        img{
+        img {
             max-width: 24em;
             max-height: 24em;
         }
         &[data-from="self"] {
             margin-inline-start: auto;
+            text-align: right;
+            align-items: end;
         }
         &[data-from="someone"] {
             margin-inline-end: auto;
+            align-items: start;
         }
     }
 </style>

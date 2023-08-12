@@ -9,6 +9,7 @@
     import type ChatLog from "$lib/classes/ChatLog";
     import { ChatStore } from "$lib/stores/guildSet";
     import { writable } from "svelte/store";
+    import MimeImg from "./MimeImg.svelte";
 
     /**
      * If the frequency of messages from the same person does not exceed this many seconds,
@@ -260,15 +261,14 @@
                             </div>
                         {:else}
                             <div class="attachment attachment__file">
+                                <MimeImg mime={file.type} />
                                 <span class="file__name">
                                     {file.name}
-                                </span>
-                                <span class="file__size">
-                                    {file.size}
                                 </span>
                             </div>
                         {/if}
                     {/each}
+                    <button on:click={() => ($attachments = [])}> X </button>
                 </div>
             {/if}
             <label class="attach">
@@ -300,6 +300,8 @@
             height: 100%;
             overflow-y: auto;
             .scrollable {
+                margin-inline: 0.275em;
+                padding-inline: 0.275em;
                 position: absolute;
                 inset: 0;
                 display: flex;
@@ -351,6 +353,7 @@
                 }
             }
             .attachments {
+                position: relative;
                 background-color: var(--surface);
                 grid-area: attachments;
                 display: flex;
@@ -405,6 +408,11 @@
                             }
                         }
                     }
+                }
+                button {
+                    position: absolute;
+                    right: 1em;
+                    top: 0.525em;
                 }
             }
         }
