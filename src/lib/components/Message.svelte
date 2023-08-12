@@ -238,6 +238,10 @@
             text-overflow: ellipsis;
             overflow-wrap: break-word;
         }
+        img{
+            max-width: 24em;
+            max-height: 24em;
+        }
         &[data-from="self"] {
             margin-inline-start: auto;
         }
