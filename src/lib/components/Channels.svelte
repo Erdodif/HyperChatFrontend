@@ -8,6 +8,7 @@
     import {page} from "$app/stores";
     import type Channel from "$lib/classes/Channel";
     import { _ } from "svelte-i18n";
+    import Rest, { RestMethod } from "$lib/classes/Rest";
 
     export let guild: Guild;
 
@@ -15,7 +16,7 @@
         return [
             new ContextMenuItem(channel.name),
             new ButtonAction($_("channel.delete"), () =>
-                alert($_("errors.not-implemented"))
+                Rest.getJsonFromServer(`channels/${channel.id}`,RestMethod.DELETE)
             ),
         ];
     };
