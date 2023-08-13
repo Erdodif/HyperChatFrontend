@@ -36,7 +36,7 @@
             localStorage.setItem("auth-token", content.token);
             guildSet.resetGuildSet();
             token.set(content.token);
-            return goto(from);
+            return await goto(from);
         }
         console.error(content);
     };

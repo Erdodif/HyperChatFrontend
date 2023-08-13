@@ -2,13 +2,16 @@
     import { goto } from "$app/navigation";
     import {page} from "$app/stores";
     import Rest from "$lib/classes/Rest";
+    import { guildSet } from "$lib/stores/guildSet";
     let name: string = "";
 
+    let guild = $guildSet.get($page.params.guild);
+
     const handleSubmit = async () => {
-        const response = await Rest.sendToServer(`/guilds/${$page.data.guild.id}/channels`,{name:name});
+        const response = await Rest.sendToServer(`guilds/${guild.id}/channels`,{type:"GUILD_TEXT",name:name});
         let res = await response.json();
         if(response.ok){
-            throw goto(`/channels/${res.id}`);
+            return await goto(`/channels/${res.id}`);
         }
         console.log(res);
     };

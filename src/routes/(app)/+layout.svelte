@@ -21,6 +21,7 @@
     import { goto } from "$app/navigation";
     // Assets
     import Settings from "$lib/assets/icons/Settings.svelte";
+    import Channel from "$lib/classes/Channel";
 
     let waiting: number = 1;
 
@@ -43,11 +44,18 @@
             }
             $initializing = waiting <= 0;
         }),
+        new EventHandler("CHANNEL_CREATE", (event) => {
+            let guild = guildSet.get(event.quild_id);
+            guildSet.setChannel(new Channel(event.id,event.name,event.type,guild));
+        }),
         new EventHandler("GUILD_REMOVE", (event) => {
             $guildSet.remove(event.id);
         }),
         new EventHandler("MESSAGE_CREATE", (event) => {
-            let message: ChatMessage = ChatMessage.fromJson(event,guildSet.searchChannel(event.channel_id));
+            let message: ChatMessage = ChatMessage.fromJson(
+                event,
+                guildSet.searchChannel(event.channel_id)
+            );
             guildSet.pushToChatLog(event.channel_id, message, event.nonce);
         }),
     ];

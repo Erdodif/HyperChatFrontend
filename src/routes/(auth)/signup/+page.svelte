@@ -15,7 +15,7 @@
         const content = await response.json();
         if (content.username) {
             localStorage.setItem("username", username);
-            goto("/login");
+            await goto("/login");
         } else {
             console.error(content);
         }

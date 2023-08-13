@@ -43,20 +43,26 @@
             : new ContextMenuItem($_("guild.cannot-delete")),
     ];
 
-    const deleteGuild = async(guild: Guild) => {
+    const deleteGuild = async (guild: Guild) => {
         if (
             confirm(
-                $_("guild.delete-confirm",{values:{name:guild.name,id:guild.id}})
+                $_("guild.delete-confirm", {
+                    values: { name: guild.name, id: guild.id },
+                })
                 //`Are you really going to delete ${guild.name} (${guild.id})?\nThis step is irreversible tho...`
             )
         ) {
-            const response = await Rest.sendToServer(`guilds${guild.id}`,null,RestMethod.DELETE);
+            const response = await Rest.sendToServer(
+                `guilds${guild.id}`,
+                null,
+                RestMethod.DELETE
+            );
             console.log(response);
             if (response.ok) {
                 alert($_("guild.deleted"));
                 return;
             }
-            alert($_("errors.guild.delete-failed"))
+            alert($_("errors.guild.delete-failed"));
             console.log(response);
         }
     };
@@ -93,6 +99,8 @@
         flex-wrap: nowrap;
         justify-content: center;
         gap: 0.275em;
+        overflow-x: hidden;
+        isolation: isolate;
         #create {
             line-height: 1.625em;
             user-select: none;
@@ -116,7 +124,11 @@
             }
         }
         .guild {
+            box-sizing: border-box;
             user-select: none;
+            margin: 0.225em;
+            aspect-ratio: 1 / 1;
+            border-radius: 1em;
             img {
                 max-height: 90%;
                 max-width: 90%;
@@ -129,18 +141,20 @@
             }
 
             &:hover {
-                filter: drop-shadow(0em 0em 0.425em var(--primary));
+                border: 0.1ch dashed var(--primary);
                 .name {
+                    margin-block-start:-1em;
                     max-width: 20ch;
                     width: max-content;
+                    border: .1ch solid var(--primary-variant);
                     display: block;
                     position: absolute;
                     left: 4em;
-                    bottom: 30%;
                     font-size: 0.675em;
                     background: var(--background);
                     padding-inline: 1ch;
-                    border-radius: 1ch;
+                    padding-block: .5ch;
+                    border-radius: 1.3ch;
                     color: var(--on-background);
                 }
             }

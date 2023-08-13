@@ -46,7 +46,7 @@ export default class SocketHandler {
                 this.#handlers.get("INVALID_SESSION")(ec);
                 return;
             }
-            goto("/login");
+            await goto("/login");
             throw new Error("Invalid session in SocketHandler, wich is unhandled.");
         }
         console.log("Disconnected");

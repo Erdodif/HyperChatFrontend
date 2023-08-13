@@ -8,7 +8,7 @@
         const response = await Rest.sendToServer("guilds",{name:name});
         let res = await response.json();
         if(response.ok){
-            throw goto(`/guilds/${res.id}`);
+            return await goto(`/guilds/${res.id}`);
         }
     };
 
@@ -17,7 +17,7 @@
         if(response.ok){
             let res = await response.json();
             console.log(res);
-            throw goto(`/guilds/${res.id}`);
+            return await goto(`/guilds/${res.id}`);
         }
         console.log(response);
     };
