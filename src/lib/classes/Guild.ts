@@ -107,6 +107,7 @@ export default class Guild {
         this.id = id;
         this.name = name;
         this._members = new Map();
+        this.ownerId = ownerId;
         for (const member of members ?? []) {
             this._members.set(member.user.id, member);
         }
@@ -122,15 +123,11 @@ export default class Guild {
      * @returns A new `Guild`
      */
     static fromJson(content: GuildJson): Guild {
-        return new Guild(content.id, content.name,content.owner_id);
+        return new Guild(content.id, content.name, content.owner_id);
     }
 
-    static fromGuildCreate(content:{guild:GuildJson,channels:ChannelJson[],members:MemberJson[]}):Guild{
-        const guild = new Guild(
-            content.guild.id,
-            content.guild.name,
-            content.guild.owner_id
-        );
+    static fromGuildCreate(content: { guild: GuildJson, channels: ChannelJson[], members: MemberJson[] }): Guild {
+        const guild = Guild.fromJson(content.guild);
         for (const member of content.members ?? []) {
             guild.setMember(Member.fromJson(member).copyWithGuild(guild));
         }
