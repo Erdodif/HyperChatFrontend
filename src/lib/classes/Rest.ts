@@ -26,7 +26,7 @@ export default class Rest {
             method: method,
             headers: {
                 "Content-Type": "application/json",
-                Authorization: Rest.token,
+                Authorization: `Bearer ${Rest.token}`,
             },
             body: JSON.stringify(body),
         });
@@ -49,7 +49,7 @@ export default class Rest {
                 reject('timeout')
             }
             xhr.open(method, `${PUBLIC_SERVER_URL}/${location}`, true);
-            xhr.setRequestHeader("Authorization", Rest.token);
+            xhr.setRequestHeader("Authorization", `Bearer ${Rest.token}`);
             xhr.send(body);
         })
     }
@@ -65,7 +65,7 @@ export default class Rest {
             method: method,
             headers: {
                 "Content-Type": "application/json",
-                Authorization: Rest.token,
+                Authorization: `Bearer ${Rest.token}`,
             }
         });
     }
@@ -81,7 +81,7 @@ export default class Rest {
             method: method,
             headers: {
                 "Content-Type": "application/json",
-                Authorization: Rest.token,
+                Authorization: `Bearer ${Rest.token}`,
                 Accept: "application/json"
             }
         })).json();
@@ -97,7 +97,7 @@ export default class Rest {
             method: RestMethod.GET,
             headers: {
                 "Content-Type": "application/json",
-                Authorization: Rest.token,
+                Authorization: `Bearer ${Rest.token}`,
             }
         })).ok;
     }
@@ -106,7 +106,7 @@ export default class Rest {
         return fetch(`${PUBLIC_FILE_SERVER_URL}/${attachment.endpoint}`, {
             method: RestMethod.GET,
             headers: {
-                Authorization: Rest.token,
+                Authorization: `Bearer ${Rest.token}`
             },
         });
     }
