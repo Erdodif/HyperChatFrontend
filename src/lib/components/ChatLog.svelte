@@ -11,14 +11,6 @@
     import { writable } from "svelte/store";
     import MimeImg from "./MimeImg.svelte";
 
-    /**
-     * If the frequency of messages from the same person does not exceed this many seconds,
-     * they will be grouped together, indicating that those messages may semantically be connected
-     *
-     * This should be user-available setting in the future
-     */
-    const MESSAGE_SECONDS_THRESHOLD = 60;
-
     const MAX_ATTACHMENT_COUNT = 10;
 
     export let chatInit: ChatLog;
@@ -26,7 +18,7 @@
 
     let message: string;
 
-    const messageRefs: MessageComponent[] = new Array<MessageComponent>(
+    let messageRefs: MessageComponent[] = new Array<MessageComponent>(
         $chatLog.count
     );
 
@@ -57,10 +49,10 @@
     }
 
     const handleSend = async () => {
-        if (!message && !attachments) {
+        if (!message && !$attachments.length) {
             return;
         }
-        chatLog.push(
+        let index = chatLog.push(
             new UnsentMessage(
                 $user,
                 message ?? "attachments...",
@@ -87,11 +79,12 @@
                 i++;
             }
         }
-        await Rest.sendMultipart(
+        let data = await Rest.sendMultipart(
             $chatLog.sendLocation,
             messageForm,
             RestMethod.POST
         );
+        chatLog.delete(index);
         message = "";
         $attachments = [];
         scrollToBottom();
@@ -141,49 +134,11 @@
         messageRefs[0]?.scrollTo();
     };
 
-    $: chatLog = new ChatStore(chatInit);
+    //$: chatLog = new ChatStore(chatInit);
 
     let attachments = writable<Array<File>>([]);
 
     let attachment: HTMLInputElement;
-
-    /**
-     * Defines modifiers on a message Object compared to the next and previous message
-     *
-     * Based on creation time, author and content
-     * @param index
-     */
-    const getMessageModifiers = (index: number) => {
-        let modifiers: string[] = [];
-        if (index < 0) {
-            return modifiers;
-        }
-        let current = $chatLog.get(index);
-        let previous = $chatLog.get(index + 1);
-        let next = $chatLog.get(index - 1);
-        if (!(current instanceof ChatMessage)) {
-            return modifiers;
-        }
-        if (
-            previous &&
-            previous instanceof ChatMessage &&
-            previous.sameAuthor(current)
-        ) {
-            modifiers.push("same-author");
-            if (current.secondsBetween(previous) < MESSAGE_SECONDS_THRESHOLD) {
-                modifiers.push("group-above");
-            }
-        }
-        if (next && next instanceof ChatMessage && next.sameAuthor(current)) {
-            if (next.sameContent(current)) {
-                modifiers.push("same-content");
-            }
-            if (next.secondsBetween(current) < MESSAGE_SECONDS_THRESHOLD) {
-                modifiers.push("group-below");
-            }
-        }
-        return modifiers;
-    };
 
     const handleAttachentsUploaded = (event: Event) => {
         if (
@@ -224,11 +179,11 @@
     <div class="chat-holder">
         <div class="messages">
             <div class="scrollable" bind:this={scrollable}>
-                {#each $chatLog.messages as message, index}
+                {#each $chatLog.messages as message, index (message.id)}
                     <MessageComponent
                         {message}
                         bind:this={messageRefs[index]}
-                        modifiers={getMessageModifiers(index)}
+                        modifiers={$chatLog.getModifiers(index)}
                     />
                 {/each}
             </div>

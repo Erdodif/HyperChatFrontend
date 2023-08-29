@@ -11,7 +11,7 @@ export class Socket extends CustomStore<SocketHandler>{
 
     init(token: string, handlerBoundle: EventHandler[]) {
         this._value = new SocketHandler(token, handlerBoundle);
-        this.nofity();
+        this.notify();
     }
 }
 

@@ -19,7 +19,7 @@ export abstract class CustomStore<T> implements Readable<T> {
         this.callbacks = this.callbacks.filter(cb => cb !== callback);
     }
 
-    protected nofity() {
+    protected notify() {
         for (const callback of this.callbacks) {
             callback(this._value);
         }
@@ -48,7 +48,7 @@ export abstract class IndirectStore<T, R> implements Readable<T>{
         this.callbacks = this.callbacks.filter(cb => cb !== callback);
     }
 
-    protected nofity() {
+    protected notify() {
         for (const callback of this.callbacks) {
             callback(this.value);
         }

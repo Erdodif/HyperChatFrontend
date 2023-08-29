@@ -1,6 +1,22 @@
 import type User from "./User";
-import { type Message, type SystemMessage, ChatMessage, UnsentMessage } from "./Message";
+import { type Message, ChatMessage, UnsentMessage } from "./Message";
 import type Channel from "./Channel";
+
+/**
+ * If the frequency of messages from the same person does not exceed this many seconds,
+ * they will be grouped together, indicating that those messages may semantically be connected
+ *
+ * This should be user-available setting in the future
+ */
+export const MESSAGE_SECONDS_THRESHOLD = 60;
+
+export enum MessageModifier {
+    SAME_AUTHOR = "same_author",
+    GROUP_ABOVE = "group_above",
+    GROUP_BELOW = "group_below",
+    SAME_CONTENT = "same_content",
+    ONLY_ATTACHMENT = "only_attachment"
+}
 
 export default class ChatLog {
     #log: Message[];
@@ -34,7 +50,7 @@ export default class ChatLog {
      * @param message The Message Object
      * @param nonce A possible nonce from the server
      */
-    push(message: Message, nonce: string | null = null) {
+    push(message: Message, nonce: string | null = null):number {
         if (nonce !== null) {
             let index = this.messages.findIndex((msg, _) => (msg instanceof UnsentMessage && msg.nonce === nonce) || msg.equals(message));
             if (index !== -1) {
@@ -42,7 +58,7 @@ export default class ChatLog {
                 return;
             }
         }
-        this.#log.unshift(message);
+        return this.#log.unshift(message);
     }
 
     //Follows cronological order
@@ -74,8 +90,49 @@ export default class ChatLog {
      * @param index The location
      * @returns The Message Object on the given index
      */
-    get(index) {
+    get(index: number) {
         return this.#log[index];
+    }
+
+    /**
+     * Defines modifiers on a message Object compared to the next and previous message
+     *
+     * Based on creation time, author and content
+     * @param index
+     */
+    getModifiers(index: number): MessageModifier[] {
+        let modifiers: MessageModifier[] = [];
+        if (index < 0) {
+            return modifiers;
+        }
+        let current = this.get(index);
+        let previous = this.get(index + 1);
+        let next = this.get(index - 1);
+        if (!(current instanceof ChatMessage)) {
+            return modifiers;
+        }
+        if (!current.content){
+            modifiers.push(MessageModifier.ONLY_ATTACHMENT);
+        }
+        if (
+            previous &&
+            previous instanceof ChatMessage &&
+            previous.sameAuthor(current)
+        ) {
+            modifiers.push(MessageModifier.SAME_AUTHOR);
+            if (current.secondsBetween(previous) < MESSAGE_SECONDS_THRESHOLD) {
+                modifiers.push(MessageModifier.GROUP_ABOVE);
+            }
+        }
+        if (next && next instanceof ChatMessage && next.sameAuthor(current)) {
+            if (next.sameContent(current)) {
+                modifiers.push(MessageModifier.SAME_CONTENT);
+            }
+            if (next.secondsBetween(current) < MESSAGE_SECONDS_THRESHOLD) {
+                modifiers.push(MessageModifier.GROUP_BELOW);
+            }
+        }
+        return modifiers;
     }
 
     /**
@@ -99,6 +156,10 @@ export default class ChatLog {
         }
     }
 
+    delete(index:number){
+        this.#log.splice(index,1);
+    }
+
     /**
      * Finalize the message on the given index.
      * 
@@ -106,10 +167,10 @@ export default class ChatLog {
      * @param index The location of the message
      * @param id The id assigned to the ChatMessage
      */
-    makeSent(index, id: string) {
+    makeSent(index:number,message:ChatMessage ) {
         if (!(this.#log[index] instanceof UnsentMessage)) return;
-        this.remove(id);
-        this.#log[index] = (this.#log[index] as UnsentMessage).messageSent(id);
+        message.channel = this.channel;
+        this.#log.splice(index,1,message);
     }
 
     /**

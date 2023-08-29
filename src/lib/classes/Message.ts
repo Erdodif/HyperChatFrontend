@@ -8,13 +8,15 @@ export const EPOCH: bigint = 1672531200000n // 2023-01-01T00:00:00Z in milis
 
 export type ChatMessageJson = { author: MemberJson | UserJson, content: string, id: string, attachments: AttachmentJson[] }
 
-export class Message {
+export abstract class Message {
 
+    id: string;
     channel: Channel;
     content: string;
     created: Date;
 
-    constructor(content: string, channel: Channel | null = null) {
+    constructor(id: string, content: string, channel: Channel | null = null) {
+        this.id = id;
         this.content = content;
         this.channel = channel;
         this.created = new Date(Date.now());
@@ -38,22 +40,10 @@ export class Message {
     }
 }
 
-export class SystemMessage extends Message {
-
-    constructor(content: string) {
-        super(content);
-    }
-
-    equals(right: Message): boolean {
-        return typeof this === typeof right && this.content == right.content;
-    }
-}
-
 export class ChatMessage extends Message {
 
     attachments: Attachment[];
     author: User | Member;
-    id: string;
 
     get from(): string {
         if (this.author instanceof User) {
@@ -63,9 +53,8 @@ export class ChatMessage extends Message {
     }
 
     constructor(author: User | Member, content: string, id: string, channel: Channel | null = null, attachments: Attachment[] = []) {
-        super(content, channel);
+        super(id, content, channel);
         this.author = author;
-        this.id = id;
         this.created = new Date(Number((BigInt(id) >> 22n) + EPOCH));
         this.attachments = attachments;
         for (const attachment of attachments) {
@@ -97,19 +86,13 @@ export class ChatMessage extends Message {
     }
 }
 
-export class UnsentMessage extends Message {
+export class UnsentMessage extends ChatMessage {
 
-    author: User | Member;
     nonce: string;
 
-    constructor(author: User | Member, content: string, nonce: string) {
-        super(content)
-        this.author = author;
+    constructor(author: User | Member, content: string, nonce: string, channel: Channel = null, attachments: Attachment[] = []) {
+        super(author, content, Date.now().toString(), channel, attachments);
         this.nonce = nonce;
-    }
-
-    messageSent(id: string): ChatMessage {
-        return new ChatMessage(this.author, this.content, id);
     }
 
     equals(right: Message): boolean {

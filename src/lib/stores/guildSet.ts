@@ -89,7 +89,7 @@ export class GuildSetStore extends CustomStore<GuildSet> {
 
     set(guild: Guild) {
         this._value.set(guild);
-        this.nofity();
+        this.notify();
     }
 
     get(guildId: string) {
@@ -102,38 +102,38 @@ export class GuildSetStore extends CustomStore<GuildSet> {
 
     pushToChatLog(channelId: string, message: Message, nonce: string) {
         this._value.pushToChatLog(channelId, message, nonce);
-        this.nofity();
+        this.notify();
     }
 
     setChannel(channel: Channel) {
         this._value.setChannel(channel);
-        this.nofity();
+        this.notify();
     }
 
     addChannel(guildId: string, channel: Channel) {
         this._value.addChannel(guildId, channel);
-        this.nofity();
+        this.notify();
     }
 
     removeChannel(guildId: string, channelId: string): boolean {
         let success = this._value.removeChannel(guildId, channelId);
-        this.nofity();
+        this.notify();
         return success;
     }
 
     remove(key: string): boolean {
         let success = this._value.remove(key);
-        this.nofity();
+        this.notify();
         return success;
     }
 
     resetGuildSet() {
         this._value = new GuildSet();
-        this.nofity();
+        this.notify();
     }
 
     update() {
-        this.nofity();
+        this.notify();
     }
 }
 
@@ -142,19 +142,25 @@ export class ChatStore extends CustomStore<ChatLog>{
         super(initLog);
     }
 
-    push(message: Message, nonce: string | null = null) {
+    push(message: Message, nonce: string | null = null):number {
         this._value.push(message, nonce);
-        this.nofity();
+        this.notify();
+        return this._value.count;
     }
 
     fillBefore(id:string,...messages:ChatMessage[]){
         this._value.fillBefore(id, ...messages);
-        this.nofity();
+        this.notify();
     }
 
     fillAfter(id:string,...messages:ChatMessage[]){
         this._value.fillAfter(id, ...messages);
-        this.nofity();
+        this.notify();
+    }
+
+    delete(index:number){
+        this._value.delete(index);
+        this.notify();
     }
 
 

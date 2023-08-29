@@ -1,49 +1,67 @@
 <script lang="ts">
     import type Member from "$lib/classes/Member";
     import {
-        SystemMessage,
         ChatMessage,
         Message,
         UnsentMessage,
     } from "$lib/classes/Message";
     import type User from "$lib/classes/User";
-    import Attachment from "$lib/classes/Attachment";
     import { user } from "$lib/stores/auth";
     import { _, time } from "svelte-i18n";
     import { each, space } from "svelte/internal";
     import { fly } from "svelte/transition";
-    import { PUBLIC_FILE_SERVER_URL } from "$env/static/public";
     import AttachmentElement from "./Attachment.svelte";
+    import Rest, { RestMethod } from "$lib/classes/Rest";
+    import type { MessageModifier } from "$lib/classes/ChatLog";
 
     //TODO, set type in chatlog, display (css) accordingly!
 
     export let message: Message;
-    export let modifiers: string[] = [];
+    export let modifiers: MessageModifier[] = [];
+    let header: string;
+    let messageType: string;
+    let modifierString: string;
 
-    const getHeader = () => {
+    export const getMessageModifiers=()=>{
+        return modifierString
+    }
+    export const getMessage = ()=>{
+        return message
+    }
+    export const getType = ()=>{
+        return messageType;
+    }
+
+    const setHeader = () => {
         switch (message.constructor) {
-            case SystemMessage:
-                return $_("message.system");
             case UnsentMessage:
-                return $_("message.pending");
+                header = $_("message.pending");
+                return;
             case ChatMessage:
-                return (
+                header =
                     ((message as ChatMessage).author as Member).nickname ??
-                    ((message as ChatMessage).author as User).displayName
-                );
+                    ((message as ChatMessage).author as User).displayName;
+                return;
         }
     };
 
-    const getType = () => {
+    const setType = () => {
         switch (message.constructor) {
-            case SystemMessage:
-                return "system";
             case UnsentMessage:
-                return "pending";
+                messageType = "pending";
+                return;
             case ChatMessage:
-                return (message as ChatMessage).author.id === $user.id
+                messageType = (message as ChatMessage).author.equals($user)
                     ? "self"
                     : "someone";
+                return;
+        }
+    };
+
+    const setModifiers = () => {
+        modifierString = modifiers[0] ?? "";
+        for (let i = 1; i < modifiers?.length; i++) {
+            modifierString += " " + modifiers[i];
         }
     };
 
@@ -73,17 +91,18 @@
             element.scrollIntoView({ behavior: "smooth" });
     };
 
-    let modifierString = modifiers[0] ?? "";
-    for (let i = 1; i < modifiers?.length; i++) {
-        modifierString += " " + modifiers[i];
+    $: {
+        setType();
+        setHeader();
+        setModifiers();
     }
 </script>
 
-{#if message instanceof ChatMessage && message.attachments}
+{#if message instanceof ChatMessage && message.attachments.length}
     <div
         class="attachments"
         data-modifiers={modifierString}
-        data-from={getType()}
+        data-from={messageType}
     >
         {#each message.attachments as attachment}
             <AttachmentElement {attachment} />
@@ -92,14 +111,14 @@
 {/if}
 <span
     class="message"
-    data-from={getType()}
+    data-from={messageType}
     bind:this={element}
     data-modifiers={modifierString}
     transition:fly
 >
-    {#if !(getType() === "self")}
+    {#if !(messageType === "self")}
         <span class="author">
-            {getHeader()}
+            {header}
         </span>
     {/if}
     <span class="created">
@@ -110,9 +129,19 @@
     {#if message.content}
         <span class="content">
             {message.content}
+            <button
+                on:click={async () => {
+                    console.log(message);
+                    console.log(await Rest.getJsonFromServer(
+                        `channels/${message.channel.id}/messages?limit=${20}`,
+                        RestMethod.GET
+                    ));
+                }}
+            >
+                Log
+            </button>
         </span>
     {/if}
-    <!--<button on:click={() => console.log(message)}> Log </button>-->
 </span>
 
 <style lang="scss">
