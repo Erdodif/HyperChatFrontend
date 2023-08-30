@@ -89,7 +89,7 @@
         </div>
         <div class="options">
             <hr />
-            <a href="/options">
+            <a href="/settings">
                 <Settings className="settings" />
             </a>
         </div>
