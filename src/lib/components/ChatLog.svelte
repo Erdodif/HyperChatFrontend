@@ -263,18 +263,7 @@
                 flex-direction: column-reverse;
                 flex-wrap: nowrap;
                 overflow-y: scroll;
-                scroll-behavior: smooth;
-                scrollbar-color: var(--primary);
-                scrollbar-width: 0.3ch;
-                scrollbar-gutter: stable;
-                &::-webkit-scrollbar {
-                    background-color: transparent;
-                    width: 0.3ch;
-                }
-                &::-webkit-scrollbar-thumb {
-                    background-color: var(--primary);
-                    border-radius: 1em;
-                }
+                @include scrollbar;
             }
         }
         form {
