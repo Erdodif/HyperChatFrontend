@@ -53,6 +53,14 @@
       "delete-failed": "Failed to delete guild",
       "missing": "Guild not found"
     },
+    "setting": {
+      "numeric": {
+        "out_of_bounds": "The given number is out of bounds! Is shall be between {min} and {max}."
+      },
+      "generic": {
+        "missing": "Value must not be empty!"
+      }
+    },
     "not-implemented": "Feature or translation not implemented ⚰️",
     "unspecific": "Something went wrong :("
   },
@@ -74,8 +82,8 @@
     "title": "Home page"
   },
   "languages": {
-    "en": "English",
-    "hu": "Hungarian"
+    "en-US": "American English",
+    "hu-HU": "Hungarian"
   },
   "message": {
     "pending": "Pending",
@@ -93,5 +101,59 @@
     "name": "Username",
     "password": "Password",
     "username": "Username"
+  },
+  "setting":{
+    "constrained_text":{
+      "example":"Example:"
+    }
+  },
+  "settings": {
+    "header":"Settings",
+    "save_changes":"Save changes",
+    "saved":"Settings succesfully saved.",
+    "categories":{
+      "ui":"Application",
+      "chat":"Chat",
+      "locale":"Language"
+    },
+    "flags": {
+      "render_attachments": {
+        "name": "Render attachments",
+        "description": "Specifies whether the client should render texts and images or handle all attachments as plain files.\n This setting does not effect gifs or interactive links."
+      },
+      "autoplay_gifs": {
+        "name": "Gif autoplay",
+        "description": "Tells the client whether gifs should go infinitelly on screen, or only on mouse hover and short tap on mobile"
+      }
+    },
+    "layout": {
+      "name": "Client layouts",
+      "description": "Button size, paddings and margins can be specified this way.",
+      "normal": {
+        "name": "Normal",
+        "description": "Default spacing. Every layout is based on this preset."
+      },
+      "compact": {
+        "name": "Compact",
+        "description": "Buttons will appear smaller, objects and labels will be closer to each other."
+      },
+      "comfy": {
+        "name": "Spacious",
+        "description": "Buttons will be more accessible, everything will have a generous amount of padding."
+      }
+    },
+    "message_grouping_timeout": {
+      "name": "Message grouping period",
+      "description": "The time interval in which consecuitive messages from the same person is considered semantically related.\nInformations such as the sender's profile and the timestamp is only shown on the first message in one group."
+    },
+    "locale": {
+      "name": "UI language",
+      "description": "Sets the client's language.\nThis setting only affects the application's language.\nIf the specified language is not supported on the application, it will fall back to the default, which is english (en_US) at all times.",
+      "example":"en, en_US (ISO 639-1)"
+    },
+    "font_size":{
+      "name":"Font size",
+      "description":"Sets the font size of the application."
+    }
   }
 }

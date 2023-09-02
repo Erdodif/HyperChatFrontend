@@ -53,6 +53,14 @@
       "delete-failed": "Nem sikerült törölni a szervert",
       "missing": "Szerver nem található"
     },
+    "setting": {
+      "numeric": {
+        "out_of_bounds": "A megadott számnak {min} és {max} között kell lennie!"
+      },
+      "generic": {
+        "missing": "Az érték nem lehet üres!"
+      }
+    },
     "not-implemented": "Funkció vagy fordítás nincs megvalósítva ⚰️",
     "unspecific": "Valami elromlott :("
   },
@@ -74,8 +82,8 @@
     "title": "Főoldal"
   },
   "languages": {
-    "en": "Angol",
-    "hu": "Magyar"
+    "en-US": "Amerikai Angol",
+    "hu-HU": "Magyar"
   },
   "message": {
     "pending": "Folyamatban",
@@ -93,5 +101,59 @@
     "name": "Felhasználónév",
     "password": "Jelszó",
     "username": "Felhasználónév"
+  },
+  "setting":{
+    "constrained_text":{
+      "example":"Például:"
+    }
+  },
+  "settings": {
+    "header":"Beállítások",
+    "save_changes":"Változtatások mentése",
+    "saved":"Beállítások sikeresen mentve.",
+    "categories":{
+      "ui":"Alkalmazás",
+      "chat":"Beszélgetés",
+      "locale":"Nyelv"
+    },
+    "flags": {
+      "render_attachments": {
+        "name": "Csatolmányok megjelenítése",
+        "description": "Beállítja, hogy a képek, és szöveges fájlok megjelenjenek-e az eszközön.\nEz a beállítás nincs hatással a gifekre és az interaktív linkkekre."
+      },
+      "autoplay_gifs": {
+        "name": "Gif automatikus lejátszás",
+        "description": "Beállítja, hogy automatikusan lejátsza-e a gifeket az alkalmazás."
+      }
+    },
+    "layout": {
+      "name": "Kliens elrendezések",
+      "description": "Gombok méretei és a margókhoz finomhangolt elrendezés állítható így be.",
+      "normal": {
+        "name": "Normál",
+        "description": "Alapértelmezett beállítás. Minden elrendezés erre alapszik."
+      },
+      "compact": {
+        "name": "Kompakt",
+        "description": "A gombok kissebbek lesznek, az elemek és cimkék egymáshoz közelebb lesznek."
+      },
+      "comfy": {
+        "name": "Tágas",
+        "description": "A gombok nagyobbak lesznek és az elemek bő margót kapnak."
+      }
+    },
+    "message_grouping_timeout": {
+      "name": "Üzenetcsoport",
+      "description": "Az az időtartam, amin belül az azonos küldőtől érkező egymást követő üzenetek a rendszer szemantikusan kapcsolódónak tekinti.\nAz üzenet azon információit, mint a küldő kilétét, vagy az üzenet időpontját csak a csoport első előfordulásánál kerülnek megjelenítésre"
+    },
+    "locale": {
+      "name": "Megjelenített nyelv",
+      "description": "Beállítja az alkalmazás nyelvét\nEz a beállítás csak az alkalmazás elemeire vonatkozik.\nHa a beállított nyelv az adott alkalmazásban nem elérhető, a mindenkori alapértelmezett fog megjelenni, ami az amerikai angol (en_US).",
+      "example":"hu, hu_HU (ISO 639-1)"
+    },
+    "font_size":{
+      "name":"Betűméret",
+      "description":"Finomhangolja az alkalmazás jelenlegi betűméretét."
+    }
   }
 }

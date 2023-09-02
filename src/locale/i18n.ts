@@ -1,10 +1,10 @@
 import { register, init, getLocaleFromNavigator, locale } from 'svelte-i18n';
 
-const fallbackLocale: string = 'en';
-const lngs: string[] = [fallbackLocale, 'hu'];
+const fallbackLocale: string = 'en-US';
+const lngs: string[] = [fallbackLocale, 'hu-HU'];
 
-register('en', () => import('./en.json'));
-register('hu', () => import('./hu.json'));
+register('en-US', () => import('./en_US.json'));
+register('hu-HU', () => import('./hu_HU.json'));
 
 locale.subscribe((lng) => {
     if (lng) localStorage.setItem('svelte-i18n-locale', lng);
