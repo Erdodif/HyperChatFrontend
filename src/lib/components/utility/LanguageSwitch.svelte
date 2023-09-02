@@ -2,7 +2,7 @@
     import { _, locale, locales } from "svelte-i18n";
 
     const getflag = (locale: string) => {
-        if(locale == "en") locale = "us";
+        if(locale == "en_US") locale = "us";
         return String.fromCodePoint(127397 + locale.toUpperCase().charCodeAt(0), 127397 + locale.toUpperCase().charCodeAt(1));
     };
 </script>
