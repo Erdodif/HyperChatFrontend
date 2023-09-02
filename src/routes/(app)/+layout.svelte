@@ -7,7 +7,7 @@
     import User from "$lib/classes/User";
     import Member from "$lib/classes/Member";
     import { ChatMessage } from "$lib/classes/Message";
-    import Rest from "$lib/classes/Rest";
+    import Rest, { RestMethod } from "$lib/classes/Rest";
     import { EventHandler } from "$lib/classes/SocketHandler";
     // Stores
     import { guildSet } from "$lib/stores/guildSet";
@@ -22,6 +22,10 @@
     // Assets
     import Settings from "$lib/assets/icons/Settings.svelte";
     import Channel from "$lib/classes/Channel";
+    import userPreferences, {
+        UserPreferences,
+        type PreferenceJson,
+    } from "$lib/stores/userPreferences";
 
     let waiting: number = 1;
 
@@ -46,7 +50,9 @@
         }),
         new EventHandler("CHANNEL_CREATE", (event) => {
             let guild = guildSet.get(event.quild_id);
-            guildSet.setChannel(new Channel(event.id,event.name,event.type,guild));
+            guildSet.setChannel(
+                new Channel(event.id, event.name, event.type, guild)
+            );
         }),
         new EventHandler("GUILD_REMOVE", (event) => {
             $guildSet.remove(event.id);
@@ -64,6 +70,12 @@
         if (!(await Rest.isTokenValid("users/@self"))) {
             goto(`/login?from=${$page.url.pathname}`);
         }
+        userPreferences.fromJson(
+            (await Rest.getJsonFromServer(
+                "prefs",
+                RestMethod.GET
+            )) as unknown as PreferenceJson
+        );
         socketHandler.init($token, handlerBundle);
     });
 
@@ -105,10 +117,16 @@
         width: 100%;
         height: 100%;
         display: grid;
+        overflow: hidden;
+        max-height: 100vh;
+        grid-template-rows: 2.175em calc(100vh - 2.175em);
+        @supports (max-height: 100dvh) {
+            max-height: 100dvh;
+            grid-template-rows: 2.175em calc(100dvh - 2.175em);
+        }
         grid-template-areas: "head head" "side main";
         grid-template-columns: 3em 1fr;
         align-items: stretch;
-        grid-template-rows: 2.175em 1fr min-content;
         background-color: var(--background);
         .nav {
             grid-area: head;
@@ -117,7 +135,12 @@
         main {
             position: relative;
             max-width: 100%;
+            max-height: 100%;
+            height: 100%;
             grid-area: main;
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: 1fr;
         }
         aside {
             grid-area: side;

@@ -23,7 +23,6 @@
     {:else}
         <a data-sveltekit-replacestate href="/login"> Login </a>
     {/if}
-    <LanguageSwitch/>
     <a href="/about">{$_("about.header")}</a>
 </nav>
 
