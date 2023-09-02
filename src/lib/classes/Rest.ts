@@ -1,5 +1,6 @@
 import { PUBLIC_SERVER_URL, PUBLIC_FILE_SERVER_URL } from "$env/static/public";
 import type Attachment from "./Attachment";
+import {stringify} from "json-bigint-native";
 
 export enum RestMethod {
     GET = "GET",
@@ -29,6 +30,25 @@ export default class Rest {
                 Authorization: `Bearer ${Rest.token}`,
             },
             body: JSON.stringify(body),
+        });
+    }
+
+
+    /**
+     * Sends a request to the server with the given body(stringified with bigint support)
+     * @param location 
+     * @param body 
+     * @param method 
+     * @returns 
+     */
+    static async sendBigIntToServer(location: string, body: any, method: RestMethod = RestMethod.POST): Promise<Response> {
+        return fetch(`${PUBLIC_SERVER_URL}/${location}`, {
+            method: method,
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${Rest.token}`,
+            },
+            body: stringify(body),
         });
     }
 
