@@ -1,6 +1,6 @@
 import { PUBLIC_SERVER_URL, PUBLIC_FILE_SERVER_URL } from "$env/static/public";
 import type Attachment from "./Attachment";
-import {stringify} from "json-bigint-native";
+import {stringify, parse} from "json-bigint-native";
 
 export enum RestMethod {
     GET = "GET",
@@ -32,7 +32,6 @@ export default class Rest {
             body: JSON.stringify(body),
         });
     }
-
 
     /**
      * Sends a request to the server with the given body(stringified with bigint support)
@@ -88,6 +87,33 @@ export default class Rest {
                 Authorization: `Bearer ${Rest.token}`,
             }
         });
+    }
+
+
+
+    /**
+     * Sends a bodyless request to the server, already wrapped the json parsing part with bigint support
+     * 
+     * Those keys that are specified will be forced to be a BigInt, others may stay number if applicable.
+     * @param location 
+     * @param method 
+     * @returns 
+     */
+    static async getJsonBigint(location: string, method: RestMethod, ...bigIntkeys:string[]): Promise<any> {
+        let result = parse(await(await fetch(`${PUBLIC_SERVER_URL}/${location}`, {
+            method: method,
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${Rest.token}`,
+                Accept: "application/json"
+            }
+        })).text());
+        for(const key of bigIntkeys){
+            if (Object.hasOwn(result,key)){
+                result[key] = BigInt(result[key]);
+            }
+        }
+        return result
     }
 
     /**

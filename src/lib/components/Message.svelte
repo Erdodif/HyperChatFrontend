@@ -1,10 +1,6 @@
 <script lang="ts">
     import type Member from "$lib/classes/Member";
-    import {
-        ChatMessage,
-        Message,
-        UnsentMessage,
-    } from "$lib/classes/Message";
+    import { ChatMessage, Message, UnsentMessage } from "$lib/classes/Message";
     import type User from "$lib/classes/User";
     import { user } from "$lib/stores/auth";
     import { _, time } from "svelte-i18n";
@@ -13,6 +9,7 @@
     import AttachmentElement from "./Attachment.svelte";
     import Rest, { RestMethod } from "$lib/classes/Rest";
     import type { MessageModifier } from "$lib/classes/ChatLog";
+    import userPreferences from "$lib/stores/userPreferences";
 
     //TODO, set type in chatlog, display (css) accordingly!
 
@@ -22,15 +19,15 @@
     let messageType: string;
     let modifierString: string;
 
-    export const getMessageModifiers=()=>{
-        return modifierString
-    }
-    export const getMessage = ()=>{
-        return message
-    }
-    export const getType = ()=>{
+    export const getMessageModifiers = () => {
+        return modifierString;
+    };
+    export const getMessage = () => {
+        return message;
+    };
+    export const getType = () => {
         return messageType;
-    }
+    };
 
     const setHeader = () => {
         switch (message.constructor) {
@@ -103,6 +100,7 @@
         class="attachments"
         data-modifiers={modifierString}
         data-from={messageType}
+        data-layout={$userPreferences.styleLayout}
     >
         {#each message.attachments as attachment}
             <AttachmentElement {attachment} />
@@ -114,6 +112,7 @@
     data-from={messageType}
     bind:this={element}
     data-modifiers={modifierString}
+    data-layout={$userPreferences.styleLayout}
     transition:fly
 >
     {#if !(messageType === "self")}
@@ -129,45 +128,53 @@
     {#if message.content}
         <span class="content">
             {message.content}
-            <button
-                on:click={async () => {
-                    console.log(message);
-                    console.log(await Rest.getJsonFromServer(
-                        `channels/${message.channel.id}/messages?limit=${20}`,
-                        RestMethod.GET
-                    ));
-                }}
-            >
-                Log
-            </button>
         </span>
     {/if}
 </span>
 
 <style lang="scss">
     .message {
-        font-size: 0.625em;
+        font-size: 1rem;
         width: 95%;
-        padding-block: 0.275em;
-        margin-inline: 1em;
         box-sizing: border-box;
         display: grid;
-        column-gap: 1ch;
         grid-template-areas: "author time -" "content content content";
         grid-template-columns: fit-content fit-content 1fr;
+        &[data-layout="comfy"] {
+            padding-block: 0.675em;
+            margin-inline: 2em;
+            column-gap: 1em;
+            .content {
+                padding: 0.5em;
+            }
+        }
+        &[data-layout="normal"] {
+            padding-block: 0.375em;
+            margin-inline: 1em;
+            column-gap: 0.5em;
+            .content {
+                padding: 0.3em;
+            }
+        }
+        &[data-layout="compact"] {
+            padding-block: 0.125em;
+            margin-inline: 0.625em;
+            column-gap: 0.2em;
+            .content {
+                padding: 0.2em;
+            }
+        }
         .author {
-            font-size: 0.525em;
+            font-size: 0.625rem;
             grid-area: author;
         }
         .created {
-            font-size: 0.375em;
-            margin-inline-end: 1ch;
+            font-size: 0.525rem;
             text-align: right;
             grid-area: time;
         }
         .content {
             grid-area: content;
-            padding: 0.5ch;
             border-inline: 0.1ch solid var(--secondary-variant);
             border-radius: 0.8ch;
         }
@@ -253,16 +260,12 @@
         display: flex;
         flex-direction: column;
         flex-wrap: nowrap;
-        font-size: 0.525em;
+        font-size: 1rem;
         a {
             @include button;
             max-width: 20ch;
             text-overflow: ellipsis;
             overflow-wrap: break-word;
-        }
-        img {
-            max-width: 24em;
-            max-height: 24em;
         }
         &[data-from="self"] {
             margin-inline-start: auto;

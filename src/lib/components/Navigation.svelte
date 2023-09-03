@@ -4,22 +4,23 @@
     import { page } from "$app/stores";
     import { user } from "$lib/stores/auth";
     import { guildSet } from "$lib/stores/guildSet";
-    import LanguageSwitch from "./utility/LanguageSwitch.svelte";
+    import userPreferences from "$lib/stores/userPreferences";
 </script>
 
-<nav>
-    <a href="/"> {$_('title.index')} </a>
+<nav data-layout={$userPreferences ? $userPreferences.styleLayout : "normal"}>
+    <a href="/"> {$_("title.index")} </a>
     {#if $user}
-        <span>{$user.username} ({$_('user.aka')}: {$user.displayName})</span>
-    <button
-        on:click={() => {
-            localStorage.removeItem("user_name");
-            localStorage.removeItem("display_name");
-            localStorage.removeItem("user_id");
-            localStorage.removeItem("auth-token");
-            guildSet.resetGuildSet();
-            goto(`/login?from=${$page.url.href}`, { replaceState: true });
-        }}>Logoff</button>
+        <span>{$user.username} ({$_("user.aka")}: {$user.displayName})</span>
+        <button
+            on:click={() => {
+                localStorage.removeItem("user_name");
+                localStorage.removeItem("display_name");
+                localStorage.removeItem("user_id");
+                localStorage.removeItem("auth-token");
+                guildSet.resetGuildSet();
+                goto(`/login?from=${$page.url.href}`, { replaceState: true });
+            }}>Logoff</button
+        >
     {:else}
         <a data-sveltekit-replacestate href="/login"> Login </a>
     {/if}
@@ -29,23 +30,41 @@
 <style lang="scss">
     nav {
         background: var(--surface);
-        padding: 0.2em;
-        border-bottom: 0.125em solid var(--secondary-variant);
+        border-bottom: 0.155rem solid var(--secondary-variant);
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
-        gap: 1em;
         align-items: space-between;
         a,
         span {
             text-decoration: none;
             color: var(--on-surface);
             border-radius: 0.2em;
-            padding: 0.155em;
         }
         a:hover {
             color: var(--secondary);
             filter: drop-shadow(0 0 1em var(--on-background));
+        }
+        &[data-layout="comfy"] {
+            gap: 2.5rem;
+            padding: .5rem;
+            span {
+                padding: 0.255rem;
+            }
+        }
+        &[data-layout="normal"] {
+            gap: 1rem;
+            padding: 0.2rem;
+            span {
+                padding: 0.155rem;
+            }
+        }
+        &[data-layout="compact"] {
+            gap: .725rem;
+            padding: 0.125rem;
+            span {
+                padding: 0.055rem;
+            }
         }
     }
 </style>

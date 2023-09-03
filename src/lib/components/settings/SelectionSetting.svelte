@@ -10,9 +10,9 @@
         <h3>
             {$_(`${setting.localeKey}.name`)}
         </h3>
-        <select bind:value={setting.current}>
-            {#each setting.options as option}
-                <option value={option}>
+        <select bind:value={setting.currentIndex}>
+            {#each setting.options as option, index}
+                <option value={index}>
                     {$_(`${option}.name`)}
                 </option>
             {/each}
@@ -33,5 +33,12 @@
     }
     .current-description{
         font-size: .825em;
+    }
+    select{
+        padding-inline:.525em;
+        padding-block:.255em;
+        option{
+            padding-block: .255em;
+        }
     }
 </style>

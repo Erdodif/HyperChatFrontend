@@ -71,10 +71,12 @@
             goto(`/login?from=${$page.url.pathname}`);
         }
         userPreferences.fromJson(
-            (await Rest.getJsonFromServer(
+            (await Rest.getJsonBigint(
                 "prefs",
-                RestMethod.GET
-            )) as unknown as PreferenceJson
+                RestMethod.GET,
+                "flags"
+            )) as unknown as PreferenceJson,
+            true
         );
         socketHandler.init($token, handlerBundle);
     });
@@ -84,7 +86,10 @@
     }
 </script>
 
-<div class="page">
+<div
+    class="page"
+    data-layout={$userPreferences ? $userPreferences.styleLayout : "normal"}
+>
     <header class="nav">
         <Navigation />
     </header>
@@ -101,7 +106,7 @@
         </div>
         <div class="options">
             <hr />
-            <a href="/settings">
+            <a href="/settings" data-sveltekit-reload>
                 <Settings className="settings" />
             </a>
         </div>
@@ -119,13 +124,7 @@
         display: grid;
         overflow: hidden;
         max-height: 100vh;
-        grid-template-rows: 2.175em calc(100vh - 2.175em);
-        @supports (max-height: 100dvh) {
-            max-height: 100dvh;
-            grid-template-rows: 2.175em calc(100dvh - 2.175em);
-        }
         grid-template-areas: "head head" "side main";
-        grid-template-columns: 3em 1fr;
         align-items: stretch;
         background-color: var(--background);
         .nav {
@@ -184,6 +183,30 @@
                     }
                 }
             }
+        }
+        &[data-layout="comfy"] {
+            grid-template-rows: 2.775rem calc(100vh - 2.775em);
+            @supports (max-height: 100dvh) {
+                max-height: 100dvh;
+                grid-template-rows: 2.775rem calc(100dvh - 2.775rem);
+            }
+            grid-template-columns: 4em 1fr;
+        }
+        &[data-layout="normal"] {
+            grid-template-rows: 2.275rem calc(100vh - 2.275rem);
+            @supports (max-height: 100dvh) {
+                max-height: 100dvh;
+                grid-template-rows: 2.275rem calc(100dvh - 2.275rem);
+            }
+            grid-template-columns: 3em 1fr;
+        }
+        &[data-layout="compact"] {
+            grid-template-rows: 2.175rem calc(100vh - 2.175rem);
+            @supports (max-height: 100dvh) {
+                max-height: 100dvh;
+                grid-template-rows: 2.175rem calc(100dvh - 2.175rem);
+            }
+            grid-template-columns: 2.5em 1fr;
         }
     }
 </style>

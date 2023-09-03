@@ -1,14 +1,8 @@
 import type User from "./User";
 import { type Message, ChatMessage, UnsentMessage } from "./Message";
 import type Channel from "./Channel";
+import userPreferences from "$lib/stores/userPreferences";
 
-/**
- * If the frequency of messages from the same person does not exceed this many seconds,
- * they will be grouped together, indicating that those messages may semantically be connected
- *
- * This should be user-available setting in the future
- */
-export const MESSAGE_SECONDS_THRESHOLD = 60;
 
 export enum MessageModifier {
     SAME_AUTHOR = "same_author",
@@ -19,12 +13,20 @@ export enum MessageModifier {
 }
 
 export default class ChatLog {
+
+    /**
+     * If the frequency of messages from the same person does not exceed this many seconds,
+     * they will be grouped together, indicating that those messages may semantically be connected
+     *
+     */
+    MESSAGE_SECONDS_THRESHOLD = 60;
     #log: Message[];
     readonly channel: Channel;
 
     constructor(channel: Channel) {
         this.#log = [];
         this.channel = channel;
+        userPreferences.subscribe((prefs) => this.MESSAGE_SECONDS_THRESHOLD = prefs.messageGroupingTimeout.value);
     }
 
     /**
@@ -50,7 +52,7 @@ export default class ChatLog {
      * @param message The Message Object
      * @param nonce A possible nonce from the server
      */
-    push(message: Message, nonce: string | null = null):number {
+    push(message: Message, nonce: string | null = null): number {
         if (nonce !== null) {
             let index = this.messages.findIndex((msg, _) => (msg instanceof UnsentMessage && msg.nonce === nonce) || msg.equals(message));
             if (index !== -1) {
@@ -111,7 +113,7 @@ export default class ChatLog {
         if (!(current instanceof ChatMessage)) {
             return modifiers;
         }
-        if (!current.content){
+        if (!current.content) {
             modifiers.push(MessageModifier.ONLY_ATTACHMENT);
         }
         if (
@@ -120,7 +122,7 @@ export default class ChatLog {
             previous.sameAuthor(current)
         ) {
             modifiers.push(MessageModifier.SAME_AUTHOR);
-            if (current.secondsBetween(previous) < MESSAGE_SECONDS_THRESHOLD) {
+            if (current.secondsBetween(previous) < this.MESSAGE_SECONDS_THRESHOLD) {
                 modifiers.push(MessageModifier.GROUP_ABOVE);
             }
         }
@@ -128,7 +130,7 @@ export default class ChatLog {
             if (next.sameContent(current)) {
                 modifiers.push(MessageModifier.SAME_CONTENT);
             }
-            if (next.secondsBetween(current) < MESSAGE_SECONDS_THRESHOLD) {
+            if (next.secondsBetween(current) < this.MESSAGE_SECONDS_THRESHOLD) {
                 modifiers.push(MessageModifier.GROUP_BELOW);
             }
         }
@@ -156,8 +158,8 @@ export default class ChatLog {
         }
     }
 
-    delete(index:number){
-        this.#log.splice(index,1);
+    delete(index: number) {
+        this.#log.splice(index, 1);
     }
 
     /**
@@ -167,10 +169,10 @@ export default class ChatLog {
      * @param index The location of the message
      * @param id The id assigned to the ChatMessage
      */
-    makeSent(index:number,message:ChatMessage ) {
+    makeSent(index: number, message: ChatMessage) {
         if (!(this.#log[index] instanceof UnsentMessage)) return;
         message.channel = this.channel;
-        this.#log.splice(index,1,message);
+        this.#log.splice(index, 1, message);
     }
 
     /**

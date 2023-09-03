@@ -5,6 +5,16 @@ import BitField from "bitfield";
 export type PreferenceJson = { flags: bigint | BigInt, message_grouping_timeout: number, layout: number, text_size: number, locale: string }
 
 /**
+ * returns the UserPreference flags (may be used in stylesheet)
+ * 
+ * The flags' order specified by the API reference
+ */
+export const PREFERENCE_FLAGS = [
+    "render-attachments",
+    "autoplay-gifs"
+]
+
+/**
  * Singleton to represent the user's settings
  * 
  * The values specified here shall be stored on the server and do match with the API's specification
@@ -28,7 +38,7 @@ export class UserPreferences {
      * Server default is 60, there is no upper bound yet.
      * Negative values is not allowed and shall be treated as zero (letting the client show message time at al times).
      */
-    messageGroupingTimeout: NumericSetting = new NumericSetting("settings.message_grouping_timeout", 0, 180);
+    messageGroupingTimeout: NumericSetting = new NumericSetting("settings.message_grouping_timeout", 0, 600);
 
     /**
      * Layout spacing setting
@@ -48,7 +58,7 @@ export class UserPreferences {
      * 
      * Message font size shall be treated as the base font size, headings, comments shall be adjusted accordingly
      */
-    textSize: NumericSetting = new NumericSetting("settings.font_size", 8, 24);
+    textSize: NumericSetting = new NumericSetting("settings.font_size", 8, 36);
 
     /**
      * Sets the langusage of the UI
@@ -71,10 +81,10 @@ export class UserPreferences {
     };
 
     static flagFromBigInt(value: bigint): BitField {
-        let field = new BitField();
+        let field = new BitField(0, { grow: Infinity });
         let i = 0;
         while (value !== 0n) {
-            field.set(i, BigInt(value) % 2n == 0n);
+            field.set(i, value % 2n == 0n);
             value /= 2n;
             i++;
         }
@@ -135,6 +145,32 @@ export class UserPreferences {
     copy(): UserPreferences {
         return new UserPreferences(this.flagsBigInt, this.messageGroupingTimeout.value, this.layout.currentIndex, this.locale.value, this.textSize.value);
     }
+
+    /**
+     * Applies the current settings in the stylesheet's root element
+     * 
+     * All flags are fed into whethet the client's currently using that information or not
+     * 
+     * Some behavioral settings may not appear in the stylesheet, those values are irrelevant for styling
+     */
+    applyStyleSettings() {
+        if (!document) {
+            throw new Error("User preferences cannot be applied outside the client's scope! (there is no document to apply style variables)");
+        }
+        document.documentElement.style.setProperty("--layout", this.styleLayout);
+        document.documentElement.style.setProperty("--font-size",`${this.textSize.value}px`);
+        //Set flags, if a CSS variable present, it's corresponding setting is considered as set
+        for (let i = 0; i < this.flags.length; i++) {
+            if (this.flags[i].isSet) {
+                document.documentElement.style.setProperty(`--flag-${PREFERENCE_FLAGS[i]}`, "1");
+            }
+        }
+    }
+
+    get styleLayout(){
+        return ["compact", "normal", "comfy"][this.layout.currentIndex];
+    }
+
 }
 
 export class PreferenceStore extends CustomStore<UserPreferences>{
@@ -142,12 +178,17 @@ export class PreferenceStore extends CustomStore<UserPreferences>{
         super(null);
     }
 
-    fromJson(json: any) {
+    fromJson(json: any, applyStyle:boolean = false) {
         this._value = UserPreferences.fromJson(json);
+        if(applyStyle){
+            this._value.applyStyleSettings();
+        }
+        this.notify();
     }
 
     set(value: UserPreferences) {
         this._value = value;
+        this.notify();
     }
 }
 

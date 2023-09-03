@@ -144,7 +144,7 @@
     },
     "message_grouping_timeout": {
       "name": "Üzenetcsoport",
-      "description": "Az az időtartam, amin belül az azonos küldőtől érkező egymást követő üzenetek a rendszer szemantikusan kapcsolódónak tekinti.\nAz üzenet azon információit, mint a küldő kilétét, vagy az üzenet időpontját csak a csoport első előfordulásánál kerülnek megjelenítésre"
+      "description": "Az az időtartam, amin belül az azonos küldőtől érkező egymást követő üzeneteket a rendszer szemantikusan kapcsolódónak tekinti.\nAz üzenet azon információit, mint a küldő kilétét, vagy az üzenet időpontját csak a csoport első előfordulásánál kerülnek megjelenítésre"
     },
     "locale": {
       "name": "Megjelenített nyelv",

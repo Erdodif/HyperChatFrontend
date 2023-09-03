@@ -5,15 +5,14 @@
     import ChatLog from "$lib/components/ChatLog.svelte";
     import { initializing, onSocketFinished } from "$lib/stores/socketHandler";
     import type Channel from "$lib/classes/Channel";
-    import { onMount } from "svelte";
 
     let channel: Channel;
 
-    onSocketFinished(()=>{
+    onSocketFinished(() => {
         channel = $guildSet.searchChannel($page.params.channel);
     });
 
-    $:channel = $guildSet.searchChannel($page.params.channel);
+    $: channel = $guildSet.searchChannel($page.params.channel);
 </script>
 
 {#if $initializing}

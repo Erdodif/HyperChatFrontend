@@ -43,3 +43,15 @@
         border-radius: 1em;
     }
 }
+
+/**
+One key color becomes thirteen tones
+A tonal palette consists of thirteen tones, including white and black. 
+ tone value of 100 is equivalent to the idea of light at its maximum and results in white. 
+Every tone value between 0 and 100 expresses the amount of light present in the color.
+*/
+@mixin tone($color, $tone: 0) {
+    //Material theme's 13 predefined tones for chosen color
+    //Preset values are:
+    // 0 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 95 | 99 | 100
+}

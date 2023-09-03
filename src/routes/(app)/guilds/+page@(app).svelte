@@ -88,7 +88,7 @@
                     position: absolute;
                     left: 4em;
                     bottom: 30%;
-                    font-size: 0.675em;
+                    font-size: 0.675rem;
                     background: var(--background);
                     padding-inline: 1ch;
                     border-radius: 1ch;

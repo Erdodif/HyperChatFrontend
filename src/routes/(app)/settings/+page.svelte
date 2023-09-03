@@ -26,6 +26,7 @@
         ) {
             alert($_("settings.saved"))
             $userPreferences = settings
+            $userPreferences.applyStyleSettings();
         }
     };
 </script>
@@ -73,6 +74,7 @@
         width: 95%;
     }
     .settingpage {
+        font-size: 1rem;
         margin: 0;
         overflow: hidden;
         height: 100%;
@@ -81,8 +83,8 @@
             overflow-y: auto;
             max-width: 40rem;
             margin-inline: auto;
-            padding-inline: 1em;
-            padding-block-end: 2em;
+            padding-inline: 1rem;
+            padding-block-end: 2rem;
             @include scrollbar;
             input[type="submit"] {
                 @include button;
