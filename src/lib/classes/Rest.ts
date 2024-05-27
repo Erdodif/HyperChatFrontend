@@ -55,7 +55,7 @@ export default class Rest {
         return new Promise(function (resolve, reject) {
             const xhr = new XMLHttpRequest();
             xhr.timeout = 2000;
-            xhr.onreadystatechange = function (e) {
+            xhr.onreadystatechange = function () {
                 if (xhr.readyState === XMLHttpRequest.DONE) {
                     if (xhr.status === 200 || xhr.status === 201) {
                         resolve(xhr.response)

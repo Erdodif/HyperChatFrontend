@@ -77,5 +77,11 @@
                 $shadow-color: var(--background)
             );
         }
+        a {
+            @include button;
+            max-width: 20ch;
+            text-overflow: ellipsis;
+            overflow-wrap: break-word;
+        }
     }
 </style>

@@ -158,7 +158,7 @@ export class UserPreferences {
             throw new Error("User preferences cannot be applied outside the client's scope! (there is no document to apply style variables)");
         }
         document.documentElement.style.setProperty("--layout", this.styleLayout);
-        document.documentElement.style.setProperty("--font-size",`${this.textSize.value}px`);
+        document.documentElement.style.setProperty("--font-size",`${this.textSize.value+6}px`);
         //Set flags, if a CSS variable present, it's corresponding setting is considered as set
         for (let i = 0; i < this.flags.length; i++) {
             if (this.flags[i].isSet) {

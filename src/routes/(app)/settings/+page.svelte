@@ -14,7 +14,7 @@
     let settings: UserPreferences;
     userPreferences.subscribe((prefs) => (settings = prefs.copy()))();
 
-    const handleSave = async (event) => {
+    const handleSave = async () => {
         if (
             (
                 await Rest.sendBigIntToServer(

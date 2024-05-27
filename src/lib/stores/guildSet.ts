@@ -62,7 +62,7 @@ export class GuildSet {
         return this._guilds.has(key);
     }
 
-    remove(key: string): boolean {
+    removeGuild(key: string): boolean {
         let success = this._guilds.delete(key);
         return success;
     }
@@ -121,8 +121,8 @@ export class GuildSetStore extends CustomStore<GuildSet> {
         return success;
     }
 
-    remove(key: string): boolean {
-        let success = this._value.remove(key);
+    removeGuild(key: string): boolean {
+        let success = this._value.removeGuild(key);
         this.notify();
         return success;
     }

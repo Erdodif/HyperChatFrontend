@@ -13,14 +13,23 @@ export enum UserStatus {
 
 export default class User {
     username: string;
-    displayName: string;
+    private _displayName: string;
+    get hasDisplayName() : boolean{
+        return this._displayName !== null  && this._displayName !== undefined;
+    }
+    get displayName(): string {
+        if (!this._displayName) {
+            return this.username;
+        }
+        return this._displayName;
+    }
     readonly id: string;
     status: UserStatus;
 
     constructor(id: string, username: string, display_name: string) {
         this.id = id;
         this.username = username;
-        this.displayName = display_name;
+        this._displayName = display_name;
         this.status = UserStatus.OFFLINE;
     }
 
@@ -42,18 +51,18 @@ export default class User {
     }
 
     static fromJsonOrRedirect(content: any | UserJson, from: string = "/"): User {
-        if (!content.username || !content.display_name || !content.id) {
+        if (!content.username && !content.display_name && !content.id) {
             let login = new URL("/login");
             if (from !== "/") {
                 login.searchParams.append("from", from);
             }
             goto(login);
         }
-        return new User(content.id, content.display_name, content.username);
+        return new User(content.id, content.username, content.display_name);
     }
 
     static fromJson(content: any | UserJson): User {
-        return new User(content.id, content.display_name, content.username);
+        return new User(content.id, content.username, content.display_name);
     }
 
     static fromLocalStorage(): User {

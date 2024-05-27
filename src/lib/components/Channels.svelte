@@ -16,7 +16,7 @@
         return [
             new ContextMenuItem(channel.name),
             new ButtonAction($_("channel.delete"), () =>
-                Rest.getJsonFromServer(`channels/${channel.id}`,RestMethod.DELETE)
+                Rest.sendToServer(`channels/${channel.id}`, null, RestMethod.DELETE)
             ),
         ];
     };

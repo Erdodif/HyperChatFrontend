@@ -1,14 +1,25 @@
 <script lang="ts">
     import { page } from "$app/stores";
-    import type Guild from "$lib/classes/Guild";
+    import Guild from "$lib/classes/Guild";
     import GuildPage from "$lib/components/GuildPage.svelte";
     import { guildSet } from "$lib/stores/guildSet";
     import { initializing } from "$lib/stores/socketHandler";
     import { _ } from "svelte-i18n";
+    import Rest from "$lib/classes/Rest";
+    import { writable } from "svelte/store";
 
     let guild: Guild;
-
-    $: guild = $guildSet.guilds.get($page.params.guild);
+    let checked = writable(false)
+    $: {
+        guild = $guildSet.guilds.get($page.params.guild);
+        if(!guild && !$checked){
+            Rest.getJsonFromServer(`guilds/${$page.params.guild}`)
+            .then(response => {
+                guild = new Guild(response.id, response.name, response.owner_id);
+            });
+            $checked = true;
+        }
+    }
 </script>
 
 {#if $initializing}

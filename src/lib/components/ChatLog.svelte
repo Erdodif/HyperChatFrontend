@@ -135,7 +135,6 @@
     };
 
     //$: chatLog = new ChatStore(chatInit);
-
     let attachments = writable<Array<File>>([]);
 
     let attachment: HTMLInputElement;
@@ -194,7 +193,7 @@
                 name="message"
                 bind:value={message}
                 id="send-message"
-                placeholder={$_("chat.message-placeholder")}
+                placeholder={$_("chat.message-placeholder")+ $chatLog.channel.id}
             />
             <input
                 type="submit"

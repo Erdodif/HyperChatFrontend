@@ -15,10 +15,12 @@ export class ContextMenuItem {
 
 export default class ButtonAction extends ContextMenuItem {
     action: () => void;
+    autoClose: boolean;
 
-    constructor(name: string, action: () => void, icon: string | null = null, center: boolean = false) {
+    constructor(name: string, action: () => void, icon: string | null = null, center: boolean = false, autoClose: boolean = true) {
         super(name, icon, center);
         this.action = action;
+        this.autoClose = autoClose;
     }
 }
 
@@ -43,7 +45,7 @@ export class ToogleAction extends ContextMenuItem {
     }
 }
 
-export class Expandable extends ContextMenuItem{
+export class Expandable extends ContextMenuItem {
     options: ContextMenuItem[];
     expanded: boolean;
 

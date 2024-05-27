@@ -1,10 +1,13 @@
 <script lang="ts">
     import { page } from "$app/stores";
     import userPreferences from "$lib/stores/userPreferences";
+    import { writable } from "svelte/store";
 
     export let mime: string = "unknown";
 
-    const mimeSource = `${$page.url.origin}/mimetypes/${mime.replaceAll(
+    let mimeSource = writable()
+
+    $mimeSource = `${$page.url.origin}/mimetypes/${mime.replaceAll(
         "/",
         "-"
     )}.svg`;
@@ -12,9 +15,9 @@
 
 <img
     class="mime"
-    src={mimeSource}
+    src={$mimeSource}
     alt={mime}
-    on:error={() => (this.src = `${$page.url.origin}/mimetypes/unknown.svg`)}
+    on:error={() => ($mimeSource = `${$page.url.origin}/mimetypes/unknown.svg`)}
     data-layout={$userPreferences.styleLayout}
 />
 

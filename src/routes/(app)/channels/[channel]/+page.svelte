@@ -5,6 +5,9 @@
     import ChatLog from "$lib/components/ChatLog.svelte";
     import { initializing, onSocketFinished } from "$lib/stores/socketHandler";
     import type Channel from "$lib/classes/Channel";
+    import { slide, fade  } from "svelte/transition"
+    import { goto } from "$app/navigation";
+    import { _ } from "svelte-i18n";
 
     let channel: Channel;
 
@@ -25,13 +28,17 @@
                     {channel.name}
                 </h1>
             </div>
-            <div class="chat">
-                <ChatLog chatInit={channel.chat} />
-            </div>
+            {#key channel}
+                <div class="chat">
+                    <ChatLog chatInit={channel.chat} />
+                </div>
+            {/key}
         </div>
     </GuildPage>
 {:else}
-    <span>404</span>
+    <span in:fade={{duration:450}} on:introend={()=> setTimeout(() => {goto("/")}, 1000)}>
+        {$_("errors.channel.not_found")}
+    </span>
 {/if}
 
 <style lang="scss">

@@ -7,6 +7,8 @@
         LinkAction,
         ToogleAction,
     } from "$lib/classes/ContextMenuOption";
+    import {fade, blur,fly,slide,scale,crossfade } from "svelte/transition";
+    import {writable} from "svelte/store";
 
     import { createEventDispatcher } from "svelte";
     import { _ } from "svelte-i18n";
@@ -17,6 +19,7 @@
     const dispatch = createEventDispatcher();
 
     function close() {
+        visible = false;
         dispatch("close");
     }
 
@@ -63,6 +66,8 @@
         node.style.left = `${x}px`;
         visible = true;
     };
+
+    let _counter = writable(0);
 </script>
 
 <svelte:document
@@ -72,8 +77,13 @@
 />
 
 <div id="context-menu" data-visible={visible} bind:this={node}>
-    {#each options as option}
-        <span class="context-option">
+    {#if visible}
+    <div id="context-menu-content" in:slide={{axis:'y', duration:40* options.length}} on:introstart={()=>$_counter=0} on:outroend={()=>$_counter=0}>
+    {#each options as option, i}
+        {#if option.icon}
+            <img src={option.icon} alt={option.name} />
+        {/if}
+        <span class={option.center?"context-option centered":"context-option"}>
             {#if option instanceof Expandable}
                 <svelte:self
                     options={option.options}
@@ -83,17 +93,17 @@
                     {option.name}
                 </button>
             {:else if option instanceof ToogleAction}
-                <label for={Uid.getId()}>
-                    {option.name}
-                </label>
                 <input
                     type="checkbox"
                     name={option.isFor}
                     id={Uid.currentId()}
                     bind:checked={option.isSet}
                 />
+                <label for={Uid.getId()}>
+                    {option.name}
+                </label>
             {:else if option instanceof ButtonAction}
-                <button on:click={option.action}>
+                <button on:click={()=>{option.action(); if(option.autoClose) close()}}>
                     {option.name}
                 </button>
             {:else if option instanceof LinkAction}
@@ -104,45 +114,52 @@
                     {option.name}
                 </a>
             {:else}
-                <span>{option.name}</span>
-            {/if}
-            {#if option.icon}
-                <img src={option.icon} alt={option.name} />
+                <div class="text-option">{option.name}</div>
             {/if}
         </span>
     {:else}
         <span class="context-option">{$_("errors.contextmenu.no-option")}</span>
     {/each}
+    </div>
+    {/if}
 </div>
 
 <style lang="scss">
+    .centered{
+        margin-inline:auto;
+        max-width:100%;
+    }
     #context-menu {
         z-index: 999;
         user-select: none;
         font-size: 0.925em;
-        max-width: 20ch;
+        max-width: 40ch;
         min-width: 13ch;
         position: fixed;
         display: none;
         box-sizing: border-box;
-        padding-block: 0.1ch;
-        border: 0.15ch solid var(--on-secondary);
-        .context-option {
+        #context-menu-content{
+            background-color: var(--secondary-variant);
+            box-sizing: border-box;
             padding-block: 0.1ch;
-            padding-inline-start: 0.8ch;
-            padding-inline-end: calc(1.2em + 0.8ch);
-        }
-        &[data-visible="true"] {
+            border: 0.15ch solid var(--on-secondary);
             display: flex;
             flex-direction: column;
             flex-wrap: nowrap;
+            .context-option {
+                padding-block: 0.1ch;
+                padding-inline-start: calc(1.2em + 0.8ch);
+                padding-inline-end: 0.8ch;
+            }
         }
-        background-color: var(--secondary-variant);
+        &[data-visible="true"] {
+            display:block;
+        }
         color: var(--on-secondary);
         img,
         input {
             position: absolute;
-            right: 0.4ch;
+            left: 0.4ch;
             max-width: 1.125em;
             max-height: 1.125em;
             height: 100%;
@@ -172,6 +189,11 @@
                     filter: drop-shadow(0.1ch 0.1ch 0.2ch var(--primary));
                 }
             }
+        }
+        .text-option{
+            overflow-x:hidden;
+            overflow-y:auto;
+            overflow-wrap:break-word;
         }
     }
 </style>

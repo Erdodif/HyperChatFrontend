@@ -50,12 +50,19 @@
         }),
         new EventHandler("CHANNEL_CREATE", (event) => {
             let guild = guildSet.get(event.quild_id);
-            guildSet.setChannel(
-                new Channel(event.id, event.name, event.type, guild)
-            );
+            guildSet.addChannel(guild.id, new Channel(event.id, event.name, event.type, guild));
         }),
         new EventHandler("GUILD_REMOVE", (event) => {
-            $guildSet.remove(event.id);
+            $guildSet.removeGuild(event.id);
+            if($page.params && $page.params.guild === event.id){
+                goto(`/guilds`);
+            }
+        }),
+        new EventHandler("CHANNEL_REMOVE", (event) => {
+            $guildSet.removeChannel(event.guild_id, event.id);
+            if($page.params && $page.params.channel === event.id){
+                goto(`/guilds/${event.guild_id}`);
+            }
         }),
         new EventHandler("MESSAGE_CREATE", (event) => {
             let message: ChatMessage = ChatMessage.fromJson(
@@ -69,6 +76,7 @@
     onMount(async () => {
         if (!(await Rest.isTokenValid("users/@self"))) {
             goto(`/login?from=${$page.url.pathname}`);
+            return;
         }
         userPreferences.fromJson(
             (await Rest.getJsonBigint(

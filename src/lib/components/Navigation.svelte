@@ -10,7 +10,12 @@
 <nav data-layout={$userPreferences ? $userPreferences.styleLayout : "normal"}>
     <a href="/"> {$_("title.index")} </a>
     {#if $user}
-        <span>{$user.username} ({$_("user.aka")}: {$user.displayName})</span>
+        <span>
+            {$user.username} 
+            {#if $user.display_name}
+            ({$_("user.aka")}: {$user.displayName})
+            {/if}
+        </span>
         <button
             on:click={() => {
                 localStorage.removeItem("user_name");
@@ -19,7 +24,9 @@
                 localStorage.removeItem("auth-token");
                 guildSet.resetGuildSet();
                 goto(`/login?from=${$page.url.href}`, { replaceState: true });
-            }}>Logoff</button
+            }}>
+            {$_("nav.logout")}
+            </button
         >
     {:else}
         <a data-sveltekit-replacestate href="/login"> Login </a>

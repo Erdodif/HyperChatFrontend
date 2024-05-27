@@ -53,6 +53,9 @@
       "delete-failed": "Nem sikerült törölni a szervert",
       "missing": "Szerver nem található"
     },
+    "channel":{
+      "not_found":"Csatorna nem található, tovább a főoldalra..."
+    },
     "setting": {
       "numeric": {
         "out_of_bounds": "A megadott számnak {min} és {max} között kell lennie!"

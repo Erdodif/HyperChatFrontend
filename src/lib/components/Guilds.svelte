@@ -13,6 +13,7 @@
     import type Guild from "$lib/classes/Guild";
     import Rest, { RestMethod } from "$lib/classes/Rest";
     import { _ } from "svelte-i18n";
+    import {writable} from "svelte/store";
 
     const randomImage = () => {
         switch (Math.floor(Math.random() * 4)) {
@@ -35,12 +36,12 @@
             $_("guild.open-new-tab"),
             `/guilds/${guild.id}`,
             null,
-            true,
+            false,
             true
         ),
         guild.ownerId == $user.id
-            ? new ButtonAction($_("guild.delete"), () => deleteGuild(guild))
-            : new ContextMenuItem($_("guild.cannot-delete")),
+            ? new ButtonAction($_("guild.delete"), () => deleteGuild(guild), null, false)
+            : new ContextMenuItem($_("guild.cannot-delete"), null, true),
     ];
 
     const deleteGuild = async (guild: Guild) => {
@@ -53,11 +54,10 @@
             )
         ) {
             const response = await Rest.sendToServer(
-                `guilds${guild.id}`,
+                `guilds/${guild.id}`,
                 null,
                 RestMethod.DELETE
             );
-            console.log(response);
             if (response.ok) {
                 alert($_("guild.deleted"));
                 return;
@@ -67,27 +67,33 @@
         }
     };
 
-    $: () => console.log($guildSet);
+    let guilds = [];
+
+    $: guilds = $guildSet.guildsArray
 </script>
 
 <div class="guilds">
-    {#each $guildSet.guildsArray as guild, i}
-        <a
-            class="guild"
-            id={guild.id}
-            href="/guilds/{guild.id}"
-            on:contextmenu|preventDefault={() => (activeIndex = i)}
-        >
+    {#each guilds as guild, i}
+        {#if guild.id}
+        <div
+            class="guild">
             <ContextMenu
                 options={getOptions(guild)}
                 visible={activeIndex == i}
                 on:close={() => (activeIndex = null)}
             />
-            <img src={randomImage()} alt={guild.name} />
-            <span class="name">
-                {guild.name}
-            </span>
-        </a>
+            <a
+                id={guild.id}
+                href="/guilds/{guild.id}"
+                on:contextmenu|preventDefault={() => (activeIndex = i)}
+            >
+                <img src={randomImage()} alt={guild.name} />
+                <span class="name">
+                  {guild.name}
+                </span>
+            </a>
+        </div>
+        {/if}
     {/each}
     <a href="/guilds/create" id="create">+</a>
 </div>
@@ -101,6 +107,7 @@
         gap: 0.275em;
         overflow-x: hidden;
         isolation: isolate;
+        box-sizing:border-box;
         #create {
             line-height: 1.625em;
             user-select: none;
@@ -124,7 +131,7 @@
             }
         }
         .guild {
-            box-sizing: border-box;
+            display: grid;
             user-select: none;
             margin: 0.225em;
             aspect-ratio: 1 / 1;
@@ -139,23 +146,29 @@
             .name {
                 display: none;
             }
-
-            &:hover {
-                border: 0.1ch dashed var(--primary);
-                .name {
-                    margin-block-start:-1em;
-                    max-width: 20ch;
-                    width: max-content;
-                    border: .1ch solid var(--primary-variant);
-                    display: block;
-                    position: absolute;
-                    left: 4em;
-                    font-size: 0.675em;
-                    background: var(--background);
-                    padding-inline: 1ch;
-                    padding-block: .5ch;
-                    border-radius: 1.3ch;
-                    color: var(--on-background);
+            a{
+                width:100%;
+                height:100%;
+                &:hover {
+                    border: 0.1ch dashed var(--primary);
+                    .name {
+                        margin-block-start:-1em;
+                        max-width: 20ch;
+                        text-overflow:ellipsis;
+                        overflow: hidden;
+                        white-space:nowrap;
+                        width: max-content;
+                        border: .1ch solid var(--primary-variant);
+                        display: block;
+                        position: absolute;
+                        left: 4em;
+                        font-size: 0.675em;
+                        background: var(--background);
+                        padding-inline: 1ch;
+                        padding-block: .5ch;
+                        border-radius: 1.3ch;
+                        color: var(--on-background);
+                    }
                 }
             }
         }

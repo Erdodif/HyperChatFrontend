@@ -53,6 +53,9 @@
       "delete-failed": "Failed to delete guild",
       "missing": "Guild not found"
     },
+    "channel":{
+      "not_found":"Channel not found, move back to home..."
+    },
     "setting": {
       "numeric": {
         "out_of_bounds": "The given number is out of bounds! Is shall be between {min} and {max}."

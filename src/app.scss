@@ -1,4 +1,8 @@
-@use "variables";
+@use "variables" as *;
+*{
+  box-sizing: border-box;
+}
+
 :root {
   //UserPreference variables
   --font-size: 20px;
@@ -27,13 +31,16 @@
 }
 
 body {
-  min-height: 100vh;
+  height: 100vh;
+  width: 100vw;
+  max-width: 100%;
   margin: 0;
   padding: 0;
   overflow: auto;
 
   @supports (min-height: 100dvh) {
-    min-height: 100dvh;
+    height: 100dvh;
+    width: 100dvw;
   }
 }
 

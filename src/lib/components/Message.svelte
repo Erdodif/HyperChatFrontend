@@ -113,7 +113,7 @@
     bind:this={element}
     data-modifiers={modifierString}
     data-layout={$userPreferences.styleLayout}
-    transition:fly
+    in:fly={{duration:250}}
 >
     {#if !(messageType === "self")}
         <span class="author">
@@ -261,12 +261,6 @@
         flex-direction: column;
         flex-wrap: nowrap;
         font-size: 1rem;
-        a {
-            @include button;
-            max-width: 20ch;
-            text-overflow: ellipsis;
-            overflow-wrap: break-word;
-        }
         &[data-from="self"] {
             margin-inline-start: auto;
             text-align: right;
