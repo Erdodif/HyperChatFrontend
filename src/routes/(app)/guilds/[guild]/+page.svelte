@@ -7,7 +7,6 @@
     import { _ } from "svelte-i18n";
     import Rest from "$lib/classes/Rest";
     import { writable } from "svelte/store";
-
     let guild: Guild;
     let checked = writable(false)
     $: {

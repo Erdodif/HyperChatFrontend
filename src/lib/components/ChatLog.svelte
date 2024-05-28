@@ -4,7 +4,7 @@
     import Rest, { RestMethod } from "$lib/classes/Rest";
     import { user } from "$lib/stores/auth";
     import { _ } from "svelte-i18n";
-    import { initializing, onSocketFinished } from "$lib/stores/socketHandler";
+    import socketHandler, { initializing, onSocketFinished } from "$lib/stores/socketHandler";
     import { onMount } from "svelte";
     import type ChatLog from "$lib/classes/ChatLog";
     import { ChatStore } from "$lib/stores/guildSet";

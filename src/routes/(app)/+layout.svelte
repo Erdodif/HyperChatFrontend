@@ -53,13 +53,13 @@
             guildSet.addChannel(guild.id, new Channel(event.id, event.name, event.type, guild));
         }),
         new EventHandler("GUILD_REMOVE", (event) => {
-            $guildSet.removeGuild(event.id);
+            guildSet.removeGuild(event.id);
             if($page.params && $page.params.guild === event.id){
                 goto(`/guilds`);
             }
         }),
         new EventHandler("CHANNEL_REMOVE", (event) => {
-            $guildSet.removeChannel(event.guild_id, event.id);
+            guildSet.removeChannel(event.guild_id, event.id);
             if($page.params && $page.params.channel === event.id){
                 goto(`/guilds/${event.guild_id}`);
             }
