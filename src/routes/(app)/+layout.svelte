@@ -33,6 +33,10 @@
         new EventHandler("INVALID_SESSION", () => {
             goto(`/login?from=${$page.url.pathname}`);
         }),
+        new EventHandler("HELLO", (event) => {
+            $socketHandler.startHeartBeats(event.heartbeat_interval);
+        }),
+        new EventHandler("HEARTBEAT_ACK", () => {}),
         new EventHandler("READY", (event) => {
             $initializing = true;
             $user = User.fromJsonOrRedirect(event.user, $page.url.pathname);
@@ -71,6 +75,9 @@
             );
             guildSet.pushToChatLog(event.channel_id, message, event.nonce);
         }),
+        new EventHandler("INVALID_SESSION",(event) => {
+            console.error("Invalid session in SocketHandler, which is unhandled.");
+        })
     ];
 
     onMount(async () => {

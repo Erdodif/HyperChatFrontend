@@ -15,8 +15,10 @@ export default class SocketHandler {
     #token: string;
     #gateway: WebSocket;
     #handlers: Map<string, (event: any) => void>;
+    #heart: number;
 
     constructor(token, handlerBundle: EventHandler[] = []) {
+        this.#heart = 0;
         this.#token = token;
         this.#handlers = new Map<string, (event: any) => void>();
         this.attachHandlerbundle(handlerBundle);
@@ -25,6 +27,7 @@ export default class SocketHandler {
         this.#gateway.onclose = this.closeEvent;
         this.#gateway.onmessage = this.messageEvent;
     }
+
 
     changeToken(token: string) {
         this.#token = token;
@@ -41,16 +44,11 @@ export default class SocketHandler {
     }
 
     readonly closeEvent = async (ec) => {
-        if (JSON.parse(ec.reason).event == "INVALID_SESSION") {
-            if (this.#handlers.has("INVALID_SESSION")) {
-                this.#handlers.get("INVALID_SESSION")(ec);
-                return;
-            }
-            await goto("/login");
-            throw new Error("Invalid session in SocketHandler, wich is unhandled.");
+        if (this.#heart != 0) {
+            clearInterval(this.#heart);
         }
+        console.log(ec.reason);
         console.log("Disconnected");
-        console.warn(JSON.parse(ec.reason).data);
     }
 
     readonly openEvent = async () => {
@@ -64,6 +62,16 @@ export default class SocketHandler {
         (data: string | ArrayBufferLike | Blob | ArrayBufferView) => {
             this.#gateway.send(data);
         }
+
+
+    readonly beatManually = () => {
+        this.#gateway.send(JSON.stringify({ event: "HEARTBEAT" }));
+    }
+
+    startHeartBeats(interval: number) {
+        this.beatManually();
+        this.#heart = setInterval(this.beatManually, interval);
+    }
 
     readonly messageEvent = async (event: MessageEvent) => {
         let payload = JSON.parse(event.data);
