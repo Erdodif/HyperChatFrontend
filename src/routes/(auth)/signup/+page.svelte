@@ -53,7 +53,7 @@
             autocomplete="current-password"
         />
         {#if password !== password2}
-            <span class="error"> The two password must match! </span>
+            <span class="error"> {$_("errors.auth.password-mismatch")}</span>
         {/if}
     </div>
     <button type="submit"> Sign up </button>

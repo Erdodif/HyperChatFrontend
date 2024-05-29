@@ -1,6 +1,6 @@
 import { PUBLIC_SERVER_URL, PUBLIC_FILE_SERVER_URL } from "$env/static/public";
 import type Attachment from "./Attachment";
-import {stringify, parse} from "json-bigint-native";
+import { stringify, parse } from "json-bigint-native";
 
 export enum RestMethod {
     GET = "GET",
@@ -99,8 +99,8 @@ export default class Rest {
      * @param method 
      * @returns 
      */
-    static async getJsonBigint(location: string, method: RestMethod, ...bigIntkeys:string[]): Promise<any> {
-        let result = parse(await(await fetch(`${PUBLIC_SERVER_URL}/${location}`, {
+    static async getJsonBigint(location: string, method: RestMethod, ...bigIntkeys: string[]): Promise<any> {
+        let result = parse(await (await fetch(`${PUBLIC_SERVER_URL}/${location}`, {
             method: method,
             headers: {
                 "Content-Type": "application/json",
@@ -108,8 +108,8 @@ export default class Rest {
                 Accept: "application/json"
             }
         })).text());
-        for(const key of bigIntkeys){
-            if (Object.hasOwn(result,key)){
+        for (const key of bigIntkeys) {
+            if (Object.hasOwn(result, key)) {
                 result[key] = BigInt(result[key]);
             }
         }

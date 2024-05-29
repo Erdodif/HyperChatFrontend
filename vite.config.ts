@@ -11,6 +11,10 @@ export default defineConfig({
     topLevelAwait()
   ],
 
+  optimizeDeps:{
+    exclude:['svelte-routing']
+  },
+
   server: {
     fs: {
       strict: false,

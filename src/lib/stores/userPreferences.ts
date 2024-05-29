@@ -1,6 +1,7 @@
 import { CustomStore } from "./CustomStore";
-import { BooleanSetting, NumericSetting, ConstrainedTextSetting, SelectionSetting } from "$lib/classes/Settings";
+import { BooleanSetting, NumericSetting, ConstrainedTextSetting, SelectionSetting, Setting } from "$lib/classes/Settings";
 import BitField from "bitfield";
+import { locale as GlobalLocale, locales as GlobalLocales } from "svelte-i18n";
 
 export type PreferenceJson = { flags: bigint | BigInt, message_grouping_timeout: number, layout: number, text_size: number, locale: string }
 
@@ -20,6 +21,10 @@ export const PREFERENCE_FLAGS = [
  * The values specified here shall be stored on the server and do match with the API's specification
  */
 export class UserPreferences {
+    get settings(): Setting[] {
+        return [this.messageGroupingTimeout, this.layout, this.textSize, this.locale, ...this.flags];
+    }
+
     /**
      * Boolean values that together holds one value (as it is stored as a bitfield on the server)
      * 
@@ -61,11 +66,11 @@ export class UserPreferences {
     textSize: NumericSetting = new NumericSetting("settings.font_size", 8, 36);
 
     /**
-     * Sets the langusage of the UI
+     * Sets the language of the UI
      * 
      * Server default is `en_US`
      * 
-     * If the client does not support the locale it is on the client which locale should it fall back to
+     * If the client does not support the locale, it'll fall back to en_US
      */
     locale: ConstrainedTextSetting = new ConstrainedTextSetting("settings.locale", /^[a-z]{2}(?:_[A-Z]{2})?$/);
 
@@ -78,6 +83,11 @@ export class UserPreferences {
         this.layout.current = this.layout.options[layout];
         this.locale.value = locale;
         this.textSize.value = textSize;
+        GlobalLocales.subscribe((locales) => {
+            if ((locales as Array<string>).includes(this.locale.value.replace(/[_.]/, '-'))) {
+                GlobalLocale.set(this.locale.value.replace(/[_.]/, '-'));
+            }
+        });
     };
 
     static flagFromBigInt(value: bigint): BitField {
@@ -142,8 +152,17 @@ export class UserPreferences {
         }
     }
 
+    /**
+     * Creates a deep copy of this preference bundle
+     */
     copy(): UserPreferences {
-        return new UserPreferences(this.flagsBigInt, this.messageGroupingTimeout.value, this.layout.currentIndex, this.locale.value, this.textSize.value);
+        return new UserPreferences(
+            this.flagsBigInt.valueOf(),
+            this.messageGroupingTimeout.value.valueOf(),
+            this.layout.currentIndex.valueOf(),
+            this.locale.value.repeat(1),
+            this.textSize.value.valueOf()
+        );
     }
 
     /**
@@ -158,7 +177,7 @@ export class UserPreferences {
             throw new Error("User preferences cannot be applied outside the client's scope! (there is no document to apply style variables)");
         }
         document.documentElement.style.setProperty("--layout", this.styleLayout);
-        document.documentElement.style.setProperty("--font-size",`${this.textSize.value+6}px`);
+        document.documentElement.style.setProperty("--font-size", `${this.textSize.value + 6}px`);
         //Set flags, if a CSS variable present, it's corresponding setting is considered as set
         for (let i = 0; i < this.flags.length; i++) {
             if (this.flags[i].isSet) {
@@ -167,20 +186,43 @@ export class UserPreferences {
         }
     }
 
-    get styleLayout(){
+    /**
+     * The current layout preset in string representation
+     */
+    get styleLayout() {
         return ["compact", "normal", "comfy"][this.layout.currentIndex];
+    }
+
+    /**
+     * Compares each setting instance and returns how many are different
+     * 
+     * -1 means that the two preference objects' settings[] are different
+     * @param prefs
+     */
+    compare(prefs: UserPreferences) {
+        if (prefs.settings.length !== this.settings.length) return -1;
+        let diff = 0;
+        for (let i = 0; i < this.settings.length; i++) {
+            if (!this.settings[i].equals(prefs.settings[i])) {
+                console.warn(`At (${i}):`);
+                console.log(this.settings[i]);
+                console.log(prefs.settings[i]);
+                diff += 1;
+            }
+        }
+        return diff;
     }
 
 }
 
-export class PreferenceStore extends CustomStore<UserPreferences>{
+export class PreferenceStore extends CustomStore<UserPreferences> {
     constructor() {
         super(null);
     }
 
-    fromJson(json: any, applyStyle:boolean = false) {
+    fromJson(json: any, applyStyle: boolean = false) {
         this._value = UserPreferences.fromJson(json);
-        if(applyStyle){
+        if (applyStyle) {
             this._value.applyStyleSettings();
         }
         this.notify();

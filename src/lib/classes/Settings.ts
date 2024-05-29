@@ -4,7 +4,29 @@
  * It's key represents the `i18n` key so it's name and description shall be displayed based on that. 
  */
 export abstract class Setting {
-    localeKey: string
+    /**
+     * Simple type representation to make sure equality can be checked on raw json exports too
+     */
+    abstract readonly type: string;
+    /**
+     * Key to determine the language
+     */
+    localeKey: string;
+    /**
+     * Compares two setting objects
+     * 
+     * Note that only the held values are compared to determine equality
+     * 
+     * Only use this function to check deviation from data on the server
+     * @param setting The other setting instance
+     */
+    abstract equals(setting: Setting): boolean;
+    /**
+     * Creates a deep copy of the Setting
+     * 
+     * The resulted setting will not be dependent to the originin by any means
+     */
+    abstract copy(): Setting;
 
     constructor(localeKey: string) {
         this.localeKey = localeKey;
@@ -19,6 +41,7 @@ export abstract class Setting {
  * Server side it is stored as a non-negative integer (index)
  */
 export class SelectionSetting extends Setting {
+    type = "selection";
     readonly options: string[];
     private _currentIndex: number = 0;
     get currentIndex(): number { return this._currentIndex.valueOf() };
@@ -34,10 +57,19 @@ export class SelectionSetting extends Setting {
         }
     }
 
-
     constructor(localeKey: string, options: string[]) {
         super(localeKey);
         this.options = options;
+    }
+
+    equals(setting: Setting): boolean {
+        if (setting.type !== this.type)
+            return false;
+        return (setting as SelectionSetting).currentIndex === this.currentIndex;
+    }
+
+    copy() {
+        return new SelectionSetting(this.localeKey.repeat(1), this.options.map(option => option.repeat(1)));
     }
 }
 
@@ -47,6 +79,7 @@ export class SelectionSetting extends Setting {
  * If not specified, the bounds are `Number`'s `SAFE_INTEGER` values
  */
 export class NumericSetting extends Setting {
+    type = "numeric";
     readonly min: number;
     readonly max: number;
     value: number;
@@ -64,17 +97,38 @@ export class NumericSetting extends Setting {
     get isInBounds(): boolean {
         return this.value >= this.min && this.value <= this.max;
     }
+
+    equals(setting: Setting): boolean {
+        if (setting.type !== this.type)
+            return false;
+        return (setting as NumericSetting).value === this.value;
+    }
+
+    copy() {
+        return new NumericSetting(this.localeKey.repeat(1), this.min.valueOf(), this.max.valueOf(), this.value.valueOf());
+    }
 }
 
 /**
  * Text setting
  */
 export class TextSetting extends Setting {
+    type = "text";
     value: string;
 
     constructor(localeKey: string, value: string = "") {
         super(localeKey);
         this.value = value;
+    }
+
+    equals(setting: Setting): boolean {
+        if (setting.type !== this.type)
+            return false;
+        return (setting as TextSetting).value === this.value;
+    }
+
+    copy() {
+        return new TextSetting(this.localeKey.repeat(1), this.value.repeat(1));
     }
 }
 
@@ -84,6 +138,7 @@ export class TextSetting extends Setting {
  * It's limits are defined with a regular expression, and shall be checked before storing the final value
  */
 export class ConstrainedTextSetting extends TextSetting {
+    type = "constrainedText"
     private readonly constrain: RegExp;
 
     constructor(localeKey: string, constrain: RegExp = /.*/, value: string = "") {
@@ -109,17 +164,36 @@ export class ConstrainedTextSetting extends TextSetting {
         return this.constrain.test(value);
     }
 
+    equals(setting: Setting): boolean {
+        if (setting.type !== this.type)
+            return false;
+        return (setting as ConstrainedTextSetting).value === this.value;
+    }
+
+    copy() {
+        return new ConstrainedTextSetting(this.localeKey.repeat(1), new RegExp(this.constrain.source), this.value.repeat(1));
+    }
 }
 
 /**
  * Simple toogle setting
  */
 export class BooleanSetting extends Setting {
-
+    type = "boolean";
     isSet: boolean;
 
     constructor(localeKey: string, isSet: boolean = false) {
         super(localeKey);
         this.isSet = isSet;
+    }
+
+    equals(setting: Setting): boolean {
+        if (setting.type !== this.type)
+            return false;
+        return (setting as BooleanSetting).isSet === this.isSet;
+    }
+
+    copy(){
+        return new BooleanSetting(this.localeKey.repeat(1), this.isSet.valueOf())
     }
 }

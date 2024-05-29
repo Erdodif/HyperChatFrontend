@@ -41,7 +41,8 @@
   },
   "errors": {
     "auth": {
-      "credentials": "Hibás felhasználónév vagy jelszó"
+      "credentials": "Hibás felhasználónév vagy jelszó",
+      "password-mismatch": "A jelszavaknak meg kell egyeznie!"
     },
     "chat": {
       "max-attachment-reached": "Nem tudsz több, mint {maxcount} fájlt csatolni egy üzenethez, a maradék {leftover} fájl nem kerül feltöltésre."
@@ -63,6 +64,11 @@
       "generic": {
         "missing": "Az érték nem lehet üres!"
       }
+    },
+    "settings":{
+      "dirty":"Még van {changeCount} nem mentett változtatás",
+      "language-set-missing": "Jelenlegi",
+      "language-unsupported": "(nem támogatott)"
     },
     "not-implemented": "Funkció vagy fordítás nincs megvalósítva ⚰️",
     "unspecific": "Valami elromlott :("

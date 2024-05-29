@@ -41,7 +41,8 @@
   },
   "errors": {
     "auth": {
-      "credentials": "Invalid username or password"
+      "credentials": "Invalid username or password",
+      "password-mismatch": "The two password must match!"
     },
     "chat": {
       "max-attachment-reached": "You cannot send more than {maxcount} attachment in a single message, the rest {leftover} files will be ignored."
@@ -63,6 +64,11 @@
       "generic": {
         "missing": "Value must not be empty!"
       }
+    },
+    "settings":{
+      "dirty":"You have {changeCount} unsaved changes",
+      "language-set-missing": "Current",
+      "language-unsupported": "(unsupported)"
     },
     "not-implemented": "Feature or translation not implemented ⚰️",
     "unspecific": "Something went wrong :("
