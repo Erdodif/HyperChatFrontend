@@ -1,7 +1,7 @@
 <script lang="ts">
     // Components
     import Navigation from "$lib/components/Navigation.svelte";
-    import Guilds from "$lib/components/Guilds.svelte";
+    import Guilds from "$lib/components/guilds/Guilds.svelte";
     import Settings from "$lib/assets/icons/Settings.svelte";
     import Channel from "$lib/classes/Channel";
     //

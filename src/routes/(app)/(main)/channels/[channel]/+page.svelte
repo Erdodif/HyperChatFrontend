@@ -1,13 +1,17 @@
 <script lang="ts">
-    import GuildPage from "$lib/components/GuildPage.svelte";
+    // Types
+    import type Channel from "$lib/classes/Channel";
+    // Components
+    import GuildPage from "$lib/components/guilds/GuildPage.svelte";
+    import ChatLog from "$lib/components/chat/ChatLog.svelte";
+    // Stores
+    import { initializing, onSocketFinished } from "$lib/stores/socketHandler";
     import { guildSet } from "$lib/stores/guildSet";
     import { page } from "$app/stores";
-    import ChatLog from "$lib/components/ChatLog.svelte";
-    import { initializing, onSocketFinished } from "$lib/stores/socketHandler";
-    import type Channel from "$lib/classes/Channel";
+    import { _ } from "svelte-i18n";
+    // Navigation
     import { slide, fade  } from "svelte/transition"
     import { goto } from "$app/navigation";
-    import { _ } from "svelte-i18n";
 
     let channel: Channel;
 

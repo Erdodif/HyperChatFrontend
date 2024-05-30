@@ -1,23 +1,7 @@
 <script lang="ts">
-    import Guilds from "$lib/components/Guilds.svelte";
+    import Guilds from "$lib/components/guilds/Guilds.svelte";
     import { guildSet } from "$lib/stores/guildSet";
-    import clay from "$lib/assets/chat_bubble_clay.png";
-    import blue from "$lib/assets/chat_bubble_blue.png";
-    import purple from "$lib/assets/chat_bubble_purple.png";
-    import gold from "$lib/assets/chat_bubble_gold.png";
-
-    const randomImage = () => {
-        switch (Math.floor(Math.random() * 4)) {
-            default:
-                return clay;
-            case 1:
-                return blue;
-            case 2:
-                return purple;
-            case 3:
-                return gold;
-        }
-    };
+    import chat from "$lib/assets/icons/chat/bubble.svelte";
 
     let holderOpen = false;
 </script>
@@ -39,7 +23,7 @@
     >
         {#each $guildSet.guildsArray as guild}
             <a class="guild" id={guild.id} href="/guilds/{guild.id}">
-                <img src={randomImage()} alt={guild.name} />
+                <svg src={chat} alt={guild.name}/>
                 <span class="name">
                     {guild.name}
                 </span>

@@ -1,8 +1,8 @@
 <script lang="ts">
     import type Guild from "$lib/classes/Guild";
-    import Channels from "./Channels.svelte";
-    import ArrowLeft from "$lib/assets/icons/arrow-left.svg";
-    import ArrowRight from "$lib/assets/icons/arrow-right.svg";
+    import Channels from "$lib/components/Channels.svelte";
+    import ArrowLeft from "$lib/assets/icons/arrow-left.svelte";
+    import ArrowRight from "$lib/assets/icons/arrow-right.svelte";
     import { _ } from "svelte-i18n";
 
     export let guild: Guild;

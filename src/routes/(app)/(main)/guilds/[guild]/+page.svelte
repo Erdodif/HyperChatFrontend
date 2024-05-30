@@ -1,12 +1,16 @@
 <script lang="ts">
-    import { page } from "$app/stores";
+    // Components
+    import GuildPage from "$lib/components/guilds/GuildPage.svelte";
+    // Classes
+    import Rest from "$lib/classes/Rest";
     import Guild from "$lib/classes/Guild";
-    import GuildPage from "$lib/components/GuildPage.svelte";
+    // Stores
+    import { page } from "$app/stores";
     import { guildSet } from "$lib/stores/guildSet";
     import { initializing } from "$lib/stores/socketHandler";
     import { _ } from "svelte-i18n";
-    import Rest from "$lib/classes/Rest";
     import { writable } from "svelte/store";
+    
     let guild: Guild;
     let checked = writable(false)
     $: {

@@ -1,7 +1,7 @@
 <script lang="ts">
     import Rest, { RestMethod } from "$lib/classes/Rest";
     // Components
-    import GuildPage from "$lib/components/GuildPage.svelte";
+    import GuildPage from "$lib/components/guilds/GuildPage.svelte";
     import BooleanSetting from "$lib/components/settings/BooleanSetting.svelte";
     import ConstrainedTextSetting from "$lib/components/settings/ConstrainedTextSetting.svelte";
     import NumericSetting from "$lib/components/settings/NumericSetting.svelte";

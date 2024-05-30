@@ -1,14 +1,17 @@
 <script lang="ts">
+    // Components
+    import ContextMenu from "$lib/components/utility/ContextMenu.svelte";
     import ButtonAction, {
         ContextMenuItem,
         LinkAction,
     } from "$lib/classes/ContextMenuOption";
+    // Classes
     import type Guild from "$lib/classes/Guild";
-    import ContextMenu from "./utility/ContextMenu.svelte";
-    import {page} from "$app/stores";
     import type Channel from "$lib/classes/Channel";
-    import { _ } from "svelte-i18n";
     import Rest, { RestMethod } from "$lib/classes/Rest";
+    // Stores
+    import {page} from "$app/stores";
+    import { _ } from "svelte-i18n";
 
     export let guild: Guild;
 

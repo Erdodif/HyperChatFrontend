@@ -21,8 +21,6 @@
         UserPreferences,
         type PreferenceJson,
     } from "$lib/stores/userPreferences";
-    // Styles
-    import "../../app.scss";
     import { locale, locales } from "svelte-i18n";
 
     let waiting: number = 1;
@@ -102,6 +100,3 @@
 <div data-layout={$userPreferences ? $userPreferences.styleLayout : "normal"}>
     <slot />
 </div>
-
-<style lang="scss">
-</style>

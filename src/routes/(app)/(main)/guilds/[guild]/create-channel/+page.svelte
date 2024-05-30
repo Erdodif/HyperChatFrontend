@@ -1,7 +1,8 @@
 <script lang="ts">
-    import { goto } from "$app/navigation";
-    import {page} from "$app/stores";
     import Rest from "$lib/classes/Rest";
+    import { goto } from "$app/navigation";
+    // Stores
+    import {page} from "$app/stores";
     import { guildSet } from "$lib/stores/guildSet";
     let name: string = "";
 
