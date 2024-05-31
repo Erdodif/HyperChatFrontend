@@ -105,6 +105,9 @@
   "title": {
     "index": "Sussy Chat app"
   },
+  "profile":{
+    "save-pic":"Save Picture"
+  },
   "user": {
     "aka": "For others",
     "name": "Username",

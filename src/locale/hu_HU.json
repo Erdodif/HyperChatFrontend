@@ -105,6 +105,9 @@
   "title": {
     "index": "Relytélyes csevegő"
   },
+  "profile":{
+    "save-pic":"Kép mentése"
+  },
   "user": {
     "aka": "Másoknak",
     "name": "Felhasználónév",
