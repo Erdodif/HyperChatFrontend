@@ -1,13 +1,13 @@
 <script lang="ts">
-    import { ChatMessage, UnsentMessage } from "$lib/classes/Message";
+    import { ChatMessage, UnsentMessage } from "$classes/Message";
     import MessageComponent from "./Message.svelte";
-    import Rest, { RestMethod } from "$lib/classes/Rest";
-    import { user } from "$lib/stores/auth";
+    import Rest, { RestMethod } from "$classes/Rest";
+    import { user } from "$stores/auth";
     import { _ } from "svelte-i18n";
-    import socketHandler, { initializing, onSocketFinished } from "$lib/stores/socketHandler";
+    import socketHandler, { initializing, onSocketFinished } from "$stores/socketHandler";
     import { onMount } from "svelte";
-    import type ChatLog from "$lib/classes/ChatLog";
-    import { ChatStore } from "$lib/stores/guildSet";
+    import type ChatLog from "$classes/ChatLog";
+    import { ChatStore } from "$stores/guildSet";
     import { writable } from "svelte/store";
     import MimeImg from "./MimeImg.svelte";
 
@@ -92,11 +92,10 @@
 
     async function previousMessages() {
         let count = messageCapacity;
-        let idOfFirst: string = (
-            $chatLog.messages.find(
+        let first = $chatLog.messages.find(
                 (msg) => msg instanceof ChatMessage
             ) as ChatMessage
-        )?.id;
+        let idOfFirst: string = first?first.id:"";
         let messages: Array<any> = await Rest.getJsonFromServer(
             `channels/${$chatLog.channel.id}/messages?${
                 idOfFirst ? `before=${idOfFirst}&` : ""

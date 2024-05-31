@@ -22,13 +22,16 @@ export default class Rest {
      * @param method 
      * @returns 
      */
-    static async sendToServer(location: string, body: any, method: RestMethod = RestMethod.POST): Promise<Response> {
-        return fetch(`${PUBLIC_SERVER_URL}/${location}`, {
+    static async sendToServer(location: string, body: any, method: RestMethod = RestMethod.POST, url:string = PUBLIC_SERVER_URL): Promise<Response> {
+        return fetch(`${url}/${location}`, {
             method: method,
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${Rest.token}`,
+                Authorization: `Bearer ${Rest.token}`
             },
+            referrerPolicy: "no-referrer",
+            redirect:"follow",
+            credentials:"omit",
             body: JSON.stringify(body),
         });
     }

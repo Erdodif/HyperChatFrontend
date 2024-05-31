@@ -1,13 +1,13 @@
 <script lang="ts">
     // Components
-    import Navigation from "$lib/components/Navigation.svelte";
-    import Guilds from "$lib/components/guilds/Guilds.svelte";
-    import Settings from "$lib/assets/icons/Settings.svelte";
-    import Channel from "$lib/classes/Channel";
+    import Navigation from "$components/Navigation.svelte";
+    import Guilds from "$components/guilds/Guilds.svelte";
+    import Settings from "$icons/Settings.svelte";
+    import Channel from "$classes/Channel";
     //
-    import userPreferences from "$lib/stores/userPreferences";
+    import userPreferences from "$stores/userPreferences";
     import { isLoading } from "svelte-i18n";
-    import socketHandler, { initializing } from "$lib/stores/socketHandler";
+    import socketHandler, { initializing } from "$stores/socketHandler";
     import { _ } from "svelte-i18n";
 </script>
 

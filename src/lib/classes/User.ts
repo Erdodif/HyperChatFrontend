@@ -1,6 +1,7 @@
 import { goto } from "$app/navigation";
 import Rest from "./Rest";
 import Member from "./Member";
+import { PUBLIC_SERVER_URL } from "$env/static/public";
 
 export type UserJson = { username: string, display_name: string, id: string };
 
@@ -12,7 +13,7 @@ export enum UserStatus {
 }
 
 export default class User {
-    username: string;
+    readonly username: string;
     private _displayName: string;
     get hasDisplayName() : boolean{
         return this._displayName !== null  && this._displayName !== undefined;
@@ -23,14 +24,27 @@ export default class User {
         }
         return this._displayName;
     }
+
+    readonly avatarHash:string | null;
+    get avatarPath():string | null{
+        if(this.avatarHash === null) return null
+        return `users/${this.id}/${this.avatarHash}.${this.avatarExt}`;
+    }
+
+    get avatarExt():string | null{
+        if(this.avatarHash === null) return null
+        return this.avatarHash.split("_")[1];
+    }
+
     readonly id: string;
     status: UserStatus;
 
-    constructor(id: string, username: string, display_name: string) {
+    constructor(id: string, username: string, display_name: string, avatar_hash: string | null) {
         this.id = id;
         this.username = username;
         this._displayName = display_name;
         this.status = UserStatus.OFFLINE;
+        this.avatarHash = avatar_hash;
     }
 
     equals(right: User | Member) {
@@ -48,6 +62,7 @@ export default class User {
         localStorage.setItem("user_name", this.username);
         localStorage.setItem("display_name", this.displayName);
         localStorage.setItem("user_id", this.id);
+        localStorage.setItem("avatar_hash", this.avatarHash);
     }
 
     static fromJsonOrRedirect(content: any | UserJson, from: string = "/"): User {
@@ -58,11 +73,11 @@ export default class User {
             }
             goto(login);
         }
-        return new User(content.id, content.username, content.display_name);
+        return new User(content.id, content.username, content.display_name, content.avatar_hash);
     }
 
     static fromJson(content: any | UserJson): User {
-        return new User(content.id, content.username, content.display_name);
+        return new User(content.id, content.username, content.display_name, content.avatar_hash);
     }
 
     static fromLocalStorage(): User {
@@ -74,13 +89,15 @@ export default class User {
         return new User(
             localStorage.getItem("user_id"),
             localStorage.getItem("username"),
-            localStorage.getItem("display_name"));
+            localStorage.getItem("display_name"), 
+            localStorage.getItem("avatar_hash")??null);
     }
 
     static clearStorage() {
         localStorage.removeItem("user_id");
         localStorage.removeItem("username");
         localStorage.removeItem("display_name");
+        localStorage.removeItem("avatar_hash");
     }
 
     static async selfFromServer(token: string): Promise<User | Error> {

@@ -1,21 +1,32 @@
 <script lang="ts">
+	import { LinkAction } from '$classes/ContextMenuOption.ts';
+	import Avatar from '$components/chat/Avatar.svelte';
     import { _ } from "svelte-i18n";
     import { goto } from "$app/navigation";
     import { page } from "$app/stores";
-    import { user } from "$lib/stores/auth";
-    import { guildSet } from "$lib/stores/guildSet";
-    import userPreferences from "$lib/stores/userPreferences";
+    import { user } from "$stores/auth";
+    import { guildSet } from "$stores/guildSet";
+    import userPreferences from "$stores/userPreferences";
+    import { PUBLIC_FILE_SERVER_URL } from "$env/static/public";
+
+    const getOptions= ()=>[
+        new LinkAction("Profile", "/users/@me"),
+        new LinkAction("PFP", `${PUBLIC_FILE_SERVER_URL}/${$user.avatarPath}`,null, false, true)
+    ];
 </script>
 
 <nav data-layout={$userPreferences ? $userPreferences.styleLayout : "normal"}>
     <a href="/"> {$_("title.index")} </a>
     {#if $user}
-        <span>
-            {$user.username} 
-            {#if $user.display_name}
-            ({$_("user.aka")}: {$user.displayName})
-            {/if}
-        </span>
+        <div on:click={()=>goto("/users/@me")} >
+            <Avatar className="avatar" user={$user} options={getOptions()}/>
+            <span>
+                {$user.username} 
+                {#if $user.display_name}
+                ({$_("user.aka")}: {$user.displayName})
+                {/if}
+            </span>
+        </div>
         <button
             on:click={() => {
                 localStorage.removeItem("user_name");
@@ -41,7 +52,13 @@
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
-        align-items: space-between;
+        align-items: center;
+        div{
+            height:2em;
+            display:inline-flex;
+            align-items:center;
+            gap:1em;
+        }
         a,
         span {
             text-decoration: none;

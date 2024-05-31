@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { ConstrainedTextSetting } from "$lib/classes/Settings";
+    import type { ConstrainedTextSetting } from "$classes/Settings";
     import { _ } from "svelte-i18n";
 
     export let setting: ConstrainedTextSetting;

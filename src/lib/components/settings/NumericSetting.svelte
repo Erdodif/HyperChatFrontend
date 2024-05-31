@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { NumericSetting } from "$lib/classes/Settings";
+    import type { NumericSetting } from "$classes/Settings";
     import { _, isLoading, number } from "svelte-i18n";
 
     export let setting: NumericSetting;

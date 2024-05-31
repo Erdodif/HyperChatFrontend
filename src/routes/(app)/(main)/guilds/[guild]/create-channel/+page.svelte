@@ -1,9 +1,9 @@
 <script lang="ts">
-    import Rest from "$lib/classes/Rest";
+    import Rest from "$classes/Rest";
     import { goto } from "$app/navigation";
     // Stores
     import {page} from "$app/stores";
-    import { guildSet } from "$lib/stores/guildSet";
+    import { guildSet } from "$stores/guildSet";
     let name: string = "";
 
     let guild = $guildSet.get($page.params.guild);

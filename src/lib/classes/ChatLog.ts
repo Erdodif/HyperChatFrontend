@@ -71,8 +71,14 @@ export default class ChatLog {
             return;
         }
         index = this.messages.findLastIndex((msg) => msg instanceof ChatMessage && msg.id < id);
-        if (index == -1) index = 0;
-        this.#log.splice(index, 0, ...messages);
+        if (index === -1) index = 0;
+        for (const message of messages){
+            if(this.messages.findIndex(msg => msg.id === message.id) === -1)
+            {
+                this.#log.splice(index, 0, ...messages);
+                index++;
+            }
+        }
     }
 
     fillAfter(id: string, ...messages: ChatMessage[]) {
@@ -82,9 +88,14 @@ export default class ChatLog {
             return;
         }
         index = this.messages.findIndex((msg) => msg instanceof ChatMessage && msg.id > id);
-        if (index == -1) index = 0;
-        this.#log.splice(index + 1, 0, ...messages);
-
+        if (index === -1) index = 0;
+        for (const message of messages){
+            if(this.messages.findIndex(msg => msg.id === message.id) === -1)
+            {
+                this.#log.splice(index + 1, 0, ...messages);
+                index++;
+            }
+        }
     }
 
     /**

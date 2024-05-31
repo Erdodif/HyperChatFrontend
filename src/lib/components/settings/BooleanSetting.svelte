@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { BooleanSetting } from "$lib/classes/Settings";
+    import type { BooleanSetting } from "$classes/Settings";
     import { _ } from "svelte-i18n";
 
     export let setting: BooleanSetting;

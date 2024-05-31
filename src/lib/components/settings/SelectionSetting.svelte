@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { SelectionSetting } from "$lib/classes/Settings";
+    import type { SelectionSetting } from "$classes/Settings";
     import { _ } from "svelte-i18n";
 
     export let setting: SelectionSetting;

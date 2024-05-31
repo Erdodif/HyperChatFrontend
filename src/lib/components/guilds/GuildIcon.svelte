@@ -1,16 +1,16 @@
 <script lang="ts">
-	import Guild from '$lib/classes/Guild';
+	import Guild from '$classes/Guild';
     import { _ } from "svelte-i18n";
-    import { user } from "$lib/stores/auth";
+    import { user } from "$stores/auth";
     // Icons
-    import Icon_chat from "$lib/assets/icons/chat/bubble.svelte";
+    import Icon_chat from "$icons/chat/bubble.svelte";
     // Components
-    import ContextMenu from "$lib/components/utility/ContextMenu.svelte";
+    import ContextMenu from "$components/utility/ContextMenu.svelte";
     import ButtonAction, {
         ContextMenuItem,
         LinkAction,
-    } from "$lib/classes/ContextMenuOption";
-    import Rest, { RestMethod } from "$lib/classes/Rest";
+    } from "$classes/ContextMenuOption";
+    import Rest, { RestMethod } from "$classes/Rest";
 
     export let guild:Guild;
     export let activeIndex: number;

@@ -1,15 +1,16 @@
 <script lang="ts">
-    import type Member from "$lib/classes/Member";
-    import { ChatMessage, Message, UnsentMessage } from "$lib/classes/Message";
-    import type User from "$lib/classes/User";
-    import { user } from "$lib/stores/auth";
+	import Avatar from '$components/chat/Avatar.svelte';
+    import type Member from "$classes/Member";
+    import { ChatMessage, Message, UnsentMessage } from "$classes/Message";
+    import type User from "$classes/User";
+    import { user } from "$stores/auth";
     import { _, time } from "svelte-i18n";
     import { each, space } from "svelte/internal";
     import { fly } from "svelte/transition";
     import AttachmentElement from "./Attachment.svelte";
-    import Rest, { RestMethod } from "$lib/classes/Rest";
-    import type { MessageModifier } from "$lib/classes/ChatLog";
-    import userPreferences from "$lib/stores/userPreferences";
+    import Rest, { RestMethod } from "$classes/Rest";
+    import type { MessageModifier } from "$classes/ChatLog";
+    import userPreferences from "$stores/userPreferences";
 
     //TODO, set type in chatlog, display (css) accordingly!
 
@@ -116,9 +117,10 @@
     in:fly={{duration:250}}
 >
     {#if !(messageType === "self")}
-        <span class="author">
-            {header}
-        </span>
+    <Avatar className="avatar" user={message.author}/>
+    <div class="author">
+        {header}
+    </div>
     {/if}
     <span class="created">
         <time>
@@ -138,13 +140,17 @@
         width: 95%;
         box-sizing: border-box;
         display: grid;
-        grid-template-areas: "author time -" "content content content";
-        grid-template-columns: fit-content fit-content 1fr;
+        align-items:start;
+        grid-template-rows: auto auto 1fr;
+        grid-template-columns: auto 1fr;
+        grid-template-areas: "avatar time" "avatar author" "avatar content";
         &[data-layout="comfy"] {
             padding-block: 0.675em;
             margin-inline: 2em;
             column-gap: 1em;
+            row-gap: 1ch;
             .content {
+                margin-block-start: 0.5em;
                 padding: 0.5em;
             }
         }
@@ -152,7 +158,9 @@
             padding-block: 0.375em;
             margin-inline: 1em;
             column-gap: 0.5em;
+            row-gap: .5ch;
             .content {
+                margin-block-start: 0.3em;
                 padding: 0.3em;
             }
         }
@@ -160,9 +168,16 @@
             padding-block: 0.125em;
             margin-inline: 0.625em;
             column-gap: 0.2em;
+            row-gap: 0;
             .content {
+                margin-block-start: 0em;
                 padding: 0.2em;
             }
+        }
+        :global(.avatar){
+            width: 3em;
+            height: 3em;
+            grid-area: avatar;
         }
         .author {
             font-size: 0.625rem;

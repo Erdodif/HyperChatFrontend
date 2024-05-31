@@ -1,13 +1,13 @@
 <script lang="ts">
     // Components
-    import GuildPage from "$lib/components/guilds/GuildPage.svelte";
+    import GuildPage from "$components/guilds/GuildPage.svelte";
     // Classes
-    import Rest from "$lib/classes/Rest";
-    import Guild from "$lib/classes/Guild";
+    import Rest from "$classes/Rest";
+    import Guild from "$classes/Guild";
     // Stores
     import { page } from "$app/stores";
-    import { guildSet } from "$lib/stores/guildSet";
-    import { initializing } from "$lib/stores/socketHandler";
+    import { guildSet } from "$stores/guildSet";
+    import { initializing } from "$stores/socketHandler";
     import { _ } from "svelte-i18n";
     import { writable } from "svelte/store";
     

@@ -1,8 +1,8 @@
 <script lang="ts">
-    import type Guild from "$lib/classes/Guild";
-    import Channels from "$lib/components/Channels.svelte";
-    import ArrowLeft from "$lib/assets/icons/arrow-left.svelte";
-    import ArrowRight from "$lib/assets/icons/arrow-right.svelte";
+    import type Guild from "$classes/Guild";
+    import Channels from "$components/Channels.svelte";
+    import ArrowLeft from "$icons/arrow-left.svelte";
+    import ArrowRight from "$icons/arrow-right.svelte";
     import { _ } from "svelte-i18n";
 
     export let guild: Guild;
@@ -49,7 +49,7 @@
         width: .5em;
         height: 1.5em;
         background-size: contain;
-        z-index: 999;
+        z-index: 10;
         align-self: baseline;
     }
     section {

@@ -1,12 +1,12 @@
 <script lang="ts">
     //Cannot nest it. Don't even try it...
-    import Uid from "$lib/classes/Uid";
+    import Uid from "$classes/Uid";
     import ButtonAction, {
         ContextMenuItem,
         Expandable,
         LinkAction,
         ToogleAction,
-    } from "$lib/classes/ContextMenuOption";
+    } from "$classes/ContextMenuOption";
     import {fade, blur,fly,slide,scale,crossfade } from "svelte/transition";
     import {writable} from "svelte/store";
 
@@ -130,7 +130,8 @@
         max-width:100%;
     }
     #context-menu {
-        z-index: 999;
+        clip-path: unset !important;
+        z-index: 9999;
         user-select: none;
         font-size: 0.925em;
         max-width: 40ch;
@@ -139,10 +140,10 @@
         display: none;
         box-sizing: border-box;
         #context-menu-content{
-            background-color: var(--secondary-variant);
+            background-color: var(--surface);
             box-sizing: border-box;
             padding-block: 0.1ch;
-            border: 0.15ch solid var(--on-secondary);
+            border: 0.15ch solid var(--primary);
             display: flex;
             flex-direction: column;
             flex-wrap: nowrap;
@@ -155,7 +156,7 @@
         &[data-visible="true"] {
             display:block;
         }
-        color: var(--on-secondary);
+        color: var(--on-surface);
         img,
         input {
             position: absolute;

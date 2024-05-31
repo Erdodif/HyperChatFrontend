@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { TextSetting } from "$lib/classes/Settings";
+    import type { TextSetting } from "$classes/Settings";
     import { _ } from "svelte-i18n";
 
     export let setting: TextSetting;

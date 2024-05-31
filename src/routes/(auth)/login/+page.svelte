@@ -2,17 +2,17 @@
     import { goto } from "$app/navigation";
     import { _ } from "svelte-i18n";
     import { onMount } from "svelte";
-    import { token } from "$lib/stores/auth";
+    import { token } from "$stores/auth";
     import { page } from "$app/stores";
-    import Rest from "$lib/classes/Rest";
-    import { guildSet } from "$lib/stores/guildSet";
+    import Rest from "$classes/Rest";
+    import { guildSet } from "$stores/guildSet";
     export let username: string = "";
     export let password: string = "";
     let error: String = "";
 
     let from = new URL($page.url.searchParams.get("from"),$page.url);
 
-    if(from.hostname !== $page.url.hostname){
+    if($page.url.searchParams.get("from") === null || from.hostname !== $page.url.hostname){
         from = new URL("/",$page.url);
     } 
     

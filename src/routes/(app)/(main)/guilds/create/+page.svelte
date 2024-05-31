@@ -1,6 +1,6 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
-    import Rest, { RestMethod } from "$lib/classes/Rest";
+    import Rest, { RestMethod } from "$classes/Rest";
     let name: string = "";
     let id :string = "";
 

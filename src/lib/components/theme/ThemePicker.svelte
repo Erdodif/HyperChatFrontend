@@ -3,7 +3,7 @@
     import {onMount} from "svelte";
     import ColorPicker from "./ColorPicker.svelte";
     //import {theme} from "$stores/theme";
-    import {themeFromStorage, theme, themeToStorage, onSurface} from "$lib/stores/theme";
+    import {themeFromStorage, theme, themeToStorage, onSurface} from "$stores/theme";
     let custom = true;
 
     onMount(() =>{

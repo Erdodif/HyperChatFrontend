@@ -1,6 +1,6 @@
 <script lang="ts">
     import { page } from "$app/stores";
-    import userPreferences from "$lib/stores/userPreferences";
+    import userPreferences from "$stores/userPreferences";
     import { writable } from "svelte/store";
 
     export let mime: string = "unknown";

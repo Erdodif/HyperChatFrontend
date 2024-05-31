@@ -1,21 +1,21 @@
 <script lang="ts">
-    import Rest, { RestMethod } from "$lib/classes/Rest";
+    import Rest, { RestMethod } from "$classes/Rest";
     // Components
-    import GuildPage from "$lib/components/guilds/GuildPage.svelte";
-    import BooleanSetting from "$lib/components/settings/BooleanSetting.svelte";
-    import ConstrainedTextSetting from "$lib/components/settings/ConstrainedTextSetting.svelte";
-    import NumericSetting from "$lib/components/settings/NumericSetting.svelte";
-    import SelectionSetting from "$lib/components/settings/SelectionSetting.svelte";
-    import LanguageSwitch from "$lib/components/utility/LanguageSwitch.svelte";
+    import GuildPage from "$components/guilds/GuildPage.svelte";
+    import BooleanSetting from "$components/settings/BooleanSetting.svelte";
+    import ConstrainedTextSetting from "$components/settings/ConstrainedTextSetting.svelte";
+    import NumericSetting from "$components/settings/NumericSetting.svelte";
+    import SelectionSetting from "$components/settings/SelectionSetting.svelte";
+    import LanguageSwitch from "$components/utility/LanguageSwitch.svelte";
     // Utility
     import { onMount } from "svelte";
     import { goto } from "$app/navigation";
     // Stores
-    import { token } from "$lib/stores/auth";
+    import { token } from "$stores/auth";
     import { page } from "$app/stores";
     import userPreferences, {
         UserPreferences,
-    } from "$lib/stores/userPreferences";
+    } from "$stores/userPreferences";
     // i18n
     import { _, isLoading } from "svelte-i18n";
 
@@ -40,7 +40,7 @@
     };
 
     onMount(async () => {
-        if (!(await Rest.isTokenValid("users/@self"))) {
+        if (!(await Rest.isTokenValid("users/@me"))) {
             goto(`/login?from=${$page.url.pathname}`);
             return;
         }

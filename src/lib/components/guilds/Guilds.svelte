@@ -1,9 +1,9 @@
 <script lang="ts">
-	import GuildIcon from '$lib/components/guilds/GuildIcon.svelte';
+	import GuildIcon from '$components/guilds/GuildIcon.svelte';
     // Classes
-    import type Guild from "$lib/classes/Guild";
+    import type Guild from "$classes/Guild";
     // Stores
-    import { guildSet } from "$lib/stores/guildSet";
+    import { guildSet } from "$stores/guildSet";
 
     let activeIndex: number | null = null;
     let guilds = [];

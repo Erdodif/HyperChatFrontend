@@ -1,7 +1,7 @@
 <script lang="ts">
-    import Guilds from "$lib/components/guilds/Guilds.svelte";
-    import { guildSet } from "$lib/stores/guildSet";
-    import chat from "$lib/assets/icons/chat/bubble.svelte";
+    import Guilds from "$components/guilds/Guilds.svelte";
+    import { guildSet } from "$stores/guildSet";
+    import chat from "$icons/chat/bubble.svelte";
 
     let holderOpen = false;
 </script>

@@ -1,12 +1,12 @@
 <script lang="ts">
     // Types
-    import type Channel from "$lib/classes/Channel";
+    import type Channel from "$classes/Channel";
     // Components
-    import GuildPage from "$lib/components/guilds/GuildPage.svelte";
-    import ChatLog from "$lib/components/chat/ChatLog.svelte";
+    import GuildPage from "$components/guilds/GuildPage.svelte";
+    import ChatLog from "$components/chat/ChatLog.svelte";
     // Stores
-    import { initializing, onSocketFinished } from "$lib/stores/socketHandler";
-    import { guildSet } from "$lib/stores/guildSet";
+    import { initializing, onSocketFinished } from "$stores/socketHandler";
+    import { guildSet } from "$stores/guildSet";
     import { page } from "$app/stores";
     import { _ } from "svelte-i18n";
     // Navigation

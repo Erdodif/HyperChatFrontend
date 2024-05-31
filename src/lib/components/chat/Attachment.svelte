@@ -1,8 +1,8 @@
 <script lang="ts">
     import { page } from "$app/stores";
     import { PUBLIC_FILE_SERVER_URL } from "$env/static/public";
-    import type Attachment from "$lib/classes/Attachment";
-    import userPreferences from "$lib/stores/userPreferences";
+    import type Attachment from "$classes/Attachment";
+    import userPreferences from "$stores/userPreferences";
     import MimeImg from "./MimeImg.svelte";
 
     export let attachment: Attachment;

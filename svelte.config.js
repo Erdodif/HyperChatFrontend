@@ -1,11 +1,14 @@
 import preprocess from "svelte-preprocess";
+
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
-  kit: {
-    // For the tutorial, we need to disable CSRF protection.
-    // Don't do this in your own apps unless you know what you're doing!
-    // See https://kit.svelte.dev/docs/configuration#csrf for more info.
-    csrf: false,
+  kit:{
+    alias:{
+      $components: "src/lib/components",
+      $icons: "src/lib/assets/icons",
+      $classes: "src/lib/classes",
+      $stores: "src/lib/stores",
+    },
   },
 
   vitePlugin: {

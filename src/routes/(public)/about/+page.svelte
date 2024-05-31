@@ -1,5 +1,5 @@
 <script lang="ts">
-    import Navigation from "$lib/components/Navigation.svelte";
+    import Navigation from "$components/Navigation.svelte";
     import { _ } from "svelte-i18n";
     import PoweredByGiphy from "$lib/assets/Giphy/Poweredby_100px_Badge.gif";
 </script>

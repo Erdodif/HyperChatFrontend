@@ -1,5 +1,5 @@
 <script lang="ts">
-    // TODO - rule of thirds(at least), icons, locale, image processing, final design
+    // TODO - icons, locale, image processing, final design
 
 	import { createEventDispatcher } from 'svelte';
 	import { writable, derived } from 'svelte/store';
@@ -13,7 +13,7 @@
 
     // Initial Info
 
-    let imageObject: HtmlDivElement;
+    let imageObject= writable(document.createElement('span'));
 
     let left = writable(0);
     let top = writable(0);
@@ -23,6 +23,8 @@
     let width = derived([initialWidth, scale], ([$initialWidth,$scale])=>{return $initialWidth * $scale});
     let height = derived([initialHeight, scale], ([$initialHeight,$scale])=>{return $initialHeight * $scale});
 
+    let scrollWidth = derived(imageObject, ($imageObject) => $imageObject.scrollWidth);
+    let scrollHeight = derived(imageObject, ($imageObject) => $imageObject.scrollHeight);
     // Delta
 
     let booly = writable(false);
@@ -37,15 +39,19 @@
     let offX = writable(0);
     let offY = writable(0);
 
-    let minX = derived(width,($width)=>{
-        if(imageObject === undefined) return 0;
-        return imageObject.scrollWidth - $width;
-    })
 
-    let minY = derived(height, ($height) => {
-        if(imageObject === undefined) return 0;
-        return imageObject.scrollHeight - $height;
-    })
+    let minX = derived([width,scrollHeight], ([$width,$scrollWidth]) => {
+        return $scrollWidth - $width;
+    });
+
+    let minY = derived([height,scrollHeight], ([$height,$scrollHeight]) => {
+        return $scrollHeight - $height;
+    });
+
+    let minScale = derived([scrollWidth , initialWidth, scrollHeight , initialHeight],
+        ([$scrollWidth , $initialWidth, $scrollHeight , $initialHeight]) =>
+            Math.max(($scrollWidth / $initialWidth), ($scrollHeight/ $initialHeight))
+    );
 
     // Correction
 
@@ -53,7 +59,7 @@
         if(value > 0){
             return 0;
         }
-        if(imageObject === undefined) return value;
+        if($imageObject === undefined) return value;
         if(value < $minX){
             return $minX;
         }
@@ -64,7 +70,7 @@
         if(value > 0){
             return 0;
         }
-        if(imageObject === undefined) return value;
+        if($imageObject === undefined) return value;
         if(value < $minY){
             return $minY;
         }
@@ -96,22 +102,50 @@
         $top = getCorrectY($top +$offY);
         $offY = 0;
         $booly = false;
-    }
-
-    const Resize = (event:Event) =>{
-        console.log(imageObject.scrollWidth)
-        if($width < imageObject.scrollWidth){
-            $scale = imageObject.scrollWidth / $initialWidth;
-        }
-        if($height < imageObject.scrollHeight){
-            $scale = imageObject.scrollHeight / $initialHeight;
-        }
+        //TODO
+        dispatch('changed', {
+            image: ''
+        });
     }
 
     const Save = (event:Event) =>{
-        dispatch('imagesaved', {
-            image: 'TODO'
-        })
+        let url: URL;
+        let canvas = document.createElement('canvas');
+        canvas.width=512;
+        canvas.height=512;
+        let context = canvas.getContext('2d');
+        const original = new Image();
+        original.src = src;
+        original.crossOrigin= "anonymous";
+        original.onload = ()=>{
+            const aspect = original.naturalWidth / original.naturalHeight;
+            context.drawImage(
+                original,                 // Image reference
+                -$left / $scale,          // Left offset original
+                -$top / $scale,           // Top offset original
+                $scrollWidth / $scale,    // Width to be cut
+                $scrollHeight / $scale,   // Height to be cut
+                0,0,                      // No offset on the target
+                512, 512                  // Server prefered Size
+            );
+            url = canvas.toDataURL("image/png;base64"); // TODO - resize might not be accurate
+            dispatch('save', {
+                src: url
+            });
+        };
+    }
+
+    const Resize = (event)=>{
+        if($scrollWidth === 0) return;
+        if(($initialWidth * event.target.value) <= $scrollWidth){
+            event.target.value = $minScale;
+        } else if(($initialHeight * event.target.value) <= $scrollHeight){
+            event.target.value = $minScale;
+        }
+        let diff = $scale - event.target.value;
+        $left -= diff;
+        $top -= diff;
+        $scale = event.target.value;
     }
 
     onMount(async()=>{
@@ -119,8 +153,8 @@
         image.onload = () => {
             $initialWidth = image.naturalWidth;
             $initialHeight = image.naturalHeight;
-            $left = (imageObject.scrollWidth - $width) / 2;
-            $top = (imageObject.scrollHeight - $height) / 2;
+            $left = ($scrollWidth - $width) / 2;
+            $top = ($scrollHeight - $height) / 2;
         }
         image.src = src;
     });
@@ -135,36 +169,35 @@
         on:mousedown|capture={Click}
         style={`--width:${$width}px;--height:${$height}px;--left:${getCorrectX($left+$offX)}px; --top:${getCorrectY($top+$offY)}px; --src:url(${src});`}
     >
-    <div class="measure" bind:this={imageObject} />
+    <div class="measure" bind:this={$imageObject} />
     </div>
     </div>
     <div class="controls">
         <div>
-            <input type="range" min="0.1" max="3" step="0.05" bind:value={$scale} on:change{Resize}/>
+            <input type="range" 
+            value={$scale} 
+            on:input={Resize} 
+            min={Math.max(($scrollWidth / $initialWidth), ($scrollHeight/ $initialHeight))-0.01} 
+            max={3+Math.max(($scrollWidth / $initialWidth), ($scrollHeight/ $initialHeight))} 
+            step={Math.max((3-($scrollWidth / $initialWidth)) / 100, ((3-$scrollHeight/ $initialHeight)) / 100)}/>
             <span>{Math.round($scale *100,2)}%</span>
         </div>
+        {#if $scrollWidth < $width + 0.5}
         <div>
-            <input name="x" type="range" min={$minX} max="0" step="1" bind:value={$left}/>
+            <input name="x" type="range" min={$minX} max="0" step=".5" bind:value={$left}/>
             <label for="x">
                 X
             </label>
         </div>
+        {/if}
+        {#if $scrollHeight < $height + 0.5}
         <div>
-            <input name="y" type="range" min={$minY} max="0" step="1" bind:value={$top}/>
+            <input name="y" type="range" min={$minY} max="0" step=".5" bind:value={$top}/>
             <label for="y">
                 Y
             </label>
         </div>
-        <div>
-            <select value="null">
-                <option value="null">
-                    No grid
-                </option>
-                <option value="rut">
-                    Rule of thirds - TODO
-                </option>
-            </select>
-        </div>
+        {/if}
         <button on:click={Save}>
             {$_("profile.save-pic")}
         </button>
@@ -193,7 +226,7 @@
             content:" ";
             position:absolute;
             inset:0;
-            clip-path: inset(0 0 0 0 round 20%);
+            @include avatar-mask;
             background-position: var(--left) var(--top);
             background-size: var(--width) var(--height);
             background-image: var(--src);
@@ -210,7 +243,10 @@
             background-position: left top;
             background-size: var(--width) var(--height);
             background-repeat: no-repeat;
-            filter: opacity(0.2) brightness(0.4) blur(4px);
+            filter: grayscale(0.3) opacity(0.1) blur(5px) brightness(1) contrast(100%);
+            transition: filter 3000ms;
+            transition: border 400ms ease-in-out;
+            border: 2px solid transparent;
         }
         &.dragged::before{
             filter: grayscale(1) opacity(0.7) blur(2px) brightness(0.6) contrast(120%);

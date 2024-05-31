@@ -1,7 +1,7 @@
 <script lang="ts">
     import { _ } from "svelte-i18n";
     import { goto } from "$app/navigation";
-    import Rest from "$lib/classes/Rest";
+    import Rest from "$classes/Rest";
     export let username: string = "";
     export let password: string = "";
     export let password2: string = "";

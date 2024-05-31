@@ -1,18 +1,18 @@
 <script lang="ts">
     // Types
-    import Guild from "$lib/classes/Guild";
-    import User from "$lib/classes/User";
-    import Member from "$lib/classes/Member";
-    import { ChatMessage } from "$lib/classes/Message";
-    import Rest, { RestMethod } from "$lib/classes/Rest";
-    import { EventHandler } from "$lib/classes/SocketHandler";
+    import Guild from "$classes/Guild";
+    import User from "$classes/User";
+    import Member from "$classes/Member";
+    import { ChatMessage } from "$classes/Message";
+    import Rest, { RestMethod } from "$classes/Rest";
+    import { EventHandler } from "$classes/SocketHandler";
     // Stores
-    import { guildSet } from "$lib/stores/guildSet";
-    import { user } from "$lib/stores/auth";
-    import { token } from "$lib/stores/auth";
+    import { guildSet } from "$stores/guildSet";
+    import { user } from "$stores/auth";
+    import { token } from "$stores/auth";
     import { page } from "$app/stores";
     import { isLoading } from "svelte-i18n";
-    import socketHandler, { initializing } from "$lib/stores/socketHandler";
+    import socketHandler, { initializing } from "$stores/socketHandler";
     // Utility
     import { onMount } from "svelte";
     import { goto } from "$app/navigation";
@@ -20,7 +20,7 @@
     import userPreferences, {
         UserPreferences,
         type PreferenceJson,
-    } from "$lib/stores/userPreferences";
+    } from "$stores/userPreferences";
     import { locale, locales } from "svelte-i18n";
 
     let waiting: number = 1;
@@ -77,7 +77,7 @@
     ];
 
     onMount(async () => {
-        if (!(await Rest.isTokenValid("users/@self"))) {
+        if (!(await Rest.isTokenValid("users/@me"))) {
             goto(`/login?from=${$page.url.pathname}`);
             return;
         }

@@ -37,11 +37,13 @@ export default class Member {
         return (right instanceof User
             && this.user.id === right.id
             && this.user.username === right.username
-            && this.user.displayName == right.displayName)
+            && this.user.displayName == right.displayName
+            && this.user.avatarHash == right.avatarHash)
             || (right instanceof Member
                 && this.user.id === right.user.id
                 && this.user.username === right.user.username
-                && this.user.displayName == right.user.displayName);
+                && this.user.displayName == right.user.displayName
+                && this.user.avatarHash == right.user.avatarHash);
     }
 
     /**
