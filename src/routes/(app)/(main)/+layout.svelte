@@ -1,4 +1,5 @@
 <script lang="ts">
+	import IconButton from '$components/utility/IconButton.svelte';
     // Components
     import Navigation from "$components/Navigation.svelte";
     import Guilds from "$components/guilds/Guilds.svelte";
@@ -30,9 +31,7 @@
         </div>
         <div class="options">
             <hr />
-            <a href="/settings" data-sveltekit-reload>
-                <Settings className="settings" />
-            </a>
+            <IconButton href="/settings" class="settings" icon={Settings} data-sveltekit-reload/>
         </div>
     </aside>
 </div>
@@ -106,29 +105,11 @@
                 border-color: var(--secondary-variant);
                 border-width: 0.1ch;
             }
-            a {
+            :global(a) {
                 display: block;
                 margin: 0;
                 padding: 0;
                 width: 100%;
-                height: auto;
-                background-color: var(--secondary);
-                border-radius: 1ch;
-                :global(svg.settings) {
-                    width: 100%;
-                    height: auto;
-                    color: var(--on-secondary);
-                }
-                &:hover {
-                    background-color: color-mix(
-                        in srgb,
-                        var(--secondary-variant) 25%,
-                        var(--background)
-                    );
-                    :global(svg.settings) {
-                        color: var(--secondary);
-                    }
-                }
             }
         }
     }

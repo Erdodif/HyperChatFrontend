@@ -78,8 +78,7 @@
             );
         }
         a {
-            @include button;
-            max-width: 20ch;
+            max-width: 32rem;
             text-overflow: ellipsis;
             overflow-wrap: break-word;
         }

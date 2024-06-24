@@ -1,4 +1,6 @@
 <script lang="ts">
+	import CloseIcon from '$icons/close.svelte';
+	import IconButton from '$components/utility/IconButton.svelte';
     import Rest, { RestMethod } from "$classes/Rest";
     // Components
     import GuildPage from "$components/guilds/GuildPage.svelte";
@@ -79,9 +81,7 @@
         <div>Loading</div>
     {:else}
         <div class="settingpage">
-            <button class="back" on:click={backNavigation}>
-                X
-            </button>
+            <IconButton width="3em" icon={CloseIcon} id="back" on:click={backNavigation}/>
             <form on:submit|preventDefault={handleSave}>
                 <h1>
                     {$_("settings.header")}
@@ -121,7 +121,7 @@
     hr {
         width: 95%;
     }
-    .back{
+    :global(#back){
         position: fixed;
         right:1em;
         top:0.725em;

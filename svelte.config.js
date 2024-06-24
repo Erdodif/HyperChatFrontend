@@ -8,6 +8,7 @@ const config = {
       $icons: "src/lib/assets/icons",
       $classes: "src/lib/classes",
       $stores: "src/lib/stores",
+      $styles: "src/styles",
     },
   },
 
@@ -23,7 +24,8 @@ const config = {
   preprocess: [
     preprocess({
       scss: {
-        prependData: '@use "src/variables.scss" as *;',
+        prependData: '@use "src/styles/variables.scss" as *;',
+        includePaths: ['.src/styles']
       },
     }),
   ],

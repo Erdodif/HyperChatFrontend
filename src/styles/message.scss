@@ -1,0 +1,168 @@
+// Container display
+.message{
+    font-size: 1rem;
+    width: 95%;
+    box-sizing: border-box;
+    display: grid;
+    align-items: start;
+}
+$avatar-width: 3em;
+
+// Layout presets
+.message{
+    &[data-layout="comfy"] {
+        padding-block: 0.675em;
+        margin-inline: 2em;
+        column-gap: 1em;
+        row-gap: 1ch;
+        .content {
+            padding: 0.5em;
+            padding-block-start: 0.5em;
+        }
+    }
+    &[data-layout="normal"] {
+        padding-block: 0.375em;
+        margin-inline: 1em;
+        column-gap: 0.5em;
+        row-gap: 0.5ch;
+        .content {
+            padding: 0.3em;
+            padding-block-start: 0.3em;
+        }
+    }
+    &[data-layout="compact"] {
+        padding-block: 0.125em;
+        margin-inline: 0.625em;
+        column-gap: 0.2em;
+        row-gap: 0;
+        .content {
+            padding: 0.2em;
+            padding-block-start: 0em;
+        }
+    }
+}
+
+.message {
+    :global(.avatar) {
+        width: $avatar-width;
+        height: $avatar-width;
+        grid-area: avatar;
+    }
+    .author {
+        font-size: 0.625rem;
+        grid-area: author;
+    }
+    .created {
+        font-size: 0.525rem;
+        text-align: right;
+        grid-area: time;
+    }
+    .content {
+        grid-area: content;
+        margin:0 !important;
+        border-inline: 0.45ch solid var(--secondary-variant);
+        border-radius: 0.8ch;
+    }
+    &[data-from="system"] {
+        color: var(--secondary-variant);
+    }
+    &[data-from="pending"] {
+        max-width: 60%;
+        width: fit-content;
+        margin-inline-start: auto;
+        color: var(--primary-variant);
+    }
+    &[data-from="self"] {
+        grid-template-rows: .85em 1fr;
+        grid-template-columns: 1fr fit-content;
+        grid-template-areas: "_ time" "content content";
+        row-gap:0;
+        max-width: 70%;
+        width: fit-content;
+        text-align: right;
+        margin-inline-start: auto;
+        color: var(--primary);
+        .content {
+            border-color: var(--primary-variant);
+            border-inline-start: none;
+        }
+    }
+    &[data-from="someone"] {
+        grid-template-rows: auto auto 1fr;
+        grid-template-columns: $avatar-width 1fr;
+        grid-template-areas: "avatar time" "avatar author" "avatar content";
+        color: var(--secondary);
+        max-width: 70%;
+        width: fit-content;
+        margin-inline-end: auto;
+        .content {
+            border-color: var(--secondary-variant);
+            border-inline-end: none;
+        }
+        .created{
+            text-align: left;;
+        }
+    }
+    &[data-modifiers~="same_author"],
+    &[data-modifiers~="group_above"] {
+        :global(.avatar) {
+            display: none;
+        }
+    }
+    &[data-modifiers~="same_content"] {
+        position: relative;
+        .content {
+            color: var(--secondary-variant);
+        }
+        &[data-from="self"] {
+            .content {
+                color: var(--primary-variant);
+            }
+        }
+    }
+    &[data-modifiers~="group_above"] {
+        margin-block-start:0;
+        grid-template-rows: 1fr;
+        grid-template-areas: "_ content content";
+        padding-block-start: 0;
+        .content {
+            border-block-start: unset;
+            border-radius: 0 0 0.8ch 0.8ch;
+        }
+        .created {
+            display: none;
+        }
+        .author {
+            display: none;
+        }
+    }
+    &[data-modifiers~="group_below"] {
+        padding-block-end: 0;
+        .content {
+            border-block-end: unset;
+            border-radius: 0.8ch 0.8ch 0 0;
+        }
+        &[data-modifiers~="group_above"] {
+            .content {
+                border-radius: 0;
+            }
+        }
+    }
+}
+
+// Attachments
+.attachments {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    font-size: 1rem;
+    &[data-from="self"] {
+        margin-inline-start: auto;
+        text-align: right;
+        align-items: end;
+    }
+    &[data-from="someone"] {
+        margin-inline-end: auto;
+        align-items: start;
+    }
+}

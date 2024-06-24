@@ -1,4 +1,11 @@
 <script lang="ts">
+	import FileInputButton from './FileInputButton.svelte';
+	import IconButton from '$components/utility/IconButton.svelte';
+    //Icons
+    import SendIcon from "$icons/chat/send.svelte"; 
+    import AddIcon from "$icons/add.svelte";
+    import CloseIcon from "$icons/close.svelte";
+    //
     import { ChatMessage, UnsentMessage } from "$classes/Message";
     import MessageComponent from "./Message.svelte";
     import Rest, { RestMethod } from "$classes/Rest";
@@ -193,12 +200,11 @@
                 bind:value={message}
                 id="send-message"
                 placeholder={$_("chat.message-placeholder")+ $chatLog.channel.id}
+                autocomplete="off"
+                autocorrect="on"
+                autofocus
             />
-            <input
-                type="submit"
-                value={$_("chat.send-message")}
-                class="button"
-            />
+            <IconButton submit class="send" icon={SendIcon}/>
             {#if attachments}
                 <div class="attachments">
                     {#each $attachments as file, index}
@@ -221,18 +227,10 @@
                             </div>
                         {/if}
                     {/each}
-                    <button on:click={() => ($attachments = [])}> X </button>
+                    <IconButton class=close on:click={() => ($attachments = [])} icon={CloseIcon} width="3em"/>
                 </div>
             {/if}
-            <label class="attach">
-                {$_("chat.attachment.icon")}
-                <input
-                    type="file"
-                    bind:this={attachment}
-                    multiple
-                    on:change={handleAttachentsUploaded}
-                />
-            </label>
+            <FileInputButton width="3em" bind:element={attachment} on:change={handleAttachentsUploaded}/>
         </form>
     </div>
 {/if}
@@ -266,29 +264,47 @@
         }
         form {
             display: grid;
-            grid-template-columns: 3ch 1fr 7ch;
-            grid-template-rows: fit-content 1fr;
+            grid-template-columns: 3em 1fr 2.5em;
+            grid-template-rows: min-content 3em;
             grid-template-areas: "attachments attachments attachments" "attach message submit";
             padding: 0.5em;
             grid-area: send;
+            :global(.send) {
+                width: 100%;
+                height: 100%;
+                grid-area: submit;
+            }
             input {
-                font-size: 0.65em;
+                font-size: 1em;
                 &[type="text"] {
                     grid-area: message;
-                }
-                &[type="submit"] {
-                    width: 100%;
-                    height: 100%;
-                    grid-area: submit;
-                }
-                &[type="file"] {
-                    opacity: 0;
-                    width: 0;
-                    height: 0;
-                    grid-area: attach;
+                    margin: .8ch;
+                    paddin-block: .3ch;
+                    padding-inline: 1ch;
+                    background: var(--surface);
+                    color: var(--on-surface);
+                    border:none;
+                    border-radius: .35em;
+                    outline:none;
+                    &:hover{
+                        outline: .1ch solid var(--primary-variant);
+                    }
+                    &:focus{
+                        outline: .1ch solid var(--primary);
+                    }
                 }
             }
+            :global(.fileinput){
+                grid-area: attach;
+            }
+            :global(.fileinput input) {
+                opacity: 0;
+                width: 0;
+                height: 0;
+                grid-area: attach;
+            }
             .attach {
+                grid-area: attach;
                 background-color: var(--primary-variant);
                 &:hover {
                     background-color: var(--secondary-variant);
@@ -339,19 +355,24 @@
                         max-height: 12em;
                         max-width: 16em;
                         border-radius: 1em;
-                        border: 0.3ch dashed var(--primary-variant);
+                        border: 0.3ch solid var(--primary-variant);
+                        padding-inline: .2em;
+                        &:not(:last-of-type){
+                            margin-right: -.3em;
+                            border-right:none;
+                        }
                         .file {
                             &__name {
                                 color: var(--primary);
                                 padding-inline: 1ch;
-                                position: absolute;
+                                //position: absolute;
                                 right: 50%;
                                 bottom: 0;
                             }
                         }
                     }
                 }
-                button {
+                :global(.close) {
                     position: absolute;
                     right: 1em;
                     top: 0.525em;

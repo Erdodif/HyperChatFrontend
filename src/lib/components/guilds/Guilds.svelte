@@ -4,6 +4,9 @@
     import type Guild from "$classes/Guild";
     // Stores
     import { guildSet } from "$stores/guildSet";
+    //Icons
+	import IconButton from '$components/utility/IconButton.svelte';
+    import AddIcon from "$icons/add.svelte";
 
     let activeIndex: number | null = null;
     let guilds = [];
@@ -17,40 +20,24 @@
             <GuildIcon {guild} id={i} {activeIndex} />
         {/if}
     {/each}
-    <a href="/guilds/create" id="create">+</a>
+    <IconButton icon={AddIcon} src="/guilds/create" id="create"/>
 </div>
 
 <style lang="scss">
     .guilds {
+        height:100%;
         display: flex;
         flex-direction: column;
         flex-wrap: nowrap;
-        justify-content: center;
+        justify-content: start;
         gap: 0.275em;
         overflow-x: hidden;
         isolation: isolate;
         box-sizing:border-box;
-        #create {
-            line-height: 1.625em;
+        :global(#create) {
             user-select: none;
-            font-weight: bold;
-            font-size: 1.5em;
-            color: var(--background);
-            background-color: var(--primary);
-            border: 0.1ch solid var(--primary-variant);
-            width: 80%;
-            margin-inline: auto;
+            margin-inline: 0.125em;
             aspect-ratio: 1 / 1;
-            text-decoration: none;
-            text-align: center;
-            border-radius: 35%;
-            &:hover {
-                background-color: var(--primary-variant);
-                border: 0.1ch solid var(--secondary-variant);
-                color: var(--secondary);
-                filter: drop-shadow(0em 0em 0.075em var(--secondary));
-                transition: all 170ms ease-in-out;
-            }
         }
     }
 </style>
