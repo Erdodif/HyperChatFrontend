@@ -15,7 +15,7 @@ export type MemberJson = {
  */
 export default class Member {
     user: User;
-    guild: Guild;
+    guild: Guild | null;
     #nickname: string | null;
     get nickname(): string {
         return this.#nickname ?? this.user.displayName;
@@ -26,7 +26,7 @@ export default class Member {
     }
     joinedAt: Date;
 
-    constructor(user: User, nickname: string, joinedAt: number, guild: Guild = null) {
+    constructor(user: User, nickname: string, joinedAt: number, guild: Guild | null) {
         this.user = user;
         this.guild = guild;
         this.#nickname = nickname;
@@ -53,15 +53,15 @@ export default class Member {
      * @param content The given Json Object
      * @returns A Member instance
      */
-    static fromJson(content: any | MemberJson, guildSet: Map<string, Guild> = null): Member {
-        let guild = null;
+    static fromJson(content: any | MemberJson, guildSet: Map<string, Guild> = new Map<string, Guild>()): Member {
+        let guild : Guild | null = null;
         if (guildSet && guildSet.has(content.guild_id)) {
-            guild = guildSet.get(content.guild_id);
+            guild = guildSet.get(content.guild_id)!;
         }
         return new Member(User.fromJson(content.user), content.nickname, content.joined_at, guild);
     }
 
     copyWithGuild(guild: Guild): Member {
-        return new Member(this.user, this.#nickname, this.joinedAt.getMilliseconds(), guild);
+        return new Member(this.user, this.#nickname!, this.joinedAt.getMilliseconds(), guild);
     }
 }

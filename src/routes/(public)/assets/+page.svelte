@@ -2,17 +2,17 @@
 	import IconButton from '$components/utility/IconButton.svelte';
 	import { onMount } from 'svelte';
     import "$styles/app.scss";
+    type fun = Promise<{default:()=>boolean}>;
     const components = import.meta.glob("/src/lib/assets/icons/**/*")
     
-    let ers = new Map();
+    let ers : Map<string, ConstructorOfATypedSvelteComponent>= new Map();
 
     onMount(()=>{
        let i = 0;
             for (const path in components){
-                console.log(ers[path]);
                 components[path]().then(item =>{
-                    const Component = item?.default;
-                    ers[path] = Component;
+                    const Component = (item as {default: ConstructorOfATypedSvelteComponent}).default;
+                    ers.set(path, Component);
                 });
                 i++;
             }
@@ -21,8 +21,8 @@
 
 {#if components}
 {#each Object.keys(components) as item, i}
-    <IconButton on:click={()=>navigator.clipboard.writeText(item.replace("/src/lib/assets/icons", "$icons"))}>
-        <svelte:component this={ers[item]}/>
+    <IconButton on:click={()=>navigator.clipboard.writeText(item.replace("/src/lib/assets/icons", "$icons"))} icon={undefined}>
+        <svelte:component this={ers.get(item)}/>
         <span>#{i} {item.replace("/src/lib/assets/icons", "$icons")}</span>
     </IconButton>
 {/each}

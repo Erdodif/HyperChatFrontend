@@ -14,7 +14,7 @@
     let guild: Guild;
     let checked = writable(false)
     $: {
-        guild = $guildSet.guilds.get($page.params.guild);
+        guild = $guildSet.guilds.get($page.params.guild)!;
         if(!guild && !$checked){
             Rest.getJsonFromServer(`guilds/${$page.params.guild}`)
             .then(response => {

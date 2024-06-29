@@ -84,7 +84,7 @@ export class NumericSetting extends Setting {
     readonly max: number;
     value: number;
 
-    constructor(localeKey: string, min: number = Number.MIN_SAFE_INTEGER, max: number = Number.MAX_SAFE_INTEGER, value: number = null) {
+    constructor(localeKey: string, min: number = Number.MIN_SAFE_INTEGER, max: number = Number.MAX_SAFE_INTEGER, value: number) {
         super(localeKey);
         this.min = min;
         this.max = max;

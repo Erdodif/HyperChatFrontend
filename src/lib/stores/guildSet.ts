@@ -26,8 +26,8 @@ export class GuildSet {
         return this._guilds.size;
     }
 
-    guildByChannelId(channelId: string): Guild {
-        return this.searchChannel(channelId).guild;
+    guildByChannelId(channelId: string): Guild | null {
+        return this.searchChannel(channelId)?.guild ?? null;
     }
 
     searchChannel(id: string): Channel | null {
@@ -41,20 +41,21 @@ export class GuildSet {
     }
 
     pushToChatLog(channelId: string, message: Message, nonce: string) {
-        this.searchChannel(channelId).chat.push(message, nonce);
+        this.searchChannel(channelId)?.chat.push(message, nonce);
     }
 
     setChannel(channel: Channel) {
-        this._guilds.get(channel.guild.id).setChannel(channel);
+        if(channel?.guild?.id)
+        this._guilds.get(channel.guild.id)?.setChannel(channel);
     }
 
     addChannel(guildId: string, channel: Channel) {
         let guild = this._guilds.get(guildId);
-        guild.setChannel(channel.copyWithGuild(guild));
+        guild?.setChannel(channel.copyWithGuild(guild));
     }
 
     removeChannel(guildId: string, channelId: string): boolean {
-        let success = this._guilds.get(guildId).removeChannel(channelId);
+        let success = this._guilds.get(guildId)?.removeChannel(channelId) ?? false;
         return success;
     }
 
@@ -68,7 +69,7 @@ export class GuildSet {
     }
 
     get(guildId: string): Guild {
-        return this._guilds.get(guildId);
+        return this._guilds.get(guildId)!;
     }
 
     set(guild: Guild) {

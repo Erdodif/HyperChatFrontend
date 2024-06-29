@@ -1,5 +1,4 @@
 import { PUBLIC_SOCKET_URL } from "$env/static/public";
-import { goto } from "$app/navigation";
 
 export class EventHandler {
     type: string;
@@ -12,13 +11,14 @@ export class EventHandler {
 }
 
 export default class SocketHandler {
-    #token: string;
+    #token: string | undefined;
     #gateway: WebSocket;
     #handlers: Map<string, (event: any) => void>;
     #heart: number;
 
-    constructor(token, handlerBundle: EventHandler[] = []) {
+    constructor(token: string | null = null, handlerBundle: EventHandler[] = []) {
         this.#heart = 0;
+        if(token)
         this.#token = token;
         this.#handlers = new Map<string, (event: any) => void>();
         this.attachHandlerbundle(handlerBundle);
@@ -43,7 +43,7 @@ export default class SocketHandler {
         }
     }
 
-    readonly closeEvent = async (ec) => {
+    readonly closeEvent = async (ec : {reason: string}) => {
         if (this.#heart != 0) {
             clearInterval(this.#heart);
         }

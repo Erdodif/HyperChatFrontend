@@ -62,7 +62,7 @@ export default class User {
         localStorage.setItem("user_name", this.username);
         localStorage.setItem("display_name", this.displayName);
         localStorage.setItem("user_id", this.id);
-        localStorage.setItem("avatar_hash", this.avatarHash);
+        localStorage.setItem("avatar_hash", this.avatarHash as string);
     }
 
     static fromJsonOrRedirect(content: any | UserJson, from: string = "/"): User {
@@ -87,9 +87,9 @@ export default class User {
             throw new Error("Local user does not exist!");
         }
         return new User(
-            localStorage.getItem("user_id"),
-            localStorage.getItem("username"),
-            localStorage.getItem("display_name"), 
+            localStorage.getItem("user_id")!,
+            localStorage.getItem("username")!,
+            localStorage.getItem("display_name")!, 
             localStorage.getItem("avatar_hash")??null);
     }
 

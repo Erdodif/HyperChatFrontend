@@ -13,7 +13,7 @@
     import Rest, { RestMethod } from "$classes/Rest";
 
     export let guild:Guild;
-    export let activeIndex: number;
+    export let activeIndex: number | null;
     export let id:number;
 
     const getOptions = (guild: Guild) => [
@@ -55,7 +55,7 @@
     };
 
     const getShortName = ()=>{
-        if(guild.name.match(/[\w]+[ ][\w]+/) !== -1){
+        if(guild.name.match(/[\w]+[ ][\w]+/)?.length !== 0){
             let names: string[] = guild.name.split(" ").filter(str => str.length > 0);
             let first = (names[0][0]??"").toUpperCase();
             let second = (names[0][1]?? "").toLowerCase();

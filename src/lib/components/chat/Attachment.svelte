@@ -20,7 +20,7 @@
         >
             <img
                 src={`${PUBLIC_FILE_SERVER_URL}/${attachment.endpoint}`}
-                alt={`${attachment.message.id}_${attachment.id}_${attachment.filename}`}
+                alt={attachment.message ?`${attachment.message.id}_${attachment.id}_${attachment.filename}` : "attachment"}
             /></a
         >
     {:else}

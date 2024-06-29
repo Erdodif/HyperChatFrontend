@@ -1,7 +1,6 @@
 <script lang="ts">
     import Guilds from "$components/guilds/Guilds.svelte";
     import { guildSet } from "$stores/guildSet";
-    import chat from "$icons/chat/bubble.svelte";
 
     let holderOpen = false;
 </script>
@@ -17,13 +16,13 @@
     <div
         id="guildholder"
         data-opened={holderOpen}
-        style={`background-image: url("${gold}")`}
         on:click={() => (holderOpen = !holderOpen)}
         on:keypress={(e)=>{if(e.key === "\n") holderOpen = !holderOpen}}
+        role="button"
+        tabindex=0
     >
         {#each $guildSet.guildsArray as guild}
             <a class="guild" id={guild.id} href="/guilds/{guild.id}">
-                <svg src={chat} alt={guild.name}/>
                 <span class="name">
                     {guild.name}
                 </span>
@@ -53,7 +52,7 @@
             counter-increment: guilds;
             width: 3em;
             height: 3em;
-            img {
+            :global(img) {
                 max-height: 90%;
                 max-width: 90%;
                 width: auto;

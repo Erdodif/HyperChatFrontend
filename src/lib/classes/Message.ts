@@ -9,9 +9,8 @@ export const EPOCH: bigint = 1672531200000n // 2023-01-01T00:00:00Z in milis
 export type ChatMessageJson = { author: MemberJson | UserJson, content: string, id: string, attachments: AttachmentJson[] }
 
 export abstract class Message {
-
     id: string;
-    channel: Channel;
+    channel: Channel | null;
     content: string;
     created: Date;
 
@@ -90,7 +89,7 @@ export class UnsentMessage extends ChatMessage {
 
     nonce: string;
 
-    constructor(author: User | Member, content: string, nonce: string, channel: Channel = null, attachments: Attachment[] = []) {
+    constructor(author: User | Member, content: string, nonce: string, channel: Channel | null = null, attachments: Attachment[] = []) {
         super(author, content, Date.now().toString(), channel, attachments);
         this.nonce = nonce;
     }

@@ -5,8 +5,9 @@
 	import { writable, derived } from 'svelte/store';
 	import { onMount } from 'svelte';
     import { _ } from "svelte-i18n";
+    import type { FormEventHandler } from 'svelte/elements';
 
-    export let src: string | URL;
+    export let src: string;
     const dispatch = createEventDispatcher();
 
     let modifiedSource = writable("");
@@ -79,13 +80,13 @@
 
     // Events
 
-    const Click = (event:Event) => {
+    const Click = (event:MouseEvent) => {
         $startX = event.clientX;
         $startY = event.clientY;
         $booly = true;
     }
 
-    const Move = (event:Event)=>{
+    const Move = (event:MouseEvent)=>{
         if(!$booly) return;
         let x = event.clientX;
         let y = event.clientY;
@@ -109,16 +110,15 @@
     }
 
     const Save = (event:Event) =>{
-        let url: URL;
+        let url: string;
         let canvas = document.createElement('canvas');
         canvas.width=512;
         canvas.height=512;
-        let context = canvas.getContext('2d');
+        let context = canvas.getContext('2d')!;
         const original = new Image();
         original.src = src;
         original.crossOrigin= "anonymous";
         original.onload = ()=>{
-            const aspect = original.naturalWidth / original.naturalHeight;
             context.drawImage(
                 original,                 // Image reference
                 -$left / $scale,          // Left offset original
@@ -135,17 +135,18 @@
         };
     }
 
-    const Resize = (event)=>{
+    const Resize: FormEventHandler<HTMLInputElement> = (event : Event)=>{
         if($scrollWidth === 0) return;
-        if(($initialWidth * event.target.value) <= $scrollWidth){
-            event.target.value = $minScale;
-        } else if(($initialHeight * event.target.value) <= $scrollHeight){
-            event.target.value = $minScale;
+        let value = Number((event.target! as HTMLInputElement).value);
+        if(($initialWidth * value) <= $scrollWidth){
+            (event.target! as HTMLInputElement).value = String($minScale);
+        } else if(($initialHeight * value) <= $scrollHeight){
+            (event.target! as HTMLInputElement).value = String($minScale);
         }
-        let diff = $scale - event.target.value;
+        let diff = $scale - value;
         $left -= diff;
         $top -= diff;
-        $scale = event.target.value;
+        $scale = value;
     }
 
     onMount(async()=>{
@@ -168,7 +169,9 @@
     <div class="preview {$booly? "dragged": ""}"
         on:mousedown|capture={Click}
         style={`--width:${$width}px;--height:${$height}px;--left:${getCorrectX($left+$offX)}px; --top:${getCorrectY($top+$offY)}px; --src:url(${src});`}
-    >
+        role="cell"
+        tabindex="0"
+        >
     <div class="measure" bind:this={$imageObject} />
     </div>
     </div>
@@ -180,7 +183,7 @@
             min={Math.max(($scrollWidth / $initialWidth), ($scrollHeight/ $initialHeight))-0.01} 
             max={3+Math.max(($scrollWidth / $initialWidth), ($scrollHeight/ $initialHeight))} 
             step={Math.max((3-($scrollWidth / $initialWidth)) / 100, ((3-$scrollHeight/ $initialHeight)) / 100)}/>
-            <span>{Math.round($scale *100,2)}%</span>
+            <span>{Math.round($scale *100)}%</span>
         </div>
         {#if $scrollWidth < $width + 0.5}
         <div>

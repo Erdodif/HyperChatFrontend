@@ -60,9 +60,9 @@ export abstract class CustomDerivedStore<T> implements Readable<T> {
     protected readonly _stores: (Readable<any> | Writable<any>)[];
     protected callbacks: Array<(value: T) => void>
 
-    protected abstract setValue();
+    protected abstract setValue() : void;
 
-    constructor(stores: (Readable<any> | Writable<any>)[], initValue: T=null) {
+    constructor(stores: (Readable<any> | Writable<any>)[], initValue: T) {
         this.value = initValue;
         this.callbacks = [];
         this._stores = stores;

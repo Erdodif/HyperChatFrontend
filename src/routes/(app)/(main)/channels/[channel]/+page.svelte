@@ -13,7 +13,7 @@
     import { slide, fade  } from "svelte/transition"
     import { goto } from "$app/navigation";
 
-    let channel: Channel;
+    let channel: Channel | null;
 
     onSocketFinished(() => {
         channel = $guildSet.searchChannel($page.params.channel);

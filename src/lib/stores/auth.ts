@@ -4,7 +4,7 @@ import type User from "$lib/classes/User";
 let initToken = "";
 
 export function initializeToken() {
-    initToken = localStorage.getItem("auth-token");
+    initToken = localStorage.getItem("auth-token")!;
 }
 
 if (typeof localStorage !== 'undefined') {
@@ -19,4 +19,4 @@ export enum UserState {
     Error
 }
 
-export const user = writable<User>(null);
+export const user = writable<User>();

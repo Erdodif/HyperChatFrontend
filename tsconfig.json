@@ -15,14 +15,10 @@
     "checkJs": true,
     "isolatedModules": true,
     "noUnusedParameters": false,
-  },
-  "paths": {
-    "$lib/*": ["src/lib/*"],
-    "$components/*": ["src/lib/components/*"],
-    "$classes/*": ["src/lib/classes/*"],
-    "$icons/*": ["src/lib/assets/icons/*"],
-    "$stores/*": ["src/lib/stores/*"],
-    "$styles/*": ["src/styles/*"],
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "strict": true,
+    "moduleResolution": "bundler"
   },
   "include": [
     "src/**/*.d.ts",

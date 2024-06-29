@@ -1,9 +1,10 @@
-<script>
-    export let width = "100%";
-    export let icon = null;
-    export let href = null;
-    export let id = "";
+<script lang="ts">
     import { createEventDispatcher } from 'svelte';
+
+    export let width = "100%";
+    export let icon : ConstructorOfATypedSvelteComponent | undefined;
+    export let href: string | null = null;
+    export let id = "";
 
     const dispatch = createEventDispatcher();
 </script>
@@ -14,7 +15,7 @@
             <svelte:component this={icon} {width} height={width}/>
         </a>
     {:else}
-        <button {id} class={"icon-button " + $$props.class} role="button" on:click={e=>dispatch('click',e)}>
+        <button {id} class={"icon-button " + $$props.class} on:click={e=>dispatch('click',e)}>
             <svelte:component this={icon} {width} height={width}/>
         </button>
     {/if}
@@ -24,7 +25,7 @@
             <slot {width} height={width}/>
         </a>
     {:else}
-        <button {id} class={"icon-button " + $$props.class} role="button" on:click={e=>dispatch('click',e)}>
+        <button {id} class={"icon-button " + $$props.class} on:click={e=>dispatch('click',e)}>
             <slot {width} height={width}/>
         </button>
     {/if}

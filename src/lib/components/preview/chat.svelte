@@ -1,9 +1,10 @@
 <script lang="ts">
     export let src:string | URL;
+    let source = (src instanceof URL) ? src.toString() : src;
 </script>
 
 <div>
-    <img {src}/>
+    <img src={source} alt="preview"/>
     <span>Image is here</span>
 </div>
 

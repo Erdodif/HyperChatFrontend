@@ -146,6 +146,9 @@
     let attachment: HTMLInputElement;
 
     const handleAttachentsUploaded = (event: Event) => {
+        if (attachment.files === null){
+            return;
+        }
         if (
             $attachments.length + attachment.files.length >
             MAX_ATTACHMENT_COUNT
@@ -202,7 +205,6 @@
                 placeholder={$_("chat.message-placeholder")+ $chatLog.channel.id}
                 autocomplete="off"
                 autocorrect="on"
-                autofocus
             />
             <IconButton submit class="send" icon={SendIcon}/>
             {#if attachments}
@@ -279,7 +281,7 @@
                 &[type="text"] {
                     grid-area: message;
                     margin: .8ch;
-                    paddin-block: .3ch;
+                    padding-block: .3ch;
                     padding-inline: 1ch;
                     background: var(--surface);
                     color: var(--on-surface);
@@ -303,7 +305,7 @@
                 height: 0;
                 grid-area: attach;
             }
-            .attach {
+            :global(.attach) {
                 grid-area: attach;
                 background-color: var(--primary-variant);
                 &:hover {

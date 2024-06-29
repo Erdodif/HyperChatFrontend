@@ -46,7 +46,7 @@ export default class Channel {
 
     chat: ChatLog;
 
-    constructor(id: string, name: string, type: string, guild: Guild = null, members: Member[] = [], chatLog: ChatLog = null) {
+    constructor(id: string, name: string, type: string, guild: Guild | null = null, members: Member[] = [], chatLog: ChatLog | null = null) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -70,12 +70,12 @@ export default class Channel {
      * @param content The given Json Object
      * @returns A Channel instance
      */
-    static fromJson(content: ChannelJson, guildSet: Map<string, Guild> = null): Channel {
+    static fromJson(content: ChannelJson, guildSet: Map<string, Guild> = new Map<string, Guild>()): Channel {
         let guild = null;
         if (guildSet && guildSet.has(content.guild_id)) {
-            guild = guildSet[content.guild_id];
+            guild = guildSet.get(content.guild_id);
         }
-        let members = [];
+        let members : Member[] = [];
         if (guild) {
             members = guild.memberList;
         }

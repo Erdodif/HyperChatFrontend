@@ -1,16 +1,17 @@
 <script lang="ts">
-	import Avatar from '$components/chat/Avatar.svelte';
-    import type Member from "$classes/Member";
+    // Classes
+    import Member from "$classes/Member";
     import { ChatMessage, Message, UnsentMessage } from "$classes/Message";
-    import type User from "$classes/User";
-    import { user } from "$stores/auth";
-    import { _, time } from "svelte-i18n";
-    import { each, space } from "svelte/internal";
-    import { fly } from "svelte/transition";
-    import AttachmentElement from "./Attachment.svelte";
-    import Rest, { RestMethod } from "$classes/Rest";
     import type { MessageModifier } from "$classes/ChatLog";
+    import type User from "$classes/User";
+    // Stores
+    import { user } from "$stores/auth";
     import userPreferences from "$stores/userPreferences";
+    import { _, time } from "svelte-i18n";
+    // Components
+    import { fly } from "svelte/transition";
+    import AttachmentElement from "$components/chat/Attachment.svelte";
+	import Avatar from '$components/chat/Avatar.svelte';
 
     //TODO, set type in chatlog, display (css) accordingly!
 
@@ -69,7 +70,7 @@
 
     let element: HTMLSpanElement;
 
-    function isReallyVisible(fullVisible) {
+    function isReallyVisible(fullVisible: boolean) {
         var parentRect = (
             element.parentNode as HTMLElement
         ).getBoundingClientRect();
@@ -117,7 +118,9 @@
     in:fly={{duration:250}}
 >
     {#if !(messageType === "self")}
-    <Avatar className="avatar" user={message.author}/>
+    {#if message instanceof ChatMessage}
+        <Avatar className="avatar" user={message.author instanceof Member ? message.author.user : message.author}/>
+    {/if}
     <div class="author">
         {header}
     </div>

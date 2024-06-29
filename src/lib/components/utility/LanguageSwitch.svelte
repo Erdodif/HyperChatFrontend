@@ -1,5 +1,6 @@
 <script lang="ts">
     import { _, locale, locales } from "svelte-i18n";
+    import type { ChangeEventHandler } from "svelte/elements";
 
     export let presetLocale:string;
     
@@ -20,8 +21,8 @@
         return false;
     }
 
-    const onChange = (event: Event) => {
-        $locale = event.target.value.replace(/[_.]/,'-');
+    const onChange: ChangeEventHandler<HTMLSelectElement> = (event: Event) => {
+        $locale = (event.target! as HTMLSelectElement).value.replace(/[_.]/,'-');
     }
 
 </script>

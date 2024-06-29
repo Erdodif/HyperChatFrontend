@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { LinkAction } from '$classes/ContextMenuOption.ts';
+	import { LinkAction } from '$classes/ContextMenuOption';
 	import Avatar from '$components/chat/Avatar.svelte';
     import { _ } from "svelte-i18n";
     import { goto } from "$app/navigation";
@@ -18,11 +18,11 @@
 <nav data-layout={$userPreferences ? $userPreferences.styleLayout : "normal"}>
     <a href="/"> {$_("title.index")} </a>
     {#if $user}
-        <div on:click={()=>goto("/users/@me")} >
+        <div on:click={()=>goto("/users/@me")} role="link" tabindex=0 on:keydown>
             <Avatar className="avatar" user={$user} options={getOptions()}/>
             <span>
                 {$user.username} 
-                {#if $user.display_name}
+                {#if $user.displayName}
                 ({$_("user.aka")}: {$user.displayName})
                 {/if}
             </span>
@@ -89,6 +89,10 @@
             span {
                 padding: 0.055rem;
             }
+        }
+        :global(.avatar){
+            height: 2em;
+            cursor:pointer;
         }
     }
 </style>

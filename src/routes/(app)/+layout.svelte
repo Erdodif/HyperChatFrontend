@@ -2,7 +2,7 @@
     // Types
     import Guild from "$classes/Guild";
     import User from "$classes/User";
-    import Member from "$classes/Member";
+    import Channel from "$classes/Channel";
     import { ChatMessage } from "$classes/Message";
     import Rest, { RestMethod } from "$classes/Rest";
     import { EventHandler } from "$classes/SocketHandler";

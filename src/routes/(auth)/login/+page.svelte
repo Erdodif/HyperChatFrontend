@@ -6,11 +6,11 @@
     import { page } from "$app/stores";
     import Rest from "$classes/Rest";
     import { guildSet } from "$stores/guildSet";
-    export let username: string = "";
+    export let username: string | null = "";
     export let password: string = "";
     let error: String = "";
 
-    let from = new URL($page.url.searchParams.get("from"),$page.url);
+    let from = new URL($page.url.searchParams.get("from") ?? "",$page.url);
 
     if($page.url.searchParams.get("from") === null || from.hostname !== $page.url.hostname){
         from = new URL("/",$page.url);

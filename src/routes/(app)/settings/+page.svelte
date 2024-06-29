@@ -17,6 +17,7 @@
     import { page } from "$app/stores";
     import userPreferences, {
         UserPreferences,
+        type PreferenceJson,
     } from "$stores/userPreferences";
     // i18n
     import { _, isLoading } from "svelte-i18n";

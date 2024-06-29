@@ -29,7 +29,7 @@
     const getSrc = () =>`${PUBLIC_FILE_SERVER_URL}/${user.avatarPath}`
 
     onMount(async () => {
-        if(user.avatarHash === null){
+        if(user.avatarHash === null || user.avatarPath === null){
             $valid = false;
             return;
         }
@@ -48,19 +48,15 @@
     {#if $valid}
         <img class={className} src={getSrc()} alt={user.displayName}>
     {:else}
-        <UserIcon class={`userIcon`}/>
+        <UserIcon class={`user-icon`}/>
     {/if}
 </button>
 
 <style lang="scss">
     .image-holder{
         all:unset;
-        width: 100%;
-        height: 100%;
-        img, :global(.userIcon){
+        img, :global(.user-icon){
             z-index:0;
-            width: 100%;
-            height: 100%;
             aspect-ratio: 1 / 1;
         }
         img{

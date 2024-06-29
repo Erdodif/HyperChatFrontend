@@ -1,12 +1,12 @@
-import arrowLeft from "$lib/assets/icons/arrow-left.svg";
-import arrowRight from "$lib/assets/icons/arrow-right.svg";
+import arrowLeft from "$lib/assets/icons/arrow-left.svelte";
+import arrowRight from "$lib/assets/icons/arrow-right.svelte";
 
 export class ContextMenuItem {
     name: string;
-    icon: string | null;
+    icon: ConstructorOfATypedSvelteComponent | string | null;
     center: boolean;
 
-    constructor(name: string, icon: string | null = null, center: boolean = false) {
+    constructor(name: string, icon: ConstructorOfATypedSvelteComponent | string | null = null, center: boolean = false) {
         this.name = name;
         this.icon = icon;
         this.center = center;
@@ -17,7 +17,7 @@ export default class ButtonAction extends ContextMenuItem {
     action: () => void;
     autoClose: boolean;
 
-    constructor(name: string, action: () => void, icon: string | null = null, center: boolean = false, autoClose: boolean = true) {
+    constructor(name: string, action: () => void, icon: ConstructorOfATypedSvelteComponent | string | null = null, center: boolean = false, autoClose: boolean = true) {
         super(name, icon, center);
         this.action = action;
         this.autoClose = autoClose;
@@ -27,7 +27,7 @@ export default class ButtonAction extends ContextMenuItem {
 export class LinkAction extends ContextMenuItem {
     href: string;
     newTab: boolean;
-    constructor(name: string, href: string, icon: string | null = null, center: boolean = false, newTab = false) {
+    constructor(name: string, href: string, icon: ConstructorOfATypedSvelteComponent | string | null = null, center: boolean = false, newTab = false) {
         super(name, icon, center);
         this.href = href;
         this.newTab = newTab;
@@ -38,7 +38,7 @@ export class ToogleAction extends ContextMenuItem {
     isSet: boolean;
     isFor: string;
 
-    constructor(name: string, isFor: string, isSet: boolean, icon: string | null = null, center: boolean = false) {
+    constructor(name: string, isFor: string, isSet: boolean, icon: ConstructorOfATypedSvelteComponent | string | null = null, center: boolean = false) {
         super(name, icon, center);
         this.isFor = isFor;
         this.isSet = isSet;
